@@ -1,0 +1,12 @@
+Package: osrm
+Type: Package
+Title: Travel Time Between Points from OpenStreetMap via an OSRM API
+Version: 0.1
+Date: 2015-09-10
+Authors@R: c(person("Timothee", "Giraud", email = "timothee.giraud@ums-riate.fr", role = c("cre","aut")))
+Description: Travel Time Between Points from OpenStreetMap via an OSRM API.
+License: GPL-3
+LazyData: TRUE
+Imports: RJSONIO,
+    RCurl,
+    XML
