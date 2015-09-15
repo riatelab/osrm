@@ -18,7 +18,7 @@ osrmViarouteGeom <- function(xo, yo, xd, yd){
                  "&alt=false&geometry=true&output=gpx",sep="")
     
     # Sending the query
-    tab2 <- RCurl::getURL(URLencode(tab), useragent = "'osmdistance' R package")
+    tab2 <- RCurl::getURL(URLencode(tab), useragent = "'osrm' R package")
     
     # Parsing
     pfile <- XML::htmlTreeParse(tab2, useInternalNodes = T)

@@ -18,7 +18,7 @@ osrmViaroute <- function(xo, yo, xd, yd){
                  "&alt=false&geometry=false",sep="")
     
     # Sending the query
-    tab2 <- RCurl::getURL(URLencode(tab), useragent = "'osmdistance' R package")
+    tab2 <- RCurl::getURL(URLencode(tab), useragent = "'osrm' R package")
     
     # JSON parsing
     tab3 <- RJSONIO::fromJSON(tab2)
