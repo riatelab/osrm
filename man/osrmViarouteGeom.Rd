@@ -2,7 +2,7 @@
 % Please edit documentation in R/osrmViarouteGeom.R
 \name{osrmViarouteGeom}
 \alias{osrmViarouteGeom}
-\title{Query OSRM to Get a Travel Distance, Time and Geometry}
+\title{Query OSRM to Get the Travel Geometry Between Two Points}
 \usage{
 osrmViarouteGeom(xo, yo, xd, yd)
 }
@@ -16,10 +16,11 @@ osrmViarouteGeom(xo, yo, xd, yd)
 \item{yd}{latitude of the destination point.}
 }
 \value{
-a list is returned
+A data frame is return. It contains the longitudes and latitudes of
+the travel path between the two points.
 }
 \description{
-Query the OSRM API to get a travel time matrix between
-points. This function interface the OSRM `viaroute` service.
+Query OSRM to get the travel geometry between two points.
+This function interface the \emph{viaroute} OSRM service.
 }
 
