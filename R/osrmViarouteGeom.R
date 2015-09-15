@@ -1,12 +1,13 @@
 #' @name osrmViarouteGeom
-#' @title Query OSRM to Get a Travel Distance, Time and Geometry
-#' @description Query the OSRM API to get a travel time matrix between
-#' points. This function interface the OSRM `viaroute` service. 
+#' @title Query OSRM to Get the Travel Geometry Between Two Points
+#' @description Query OSRM to get the travel geometry between two points.
+#' This function interface the \emph{viaroute} OSRM service. 
 #' @param xo longitude of the origine point.
 #' @param yo latitude of the origine point.
 #' @param xd longitude of the destination point.
 #' @param yd latitude of the destination point.
-#' @return a list is returned
+#' @return A data frame is return. It contains the longitudes and latitudes of 
+#' the travel path between the two points.
 #' @export
 osrmViarouteGeom <- function(xo, yo, xd, yd){
   tryCatch({

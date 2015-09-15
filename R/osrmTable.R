@@ -1,16 +1,7 @@
-#' @title Shortest Paths and Travel Time from OpenStreetMap via an OSRM API
-#' @name  osrm
-#' @description Query an OSRM service to obtain travel time between points in minutes. \cr
-#' The package relies on the usage of a running OSRM instance
-#' (located here: http://0.0.0.0:5000/)
-#' @docType package
-NULL
-
-
 #' @name osrmTable
 #' @title Query OSRM to Get a Travel Time Matrix
 #' @description Query the OSRM API to get a travel time matrix between
-#' points. This function interface the OSRM `table` service. 
+#' points. This function interface the \emph{table} OSRM service. 
 #' @param df data frame containing points identifiers, longitudes and latitudes 
 #' (WGS84 projection).
 #' @param id identifier field in df.
@@ -18,9 +9,11 @@ NULL
 #' @param y latitude field in df.
 #' @return x A square matrix of time travel (in minutes) is returned.
 #' @note The public OSRM API does not allow more than 100 
-#' locations in distance table query. If you use an other API, make sure that 
-#' more than 100 locations are allowed (--max-table-size arg)   
-#' -m [ --max-table-size ] arg (=100)  Max. locations supported in distance table query
+#' locations in distance table query. \cr
+#' If you use an other OSRM API service, make sure that 
+#' more than 100 locations are allowed in table queries 
+#' (i.e. the "--max-table-size" argument, Max. locations supported in distance 
+#' table query)
 #' @export
 osrmTable <- function(df, id, x, y){
   e <- simpleError("

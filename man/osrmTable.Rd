@@ -21,12 +21,14 @@ x A square matrix of time travel (in minutes) is returned.
 }
 \description{
 Query the OSRM API to get a travel time matrix between
-points. This function interface the OSRM `table` service.
+points. This function interface the \emph{table} OSRM service.
 }
 \note{
 The public OSRM API does not allow more than 100
-locations in distance table query. If you use an other API, make sure that
-more than 100 locations are allowed (--max-table-size arg)
--m [ --max-table-size ] arg (=100)  Max. locations supported in distance table query
+locations in distance table query. \cr
+If you use an other OSRM API service, make sure that
+more than 100 locations are allowed in table queries
+(i.e. the "--max-table-size" argument, Max. locations supported in distance
+table query)
 }
 

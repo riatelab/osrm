@@ -1,12 +1,13 @@
 #' @name osrmViaroute
-#' @title Query OSRM to Get a Travel Distance, Time and Geometry
-#' @description Query the OSRM API to get a travel time matrix between
-#' points. This function interface the OSRM `viaroute` service. 
+#' @title Query OSRM to Get Travel Time and Travel Distance Between Two Points
+#' @description Query OSRM to get travel time and travel distance between two points.
+#' This function interface the \emph{viaroute} OSRM service. 
 #' @param xo longitude of the origine point.
 #' @param yo latitude of the origine point.
 #' @param xd longitude of the destination point.
 #' @param yd latitude of the destination point.
-#' @return a list is returned
+#' @return A named numeric vector is return. It contains travel time (in minutes) 
+#' and travel distance (in kilometers).  
 #' @export
 osrmViaroute <- function(xo, yo, xd, yd){
   tryCatch({
