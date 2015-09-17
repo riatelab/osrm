@@ -40,4 +40,13 @@ origin points and a set of destination points
 This function is a wraper around osrmTable. Multiple calls allow to
 obtain a matrix between different sets of origins and destinations.
 }
+\examples{
+# Load data
+data("com")
+# Travel time matrix
+distcom <- osrmTableOD(dfo = com[1:50,], ido = "comm_id", xo =  "lon", yo =  "lat",
+                       dfd = com[51:100,], idd = "comm_id", xd = "lon", yd = "lat")
+# First 5 rows and columns
+distcom[1:5,1:5]
+}
 

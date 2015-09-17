@@ -13,7 +13,14 @@
 #' If you use an other OSRM API service, make sure that 
 #' more than 100 locations are allowed in table queries 
 #' (i.e. the "%--max-table-size " argument, Max. locations supported in distance 
-#' table query)
+#' table query).
+#' @examples 
+#' # Load data
+#' data("com")
+#' # Travel time matrix
+#' distcom <- osrmTable(com[1:50,], id = "comm_id", x =  "lon",y =  "lat")
+#' # First 5 rows and columns
+#' distcom[1:5,1:5]
 #' @export
 osrmTable <- function(df, id, x, y){
   e <- simpleError("The public OSRM API does not allow more than 100 locations 

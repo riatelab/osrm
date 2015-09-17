@@ -23,4 +23,17 @@ and travel distance (in kilometers).
 Query OSRM to get travel time and travel distance between two points.
 This function interface the \emph{viaroute} OSRM service.
 }
+\examples{
+# Load data
+data("com")
+# Time and Distance between 2 points
+route <- osrmViaroute(xo = com[1,"lon"], yo = com[1,"lat"],
+                      xd = com[15,"lon"], yd = com[15,"lat"])
+# Time travel distance (min)
+route[1]
+# Travel distance (km)
+route[2]
+# Mean Speed (km/h)
+route[2]/(route[1]/60)
+}
 

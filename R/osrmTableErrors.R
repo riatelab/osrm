@@ -4,6 +4,15 @@
 #' @param mat A distance matrix.
 #' @note An error is detected when at least half of distances are not found for an element.
 #' @return A list of two vectors of identifier: originErrors and destinationErrors.
+#' @examples 
+#' # Load data
+#' data("com")
+#' # Travel time matrix
+#' distcom <- osrmTable(com[1:50,], id = "comm_id", x =  "lon",y =  "lat")
+#' # First 5 rows and columns
+#' distcom[1:5,1:5]
+#' # Get errors
+#' osrmTableErrors(distcom)
 #' @export
 osrmTableErrors <- function(mat){
   mat[!is.na(mat)] <- 0

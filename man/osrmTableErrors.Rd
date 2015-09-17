@@ -18,4 +18,14 @@ Query a distance matrix and extracts errors in origins and destination.
 \note{
 An error is detected when at least half of distances are not found for an element.
 }
+\examples{
+# Load data
+data("com")
+# Travel time matrix
+distcom <- osrmTable(com[1:50,], id = "comm_id", x =  "lon",y =  "lat")
+# First 5 rows and columns
+distcom[1:5,1:5]
+# Get errors
+osrmTableErrors(distcom)
+}
 

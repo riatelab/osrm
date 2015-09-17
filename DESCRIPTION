@@ -11,4 +11,5 @@ Imports: jsonlite,
     RCurl,
     XML, 
     reshape2
+Depends: R (>= 2.10)
 Encoding: UTF-8

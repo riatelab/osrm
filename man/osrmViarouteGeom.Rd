@@ -23,4 +23,15 @@ the travel path between the two points.
 Query OSRM to get the travel geometry between two points.
 This function interface the \emph{viaroute} OSRM service.
 }
+\examples{
+# Load data
+data("com")
+# Travel path between points
+routeGeom <- osrmViarouteGeom(xo = com[1,"lon"], yo = com[1,"lat"],
+                              xd = com[15,"lon"], yd = com[15,"lat"])
+# Display the path
+plot(com[c(1,15),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
+points(routeGeom[,2:1], type = "l", lty = 2)
+text(com[c(1,15),3:4], labels = com[c(1,15),2], pos = 2)
+}
 
