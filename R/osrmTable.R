@@ -12,13 +12,13 @@
 #' locations in distance table query. \cr
 #' If you use an other OSRM API service, make sure that 
 #' more than 100 locations are allowed in table queries 
-#' (i.e. the " --max-table-size " argument, Max. locations supported in distance 
+#' (i.e. the "%--max-table-size " argument, Max. locations supported in distance 
 #' table query)
 #' @export
 osrmTable <- function(df, id, x, y){
-  e <- simpleError("
-The public OSRM API does not allow more than 100 locations in a distance table query.")
-
+  e <- simpleError("The public OSRM API does not allow more than 100 locations 
+                   in a distance table query.")
+  
   if(getOption("osrm.server")=="http://router.project-osrm.org/" & nrow(df)>100){
     stop(e)
   }
@@ -26,32 +26,34 @@ The public OSRM API does not allow more than 100 locations in a distance table q
   tryCatch({
     # Query build
     tab <- paste(getOption("osrm.server"), "table?loc=", sep = "")
-    tab
+    
     n <- nrow(df)
     for (i in 1:n){
       tab <- paste(tab, df[i,y], ",", df[i,x], "&loc=", sep="")
     }
     tab <- substr(x = tab, start = 1, stop = (nchar(tab)-5))
-    
+
     # Sending the query
     tab2 <- RCurl::getURL(URLencode(tab), useragent = "'osrm' R package")
-    
+
     # JSON parsing
-    tab3 <- RJSONIO::fromJSON(tab2)
-    
+    # tab3 <- RJSONIO::fromJSON(content= tab2,default.size = 10)
     # Conversion to matrix
-    mat <- matrix(data = unlist(tab3[[1]]),
-                  nrow = n,
-                  ncol = n,
-                  byrow = T,
-                  dimnames =  list(df[,id], df[,id]))
+#     mat <- matrix(data = unlist( RJSONIO::fromJSON(content= tab2)[[1]]),
+#                   nrow = n,
+#                   ncol = n,
+#                   byrow = T,
+#                   dimnames =  list(df[,id], df[,id]))
+    mat <- jsonlite::fromJSON(tab2)$distance_table
+
+    dimnames(mat) <- list(df[,id], df[,id]) 
     
     # From millisec to minutes
     mat <- round(mat/(600), 1)
-    
+
     # NA management
     mat[mat == 3579139.4] <- NA
-    
+
     return(mat)
   }, error=function(e) { message("osrmTable function returns an error: \n", e)})
   return(NULL)

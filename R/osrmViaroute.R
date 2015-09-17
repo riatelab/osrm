@@ -21,7 +21,9 @@ osrmViaroute <- function(xo, yo, xd, yd){
     tab2 <- RCurl::getURL(URLencode(tab), useragent = "'osrm' R package")
     
     # JSON parsing
-    tab3 <- RJSONIO::fromJSON(tab2)
+    tab3 <- jsonlite::fromJSON(tab2)
+    
+
     
     if (tab3$status==0){
       res <- round(c(total_time=tab3$route_summary$total_time/60,

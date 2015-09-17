@@ -2,7 +2,7 @@
 % Please edit documentation in R/osrmTableOD.R
 \name{osrmTableOD}
 \alias{osrmTableOD}
-\title{Query OSRM to Get Time Distances Between Origines and Destinations}
+\title{Query OSRM to Get a Travel Time Matrix Between Origins and Destination}
 \usage{
 osrmTableOD(dfo, ido, xo, yo, dfd, idd, xd, yd, limit = 100)
 }
@@ -25,14 +25,19 @@ osrmTableOD(dfo, ido, xo, yo, dfd, idd, xd, yd, limit = 100)
 
 \item{yd}{latitude field in dfd.}
 
-\item{limit}{table query limit of osrm API in use.}
+\item{limit}{table query limit of osrm API in use. The default value (100) is
+the public API limit.}
 }
 \value{
 A matrix of time distances (in minutes) between origins and
 destinations is returned.
 }
 \description{
-Query the OSRM API to get time distances marices between Origine
- and Destination points.
+Query the OSRM API to get travel time matrices between a set of
+origin points and a set of destination points
+}
+\note{
+This function is a wraper around osrmTable. Multiple calls allow to
+obtain a matrix between different sets of origins and destinations.
 }
 
