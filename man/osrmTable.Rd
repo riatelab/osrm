@@ -8,7 +8,7 @@ osrmTable(df, id, x, y)
 }
 \arguments{
 \item{df}{data frame containing points identifiers, longitudes and latitudes
-(WGS84 projection).}
+(WGS84).}
 
 \item{id}{identifier field in df.}
 

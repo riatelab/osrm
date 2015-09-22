@@ -2,13 +2,13 @@
 % Please edit documentation in R/osrmTableOD.R
 \name{osrmTableOD}
 \alias{osrmTableOD}
-\title{Query OSRM to Get a Travel Time Matrix Between Origins and Destination}
+\title{Query OSRM to Get a Travel Time Matrix Between Origins and Destinations}
 \usage{
 osrmTableOD(dfo, ido, xo, yo, dfd, idd, xd, yd, limit = 100)
 }
 \arguments{
 \item{dfo}{data frame containing origin points identifiers, longitudes and latitudes
-(WGS84 projection).}
+(WGS84).}
 
 \item{ido}{identifier field in dfo.}
 
@@ -17,7 +17,7 @@ osrmTableOD(dfo, ido, xo, yo, dfd, idd, xd, yd, limit = 100)
 \item{yo}{latitude field in dfo.}
 
 \item{dfd}{data frame containing destination points identifiers, longitudes and latitudes
-(WGS84 projection).}
+(WGS84).}
 
 \item{idd}{identifier field in dfd.}
 
@@ -39,8 +39,8 @@ origin points and a set of destination points
 \note{
 This function is a wraper around osrmTable. Multiple calls allow to
 obtain a matrix between different sets of origins and destinations. A default delay is set between
-calls (1 sec) to be gentle with the public API. You can modify this delay:
-\code{options(osrm.delay = your_deley_value)}.
+calls (1 sec) to be gentle with the public API. You can modify this delay if you use your own server:
+\code{options(osrm.delay = your_delay_value)}.
 }
 \examples{
 # Load data

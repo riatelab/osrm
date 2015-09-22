@@ -13,7 +13,7 @@ osrmTableErrors(mat)
 A list of two vectors of identifier: originErrors and destinationErrors.
 }
 \description{
-Query a distance matrix and extracts errors in origins and destination.
+Query a distance matrix and extracts errors in origins and destinations.
 }
 \note{
 An error is detected when at least half of distances are not found for an element.

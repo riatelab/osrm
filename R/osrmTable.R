@@ -3,7 +3,7 @@
 #' @description Query the OSRM API to get a travel time matrix between
 #' points. This function interface the \emph{table} OSRM service. 
 #' @param df data frame containing points identifiers, longitudes and latitudes 
-#' (WGS84 projection).
+#' (WGS84).
 #' @param id identifier field in df.
 #' @param x longitude field in df.
 #' @param y latitude field in df.
