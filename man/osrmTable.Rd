@@ -28,7 +28,7 @@ The public OSRM API does not allow more than 100
 locations in distance table query. \cr
 If you use an other OSRM API service, make sure that
 more than 100 locations are allowed in table queries
-(i.e. the "%--max-table-size " argument, Max. locations supported in distance
+(i.e. the "max-table-size" argument, Max. locations supported in distance
 table query).
 }
 \examples{

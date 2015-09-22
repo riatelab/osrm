@@ -1,8 +1,8 @@
 Package: osrm
 Type: Package
 Title: Interface Between R and the OpenStreetMap Based Routing Service OSRM
-Version: 0.9
-Date: 2015-09-10
+Version: 1.0
+Date: 2015-09-22
 Authors@R: c(person("Timothée", "Giraud", email = "timothee.giraud@ums-riate.fr", role = c("cre","aut")))
 Description: An interface between R and the OSRM API. OSRM is a routing service based on OpenStreetMap data. A public API exists but one can run its own instance. The package allow to compute distance (travel time and kilometric distance) between points and travel time matrices.
 License: GPL-3
@@ -10,6 +10,7 @@ LazyData: TRUE
 Imports: jsonlite,
     RCurl,
     XML, 
-    reshape2
+    reshape2, 
+    utils
 Depends: R (>= 2.10)
 Encoding: UTF-8

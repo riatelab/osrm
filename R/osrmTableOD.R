@@ -17,7 +17,9 @@
 #' @return A matrix of time distances (in minutes) between origins and
 #' destinations is returned.
 #' @note This function is a wraper around osrmTable. Multiple calls allow to 
-#' obtain a matrix between different sets of origins and destinations. 
+#' obtain a matrix between different sets of origins and destinations. A default delay is set between 
+#' calls (1 sec) to be gentle with the public API. You can modify this delay: 
+#' \code{options(osrm.delay = your_deley_value)}.  
 #' @examples
 #' # Load data
 #' data("com")
@@ -28,6 +30,7 @@
 #' distcom[1:5,1:5]
 #' @export
 osrmTableOD <- function(dfo, ido, xo, yo, dfd, idd, xd, yd, limit = 100){
+  osrmcourtesy <- getOption("osrm.delay")
   k <- limit 
   dfo <- dfo[,c(ido, xo, yo)]
   names(dfo) <- c("id", "x", "y")
@@ -58,6 +61,7 @@ osrmTableOD <- function(dfo, ido, xo, yo, dfd, idd, xd, yd, limit = 100){
     for (i in (1:(nrow(z)-1))){
       for (j in 1:(ncol(z)-1)){
         if(z[i,j]==1){
+          Sys.sleep(osrmcourtesy)
           xx <- osrmTable(df = df[c(row.names(z[i,]):(as.numeric(row.names(z[i+1,]))-1), 
                                     (colnames(z)[j]):(as.numeric(colnames(z)[j+1])-1)), ], 
                           id = "id", x = "x", y = "y" )

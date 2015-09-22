@@ -12,7 +12,7 @@
 #' locations in distance table query. \cr
 #' If you use an other OSRM API service, make sure that 
 #' more than 100 locations are allowed in table queries 
-#' (i.e. the "%--max-table-size " argument, Max. locations supported in distance 
+#' (i.e. the "max-table-size" argument, Max. locations supported in distance 
 #' table query).
 #' @examples 
 #' # Load data
@@ -41,7 +41,7 @@ osrmTable <- function(df, id, x, y){
     tab <- substr(x = tab, start = 1, stop = (nchar(tab)-5))
 
     # Sending the query
-    tab2 <- RCurl::getURL(URLencode(tab), useragent = "'osrm' R package")
+    tab2 <- RCurl::getURL(utils::URLencode(tab), useragent = "'osrm' R package")
 
     # JSON parsing
     # tab3 <- RJSONIO::fromJSON(content= tab2,default.size = 10)
