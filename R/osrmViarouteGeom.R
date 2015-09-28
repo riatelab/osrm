@@ -1,6 +1,6 @@
 #' @name osrmViarouteGeom
-#' @title Query OSRM to Get the Travel Geometry Between Two Points
-#' @description Query OSRM to get the travel geometry between two points.
+#' @title Get the Travel Geometry Between Two Points
+#' @description Build and send an OSRM API query to get the travel geometry between two points.
 #' This function interface the \emph{viaroute} OSRM service. 
 #' @param xo longitude of the origine point.
 #' @param yo latitude of the origine point.
@@ -8,6 +8,7 @@
 #' @param yd latitude of the destination point.
 #' @return A data frame is return. It contains the longitudes and latitudes of 
 #' the travel path between the two points.
+#' @seealso \link{osrmViaroute}
 #' @examples 
 #' # Load data
 #' data("com")

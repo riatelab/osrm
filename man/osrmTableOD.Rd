@@ -2,7 +2,7 @@
 % Please edit documentation in R/osrmTableOD.R
 \name{osrmTableOD}
 \alias{osrmTableOD}
-\title{Query OSRM to Get a Travel Time Matrix Between Origins and Destinations}
+\title{Get Travel Time Matrices Between Origins and Destinations}
 \usage{
 osrmTableOD(dfo, ido, xo, yo, dfd, idd, xd, yd, limit = 100)
 }
@@ -33,8 +33,7 @@ A matrix of time distances (in minutes) between origins and
 destinations is returned.
 }
 \description{
-Query the OSRM API to get travel time matrices between a set of
-origin points and a set of destination points
+Build and send OSRM API queries to get travel time matrices between set of origin points and set of destination points
 }
 \note{
 This function is a wraper around osrmTable. Multiple calls allow to
@@ -50,5 +49,8 @@ distcom <- osrmTableOD(dfo = com[1:50,], ido = "comm_id", xo =  "lon", yo =  "la
                        dfd = com[51:100,], idd = "comm_id", xd = "lon", yd = "lat")
 # First 5 rows and columns
 distcom[1:5,1:5]
+}
+\seealso{
+\link{osrmTable}, \link{osrmTableErrors}
 }
 

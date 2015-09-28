@@ -1,7 +1,6 @@
 #' @name osrmTableOD
-#' @title Query OSRM to Get a Travel Time Matrix Between Origins and Destinations
-#' @description Query the OSRM API to get travel time matrices between a set of 
-#' origin points and a set of destination points
+#' @title Get Travel Time Matrices Between Origins and Destinations
+#' @description Build and send OSRM API queries to get travel time matrices between set of origin points and set of destination points
 #' @param dfo data frame containing origin points identifiers, longitudes and latitudes 
 #' (WGS84).
 #' @param ido identifier field in dfo.
@@ -20,6 +19,7 @@
 #' obtain a matrix between different sets of origins and destinations. A default delay is set between 
 #' calls (1 sec) to be gentle with the public API. You can modify this delay if you use your own server: 
 #' \code{options(osrm.delay = your_delay_value)}.  
+#' @seealso \link{osrmTable}, \link{osrmTableErrors}
 #' @examples
 #' # Load data
 #' data("com")

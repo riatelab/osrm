@@ -1,7 +1,7 @@
 #' @name osrmTable
-#' @title Query OSRM to Get a Travel Time Matrix
-#' @description Query the OSRM API to get a travel time matrix between
-#' points. This function interface the \emph{table} OSRM service. 
+#' @title Get Travel Time Matrices Between Points
+#' @description Build and send OSRM API queries to get travel time matrices between points. 
+#' This function interface the \emph{table} OSRM service. 
 #' @param df data frame containing points identifiers, longitudes and latitudes 
 #' (WGS84).
 #' @param id identifier field in df.
@@ -14,6 +14,7 @@
 #' more than 100 locations are allowed in table queries 
 #' (i.e. the "max-table-size" argument, Max. locations supported in distance 
 #' table query).
+#' @seealso \link{osrmTableOD}, \link{osrmTableErrors}
 #' @examples 
 #' # Load data
 #' data("com")

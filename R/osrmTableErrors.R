@@ -1,9 +1,10 @@
 #' @name osrmTableErrors
-#' @title Query A Distance Matrix and Extract Errors
-#' @description Query a distance matrix and extracts errors in origins and destinations. 
+#' @title Detect Errors in Distance Matrices
+#' @description Detect errors in distance matrices. 
 #' @param mat A distance matrix.
 #' @note An error is detected when at least half of distances are not found for an element.
 #' @return A list of two vectors of identifier: originErrors and destinationErrors.
+#' @seealso \link{osrmTable}, \link{osrmTableOD}
 #' @examples 
 #' # Load data
 #' data("com")

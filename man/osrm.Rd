@@ -11,8 +11,16 @@ based on OpenStreetMap data. A public API exists but one can run its own instanc
 The package allow to compute distance (travel time and kilometric distance)
 between points and travel time matrices.\cr
 The package relies on the usage of a running OSRM service.
-By default this service is the OSRM public API (\url{http://router.project-osrm.org/}).
+By default this service is the OSRM public API (http://router.project-osrm.org/).
 To change the OSRM server, change the \code{osrm.server} option:\cr
 \code{options(osrm.server = "http://address.of.the.server/")}
+
+\itemize{
+\item{\code{\link{osrmTable}} Get travel time matrices between points.}
+\item{\code{\link{osrmTableOD}} Get travel time matrices between set of origin points and set of destination points.}
+\item{\code{\link{osrmTableErrors}} Detect errors in distance matrices.}
+\item{\code{\link{osrmViaroute}} Get travel time and travel distance between two points.}
+\item{\code{\link{osrmViarouteGeom}} Get the travel geometry between two points.}
+}
 }
 

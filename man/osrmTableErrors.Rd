@@ -2,7 +2,7 @@
 % Please edit documentation in R/osrmTableErrors.R
 \name{osrmTableErrors}
 \alias{osrmTableErrors}
-\title{Query A Distance Matrix and Extract Errors}
+\title{Detect Errors in Distance Matrices}
 \usage{
 osrmTableErrors(mat)
 }
@@ -13,7 +13,7 @@ osrmTableErrors(mat)
 A list of two vectors of identifier: originErrors and destinationErrors.
 }
 \description{
-Query a distance matrix and extracts errors in origins and destinations.
+Detect errors in distance matrices.
 }
 \note{
 An error is detected when at least half of distances are not found for an element.
@@ -27,5 +27,8 @@ distcom <- osrmTable(com[1:50,], id = "comm_id", x =  "lon",y =  "lat")
 distcom[1:5,1:5]
 # Get errors
 osrmTableErrors(distcom)
+}
+\seealso{
+\link{osrmTable}, \link{osrmTableOD}
 }
 

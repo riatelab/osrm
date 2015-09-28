@@ -2,7 +2,7 @@
 % Please edit documentation in R/osrmViaroute.R
 \name{osrmViaroute}
 \alias{osrmViaroute}
-\title{Query OSRM to Get Travel Time and Travel Distance Between Two Points}
+\title{Get Travel Time and Travel Distance Between Two Points}
 \usage{
 osrmViaroute(xo, yo, xd, yd)
 }
@@ -20,7 +20,7 @@ A named numeric vector is return. It contains travel time (in minutes)
 and travel distance (in kilometers).
 }
 \description{
-Query OSRM to get travel time and travel distance between two points.
+Build and send an OSRM API query to get travel time and travel distance between two points.
 This function interface the \emph{viaroute} OSRM service.
 }
 \examples{
@@ -35,5 +35,8 @@ route[1]
 route[2]
 # Mean Speed (km/h)
 route[2]/(route[1]/60)
+}
+\seealso{
+\link{osrmViarouteGeom}
 }
 

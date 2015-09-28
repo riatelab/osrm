@@ -1,6 +1,6 @@
 #' @name osrmViaroute
-#' @title Query OSRM to Get Travel Time and Travel Distance Between Two Points
-#' @description Query OSRM to get travel time and travel distance between two points.
+#' @title Get Travel Time and Travel Distance Between Two Points
+#' @description Build and send an OSRM API query to get travel time and travel distance between two points.
 #' This function interface the \emph{viaroute} OSRM service. 
 #' @param xo longitude of the origine point.
 #' @param yo latitude of the origine point.
@@ -8,6 +8,7 @@
 #' @param yd latitude of the destination point.
 #' @return A named numeric vector is return. It contains travel time (in minutes) 
 #' and travel distance (in kilometers).  
+#' @seealso \link{osrmViarouteGeom}
 #' @examples 
 #' # Load data
 #' data("com")

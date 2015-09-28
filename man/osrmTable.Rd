@@ -2,7 +2,7 @@
 % Please edit documentation in R/osrmTable.R
 \name{osrmTable}
 \alias{osrmTable}
-\title{Query OSRM to Get a Travel Time Matrix}
+\title{Get Travel Time Matrices Between Points}
 \usage{
 osrmTable(df, id, x, y)
 }
@@ -20,8 +20,8 @@ osrmTable(df, id, x, y)
 x A square matrix of time travel (in minutes) is returned.
 }
 \description{
-Query the OSRM API to get a travel time matrix between
-points. This function interface the \emph{table} OSRM service.
+Build and send OSRM API queries to get travel time matrices between points.
+This function interface the \emph{table} OSRM service.
 }
 \note{
 The public OSRM API does not allow more than 100
@@ -38,5 +38,8 @@ data("com")
 distcom <- osrmTable(com[1:50,], id = "comm_id", x =  "lon",y =  "lat")
 # First 5 rows and columns
 distcom[1:5,1:5]
+}
+\seealso{
+\link{osrmTableOD}, \link{osrmTableErrors}
 }
 
