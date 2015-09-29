@@ -23,7 +23,7 @@ The package relies on the usage of a running OSRM service. By default this servi
 To install the GitHub version :
 ```{r}
 require(devtools)
-install_github("rCarto/osrm")
+devtools::install_github("rCarto/osrm")
 ```
 
 
