@@ -20,7 +20,13 @@ This package relies on the usage of a running OSRM service. By default this serv
 * `osrmViaRouteGeom` Get the travel geometry between two points.
 
 ## Installation
-To install the GitHub version :
+
+### CRAN version
+```{r}
+install.packages("osrm")
+```
+
+### GitHub version :
 ```{r}
 require(devtools)
 devtools::install_github("rCarto/osrm")
