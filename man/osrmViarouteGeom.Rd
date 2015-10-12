@@ -4,7 +4,7 @@
 \alias{osrmViarouteGeom}
 \title{Get the Travel Geometry Between Two Points}
 \usage{
-osrmViarouteGeom(xo, yo, xd, yd)
+osrmViarouteGeom(xo, yo, xd, yd, sp = FALSE, ido = "start", idd = "end")
 }
 \arguments{
 \item{xo}{longitude of the origine point.}
@@ -14,10 +14,17 @@ osrmViarouteGeom(xo, yo, xd, yd)
 \item{xd}{longitude of the destination point.}
 
 \item{yd}{latitude of the destination point.}
+
+\item{sp}{if sp is TRUE the function returns a SpatialLinesDataFrame.}
+
+\item{ido}{identifier of the origin point (use if sp is TRUE).}
+
+\item{idd}{identifier of the destination point (use if sp is TRUE).}
 }
 \value{
 A data frame is return. It contains the longitudes and latitudes of
-the travel path between the two points.
+the travel path between the two points. If sp is TRUE a SpatialLinesDataFrame
+is return. It contains two fields : identifiers of origine and destination.
 }
 \description{
 Build and send an OSRM API query to get the travel geometry between two points.
@@ -33,6 +40,18 @@ routeGeom <- osrmViarouteGeom(xo = com[1,"lon"], yo = com[1,"lat"],
 plot(com[c(1,15),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
 points(routeGeom[,2:1], type = "l", lty = 2)
 text(com[c(1,15),3:4], labels = com[c(1,15),2], pos = 2)
+
+# Travel path between points - output a SpatialLinesDataFrame
+routeGeom2 <- osrmViarouteGeom(xo = com[1,"lon"], yo = com[1,"lat"],
+                               xd = com[16,"lon"], yd = com[16,"lat"],
+                               sp=TRUE,
+                               ido = com[1,"comm_id"],
+                               idd = com[16,"comm_id"])
+class(routeGeom2)
+# Display the path
+plot(com[c(1,16),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
+plot(routeGeom2, lty = 2, add=TRUE)
+text(com[c(1,16),3:4], labels = com[c(1,16),2], pos = 2)
 }
 \seealso{
 \link{osrmViaroute}

@@ -8,6 +8,7 @@ Description: An interface between R and the OSRM API. OSRM is a routing service 
 License: GPL-3
 LazyData: TRUE
 Imports: jsonlite,
+    sp,
     RCurl,
     XML, 
     reshape2, 
