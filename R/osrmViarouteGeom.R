@@ -14,6 +14,7 @@
 #' is return. It contains two fields : identifiers of origine and destination.
 #' @seealso \link{osrmViaroute}
 #' @examples 
+#' \dontrun{
 #' # Load data
 #' data("com")
 #' # Travel path between points
@@ -35,11 +36,7 @@
 #' plot(com[c(1,16),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
 #' plot(routeGeom2, lty = 2, add=TRUE)
 #' text(com[c(1,16),3:4], labels = com[c(1,16),2], pos = 2)
-#' 
-#' 
-#' 
-#' 
-#' 
+#' }
 #' @export
 osrmViarouteGeom <- function(xo, yo, xd, yd, sp = FALSE, ido = "start", idd = "end"){
   tryCatch({

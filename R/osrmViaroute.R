@@ -10,6 +10,7 @@
 #' and travel distance (in kilometers).  
 #' @seealso \link{osrmViarouteGeom}
 #' @examples 
+#' \dontrun{
 #' # Load data
 #' data("com")
 #' # Time and Distance between 2 points
@@ -21,6 +22,7 @@
 #' route[2]
 #' # Mean Speed (km/h)
 #' route[2]/(route[1]/60)
+#' }
 #' @export
 osrmViaroute <- function(xo, yo, xd, yd){
   tryCatch({

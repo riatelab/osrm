@@ -6,6 +6,7 @@
 #' @return A list of two vectors of identifier: originErrors and destinationErrors.
 #' @seealso \link{osrmTable}, \link{osrmTableOD}
 #' @examples 
+#' \dontrun{
 #' # Load data
 #' data("com")
 #' # Travel time matrix
@@ -14,6 +15,7 @@
 #' distcom[1:5,1:5]
 #' # Get errors
 #' osrmTableErrors(distcom)
+#' }
 #' @export
 osrmTableErrors <- function(mat){
   mat[!is.na(mat)] <- 0

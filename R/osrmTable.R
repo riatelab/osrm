@@ -15,13 +15,15 @@
 #' (i.e. the "max-table-size" argument, Max. locations supported in distance 
 #' table query).
 #' @seealso \link{osrmTableOD}, \link{osrmTableErrors}
-#' @examples 
+#' @examples
+#' \dontrun{ 
 #' # Load data
 #' data("com")
 #' # Travel time matrix
 #' distcom <- osrmTable(com[1:50,], id = "comm_id", x =  "lon",y =  "lat")
 #' # First 5 rows and columns
 #' distcom[1:5,1:5]
+#' }
 #' @export
 osrmTable <- function(df, id, x, y){
   e <- simpleError("The public OSRM API does not allow more than 100 locations 

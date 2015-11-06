@@ -21,6 +21,7 @@
 #' \code{options(osrm.delay = your_delay_value)}.  
 #' @seealso \link{osrmTable}, \link{osrmTableErrors}
 #' @examples
+#' \dontrun{
 #' # Load data
 #' data("com")
 #' # Travel time matrix
@@ -28,6 +29,7 @@
 #'                        dfd = com[51:100,], idd = "comm_id", xd = "lon", yd = "lat")
 #' # First 5 rows and columns
 #' distcom[1:5,1:5]
+#' }
 #' @export
 osrmTableOD <- function(dfo, ido, xo, yo, dfd, idd, xd, yd, limit = 100){
   osrmcourtesy <- getOption("osrm.delay")
