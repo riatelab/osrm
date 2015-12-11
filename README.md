@@ -1,5 +1,12 @@
 # osrm R package
+
+[![Version](http://www.r-pkg.org/badges/version/osrm)](https://cran.rstudio.com/web/packages/osrm/)
+![](http://cranlogs.r-pkg.org/badges/grand-total/osrm?color=brightgreen)  
+
+
 ***Shortest Paths and Travel Time from OpenStreetMap via an OSRM API / Temps de trajet et matrices de distances entre points avec OpenStreetMap via une [API OSRM](http://project-osrm.org/)***
+
+![](http://f.hypotheses.org/wp-content/blogs.dir/1909/files/2015/10/route1.png)
 
 ## Description
 OSRM is a routing service based on OpenStreetMap data. See <http://project-osrm.org/> for more information. A public API exists but one can run its own instance. This package allows to compute distance (travel time and kilometric distance) between points and travel time matrices.
