@@ -17,8 +17,6 @@ To change the OSRM server, change the \code{osrm.server} option:\cr
 
 \itemize{
 \item{\code{\link{osrmTable}} Get travel time matrices between points.}
-\item{\code{\link{osrmTableOD}} Get travel time matrices between set of origin points and set of destination points.}
-\item{\code{\link{osrmTableErrors}} Detect errors in distance matrices.}
 \item{\code{\link{osrmViaroute}} Get travel time and travel distance between two points.}
 \item{\code{\link{osrmViarouteGeom}} Get the travel geometry between two points.}
 }

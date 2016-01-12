@@ -4,44 +4,72 @@
 \alias{osrmTable}
 \title{Get Travel Time Matrices Between Points}
 \usage{
-osrmTable(df, id, x, y)
+osrmTable(loc, locId, locLat, locLon, src = NULL, srcId, srcLat, srcLon,
+  dst = NULL, dstId, dstLat, dstLon)
 }
 \arguments{
-\item{df}{data frame containing points identifiers, longitudes and latitudes 
-(WGS84).}
+\item{loc}{data frame containing points identifiers, longitudes and latitudes 
+(WGS84). If loc parameter is used, all pair-wise distances are computed.}
 
-\item{id}{identifier field in df.}
+\item{locId}{identifier field in loc.}
 
-\item{x}{longitude field in df.}
+\item{locLat}{latitude field in loc.}
 
-\item{y}{latitude field in df.}
+\item{locLon}{longitude field in loc.}
+
+\item{src}{data frame containing origin points identifiers, longitudes and latitudes 
+(WGS84). If dst and src parameters are used, only pairs between scr/dst are computed.}
+
+\item{srcId}{identifier field in src}
+
+\item{srcLat}{latitude fiels in src}
+
+\item{srcLon}{longitude field in src}
+
+\item{dst}{data frame containing destination points identifiers, longitudes and latitudes 
+(WGS84). If dst and src parameters are used, only pairs between scr/dst are computed.}
+
+\item{dstId}{identifier field in dst}
+
+\item{dstLat}{latitude field in dst}
+
+\item{dstLon}{longitude field in dst}
 }
 \value{
-x A square matrix of time travel (in minutes) is returned.
+A list containing 3 data frames is returned. 
+distance_table is the matrix of travel times (in minutes), 
+source_coordinates and destination coordinates are the coordinates of 
+the origin and destination points actually used to compute the travel times.
 }
 \description{
 Build and send OSRM API queries to get travel time matrices between points. 
 This function interface the \emph{table} OSRM service.
 }
 \note{
-The public OSRM API does not allow more than 100 
-locations in distance table query. \cr
+The public OSRM API does not allow more than 10 000 
+distance in query result. \cr
 If you use an other OSRM API service, make sure that 
-more than 100 locations are allowed in table queries 
+more distances are allowed in results 
 (i.e. the "max-table-size" argument, Max. locations supported in distance 
 table query).
 }
 \examples{
-\dontrun{ 
+\dontrun{
 # Load data
 data("com")
 # Travel time matrix
-distcom <- osrmTable(com[1:50,], id = "comm_id", x =  "lon",y =  "lat")
+distCom <- osrmTable(loc = com[1:50,], 
+                     locId = "comm_id", 
+                     locLat = "lat", 
+                     locLon = "lon")
 # First 5 rows and columns
-distcom[1:5,1:5]
+distCom$distance_table[1:5,1:5]
+distCom2 <- osrmTable(src = com[1:50,], 
+                      srcId = "comm_id", srcLat = "lat", srcLon = "lon", 
+                      dst = com[51:100,], 
+                      dstId = "comm_id", dstLat = "lat", dstLon = "lon")
+# First 5 rows and columns
+distCom2$distance_table[1:5,1:5]
 }
-}
-\seealso{
-\link{osrmTableOD}, \link{osrmTableErrors}
 }
 
