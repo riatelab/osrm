@@ -18,10 +18,6 @@ This package relies on the usage of a running OSRM service. By default this serv
 
 * `osrmTable` Get travel time matrices between points.
 
-* `osrmTableOD` Get travel time matrices between set of origin points and set of destination points.
-
-* `osrmTableErrors` Detect errors in distance matrices.
-
 * `osrmViaRoute` Get travel time and travel distance between two points.
 
 * `osrmViaRouteGeom` Get the travel geometry between two points.
