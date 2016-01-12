@@ -4,16 +4,16 @@
 \alias{osrmViaroute}
 \title{Get Travel Time and Travel Distance Between Two Points}
 \usage{
-osrmViaroute(xo, yo, xd, yd)
+osrmViaroute(srcLat, srcLon, dstLat, dstLon)
 }
 \arguments{
-\item{xo}{longitude of the origine point.}
+\item{srcLat}{latitude of the origine point.}
 
-\item{yo}{latitude of the origine point.}
+\item{srcLon}{longitude of the origine point.}
 
-\item{xd}{longitude of the destination point.}
+\item{dstLat}{latitude of the destination point.}
 
-\item{yd}{latitude of the destination point.}
+\item{dstLon}{longitude of the destination point.}
 }
 \value{
 A named numeric vector is return. It contains travel time (in minutes) 
@@ -28,8 +28,8 @@ This function interface the \emph{viaroute} OSRM service.
 # Load data
 data("com")
 # Time and Distance between 2 points
-route <- osrmViaroute(xo = com[1,"lon"], yo = com[1,"lat"], 
-                      xd = com[15,"lon"], yd = com[15,"lat"])
+route <- osrmViaroute(srcLon = com[1,"lon"], srcLat = com[1,"lat"], 
+                      dstLon = com[15,"lon"], dstLat = com[15,"lat"])
 # Time travel distance (min)
 route[1]
 # Travel distance (km)
