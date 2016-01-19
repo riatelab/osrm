@@ -2,10 +2,8 @@
 #' @title Get Travel Time and Travel Distance Between Two Points
 #' @description Build and send an OSRM API query to get travel time and travel distance between two points.
 #' This function interface the \emph{viaroute} OSRM service. 
-#' @param srcLon longitude of the origine point.
-#' @param srcLat latitude of the origine point.
-#' @param dstLon longitude of the destination point.
-#' @param dstLat latitude of the destination point.
+#' @param src latitude and longitude of the origine point (numeric vector of length 2)
+#' @param dst latitude and longitude of the destination point (numeric vector of length 2).
 #' @return A named numeric vector is return. It contains travel time (in minutes) 
 #' and travel distance (in kilometers).  
 #' @seealso \link{osrmViarouteGeom}
@@ -14,8 +12,8 @@
 #' # Load data
 #' data("com")
 #' # Time and Distance between 2 points
-#' route <- osrmViaroute(srcLon = com[1,"lon"], srcLat = com[1,"lat"], 
-#'                       dstLon = com[15,"lon"], dstLat = com[15,"lat"])
+#' route <- osrmViaroute(src = com[1,c("lat","lon")],
+#'                       dst = com[15,c("lat","lon")] )
 #' # Time travel distance (min)
 #' route[1]
 #' # Travel distance (km)
@@ -24,12 +22,12 @@
 #' route[2]/(route[1]/60)
 #' }
 #' @export
-osrmViaroute <- function(srcLat, srcLon, dstLat, dstLon){
+osrmViaroute <- function(src, dst){
   tryCatch({
     # Query build
 
     req <- paste(getOption("osrm.server"), "viaroute?loc=", 
-                 srcLat, ",", srcLon, "&loc=",dstLat,",",dstLon, 
+                 src[1], ",", src[2], "&loc=",dst[1],",",dst[2], 
                  "&alt=false&geometry=false",sep="")
     
     # Sending the query

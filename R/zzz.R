@@ -5,5 +5,4 @@
   # options(osrm.server = "http://0.0.0.0:5000/")
   options(osrm.server = "http://router.project-osrm.org/")
   # options(osrm.server = "http://api-osrm-routed-production.tilestream.net/")
-  # options(osrm.delay = 1)
 }

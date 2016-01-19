@@ -2,35 +2,30 @@
 #' @title Get the Travel Geometry Between Two Points
 #' @description Build and send an OSRM API query to get the travel geometry between two points.
 #' This function interface the \emph{viaroute} OSRM service. 
-#' @param srcLon longitude of the origine point.
-#' @param srcLat latitude of the origine point.
-#' @param dstLon longitude of the destination point.
-#' @param dstLat latitude of the destination point.
+#' @param src identifier, latitude and longitude of the origine point (vector of length 3).
+#' @param dst identifier, latitude and longitude of the destination point (vector of length 3).
 #' @param sp if sp is TRUE the function returns a SpatialLinesDataFrame.
-#' @param srcId identifier of the origin point (use if sp is TRUE).
-#' @param dstId identifier of the destination point (use if sp is TRUE).
 #' @return A data frame is return. It contains the longitudes and latitudes of 
 #' the travel path between the two points. If sp is TRUE a SpatialLinesDataFrame 
 #' is return. It contains two fields : identifiers of origine and destination.
 #' @seealso \link{osrmViaroute}
-#' @examples 
+#' @examples
 #' \dontrun{
 #' # Load data
 #' data("com")
 #' # Travel path between points
-#' routeGeom <- osrmViarouteGeom(srcLon = com[1,"lon"], srcLat = com[1,"lat"],
-#'                               dstLon = com[15,"lon"], dstLat = com[15,"lat"])
+#' routeGeom <- osrmViarouteGeom(src = com[1, c("comm_id", "lat","lon")],
+#'                               dst = com[15, c("comm_id", "lat","lon")])
+#' 
 #' # Display the path
 #' plot(com[c(1,15),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
 #' points(routeGeom[,2:1], type = "l", lty = 2)
 #' text(com[c(1,15),3:4], labels = com[c(1,15),2], pos = 2)
 #' 
 #' # Travel path between points - output a SpatialLinesDataFrame
-#' routeGeom2 <- osrmViarouteGeom(srcLon = com[1,"lon"], srcLat = com[1,"lat"],
-#'                                dstLon = com[16,"lon"], dstLat = com[16,"lat"], 
-#'                                sp=TRUE, 
-#'                                srcId = com[1,"comm_id"], 
-#'                                dstId = com[16,"comm_id"])
+#' routeGeom2 <- osrmViarouteGeom(src=c("Bethune", 50.5199, 2.64781), 
+#'                                dst = c("Cassel", 50.80016, 2.486388), 
+#'                                sp = TRUE)
 #' class(routeGeom2)
 #' # Display the path
 #' plot(com[c(1,16),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
@@ -38,15 +33,14 @@
 #' text(com[c(1,16),3:4], labels = com[c(1,16),2], pos = 2)
 #' }
 #' @export
-osrmViarouteGeom <- function(srcLat, srcLon, dstLat, dstLon, sp = FALSE, 
-                             srcId = "start", dstId = "end"){
+osrmViarouteGeom <- function(src, dst, sp = FALSE){
   tryCatch({
     # build the query
     req <- paste(getOption("osrm.server"), 
                  "viaroute?loc=", 
-                 srcLat, ",", srcLon, 
+                 src[2], ",", src[3], 
                  "&loc=",
-                 dstLat,",",dstLon, 
+                 dst[2],",",dst[3], 
                  "&alt=false&geometry=true&",
                  "output=json&compression=false",
                  sep="")
@@ -75,11 +69,11 @@ osrmViarouteGeom <- function(srcLat, srcLon, dstLat, dstLon, sp = FALSE,
                               ID = "x")
       routeSL <- sp::SpatialLines(LinesList = list(routeLines), 
                                   proj4string = sp::CRS("+init=epsg:4326"))
-      df <- data.frame(srcId = srcId, dstId = dstId)
+      df <- data.frame(src = NA, dst = NA)
       geodf <- sp::SpatialLinesDataFrame(routeSL, 
                                          data = df, 
                                          match.ID = FALSE)   
-      row.names(geodf) <- paste(srcId, dstId,sep="_")
+      row.names(geodf) <- paste(src[1], dst[1],sep="_")
     }
     return(geodf)
   }, error=function(e) { message("osrmViarouteGeom function returns an error: \n", e)})

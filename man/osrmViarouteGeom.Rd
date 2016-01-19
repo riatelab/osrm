@@ -4,23 +4,14 @@
 \alias{osrmViarouteGeom}
 \title{Get the Travel Geometry Between Two Points}
 \usage{
-osrmViarouteGeom(srcLat, srcLon, dstLat, dstLon, sp = FALSE,
-  srcId = "start", dstId = "end")
+osrmViarouteGeom(src, dst, sp = FALSE)
 }
 \arguments{
-\item{srcLat}{latitude of the origine point.}
+\item{src}{identifier, latitude and longitude of the origine point (vector of length 3).}
 
-\item{srcLon}{longitude of the origine point.}
-
-\item{dstLat}{latitude of the destination point.}
-
-\item{dstLon}{longitude of the destination point.}
+\item{dst}{identifier, latitude and longitude of the destination point (vector of length 3).}
 
 \item{sp}{if sp is TRUE the function returns a SpatialLinesDataFrame.}
-
-\item{srcId}{identifier of the origin point (use if sp is TRUE).}
-
-\item{dstId}{identifier of the destination point (use if sp is TRUE).}
 }
 \value{
 A data frame is return. It contains the longitudes and latitudes of 
@@ -36,19 +27,18 @@ This function interface the \emph{viaroute} OSRM service.
 # Load data
 data("com")
 # Travel path between points
-routeGeom <- osrmViarouteGeom(srcLon = com[1,"lon"], srcLat = com[1,"lat"],
-                              dstLon = com[15,"lon"], dstLat = com[15,"lat"])
+routeGeom <- osrmViarouteGeom(src = com[1, c("comm_id", "lat","lon")],
+                              dst = com[15, c("comm_id", "lat","lon")])
+
 # Display the path
 plot(com[c(1,15),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
 points(routeGeom[,2:1], type = "l", lty = 2)
 text(com[c(1,15),3:4], labels = com[c(1,15),2], pos = 2)
 
 # Travel path between points - output a SpatialLinesDataFrame
-routeGeom2 <- osrmViarouteGeom(srcLon = com[1,"lon"], srcLat = com[1,"lat"],
-                               dstLon = com[16,"lon"], dstLat = com[16,"lat"], 
-                               sp=TRUE, 
-                               srcId = com[1,"comm_id"], 
-                               dstId = com[16,"comm_id"])
+routeGeom2 <- osrmViarouteGeom(src=c("Bethune", 50.5199, 2.64781), 
+                               dst = c("Cassel", 50.80016, 2.486388), 
+                               sp = TRUE)
 class(routeGeom2)
 # Display the path
 plot(com[c(1,16),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
