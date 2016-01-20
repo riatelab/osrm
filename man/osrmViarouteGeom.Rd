@@ -14,9 +14,10 @@ osrmViarouteGeom(src, dst, sp = FALSE)
 \item{sp}{if sp is TRUE the function returns a SpatialLinesDataFrame.}
 }
 \value{
-A data frame is return. It contains the longitudes and latitudes of 
-the travel path between the two points. If sp is TRUE a SpatialLinesDataFrame 
-is return. It contains two fields : identifiers of origine and destination.
+If sp is FALSE, a data frame is returned. It contains the longitudes and latitudes of 
+the travel path between the two points.\cr
+If sp is TRUE a SpatialLinesDataFrame is returned. It contains two fields : 
+identifiers of origine and destination.
 }
 \description{
 Build and send an OSRM API query to get the travel geometry between two points.

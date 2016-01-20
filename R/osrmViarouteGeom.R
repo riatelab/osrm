@@ -5,9 +5,10 @@
 #' @param src identifier, latitude and longitude of the origine point (vector of length 3).
 #' @param dst identifier, latitude and longitude of the destination point (vector of length 3).
 #' @param sp if sp is TRUE the function returns a SpatialLinesDataFrame.
-#' @return A data frame is return. It contains the longitudes and latitudes of 
-#' the travel path between the two points. If sp is TRUE a SpatialLinesDataFrame 
-#' is return. It contains two fields : identifiers of origine and destination.
+#' @return If sp is FALSE, a data frame is returned. It contains the longitudes and latitudes of 
+#' the travel path between the two points.\cr
+#' If sp is TRUE a SpatialLinesDataFrame is returned. It contains two fields : 
+#' identifiers of origine and destination.
 #' @seealso \link{osrmViaroute}
 #' @examples
 #' \dontrun{

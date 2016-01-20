@@ -12,7 +12,7 @@ osrmViaroute(src, dst)
 \item{dst}{latitude and longitude of the destination point (numeric vector of length 2).}
 }
 \value{
-A named numeric vector is return. It contains travel time (in minutes) 
+A named numeric vector is returned. It contains travel time (in minutes) 
 and travel distance (in kilometers).
 }
 \description{

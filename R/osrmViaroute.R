@@ -4,7 +4,7 @@
 #' This function interface the \emph{viaroute} OSRM service. 
 #' @param src latitude and longitude of the origine point (numeric vector of length 2)
 #' @param dst latitude and longitude of the destination point (numeric vector of length 2).
-#' @return A named numeric vector is return. It contains travel time (in minutes) 
+#' @return A named numeric vector is returned. It contains travel time (in minutes) 
 #' and travel distance (in kilometers).  
 #' @seealso \link{osrmViarouteGeom}
 #' @examples 
@@ -25,7 +25,6 @@
 osrmViaroute <- function(src, dst){
   tryCatch({
     # Query build
-
     req <- paste(getOption("osrm.server"), "viaroute?loc=", 
                  src[1], ",", src[2], "&loc=",dst[1],",",dst[2], 
                  "&alt=false&geometry=false",sep="")

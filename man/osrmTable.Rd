@@ -38,7 +38,7 @@ osrmTable(loc, locId, locLat, locLon, src = NULL, srcId, srcLat, srcLon,
 \value{
 A list containing 3 data frames is returned. 
 distance_table is the matrix of travel times (in minutes), 
-source_coordinates and destination coordinates are the coordinates of 
+source_coordinates and destination_coordinates are the coordinates of 
 the origin and destination points actually used to compute the travel times.
 }
 \description{
@@ -47,7 +47,7 @@ This function interface the \emph{table} OSRM service.
 }
 \note{
 The public OSRM API does not allow more than 10 000 
-distance in query result. \cr
+distances in query result. \cr
 If you use an other OSRM API service, make sure that 
 more distances are allowed in results 
 (i.e. the "max-table-size" argument, Max. locations supported in distance 
