@@ -70,7 +70,9 @@ osrmViarouteGeom <- function(src, dst, sp = FALSE){
                               ID = "x")
       routeSL <- sp::SpatialLines(LinesList = list(routeLines), 
                                   proj4string = sp::CRS("+init=epsg:4326"))
-      df <- data.frame(src = NA, dst = NA)
+      df <- data.frame(src = src[1], dst = dst[1], 
+                       time = res$route_summary$total_time/60,
+                       distance = res$route_summary$total_distance/1000)
       geodf <- sp::SpatialLinesDataFrame(routeSL, 
                                          data = df, 
                                          match.ID = FALSE)   
