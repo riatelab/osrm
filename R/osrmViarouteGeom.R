@@ -7,8 +7,9 @@
 #' @param sp if sp is TRUE the function returns a SpatialLinesDataFrame.
 #' @return If sp is FALSE, a data frame is returned. It contains the longitudes and latitudes of 
 #' the travel path between the two points.\cr
-#' If sp is TRUE a SpatialLinesDataFrame is returned. It contains two fields : 
-#' identifiers of origine and destination.
+#' If sp is TRUE a SpatialLinesDataFrame is returned. It contains 4 fields : 
+#' identifiers of origine and destination, travel time in minutes and travel distance in 
+#' kilometers.
 #' @seealso \link{osrmViaroute}
 #' @examples
 #' \dontrun{
@@ -36,6 +37,16 @@
 #' @export
 osrmViarouteGeom <- function(src, dst, sp = FALSE){
   tryCatch({
+    src = src[1,]
+    dst = dst[1,]
+    
+    
+    x <- testSp(src, 1, 2, 3)
+    src <- x$loc[1, c(x$id, x$lat, x$lon)]
+    x <- testSp(dst, 1, 2, 3)
+    dst <- x$loc[1, c(x$id, x$lat, x$lon)]
+    
+    
     # build the query
     req <- paste(getOption("osrm.server"), 
                  "viaroute?loc=", 
@@ -70,13 +81,16 @@ osrmViarouteGeom <- function(src, dst, sp = FALSE){
                               ID = "x")
       routeSL <- sp::SpatialLines(LinesList = list(routeLines), 
                                   proj4string = sp::CRS("+init=epsg:4326"))
-      df <- data.frame(src = src[1], dst = dst[1], 
+      df <- data.frame(src = src[1,1], dst = dst[1,1], 
                        time = res$route_summary$total_time/60,
                        distance = res$route_summary$total_distance/1000)
       geodf <- sp::SpatialLinesDataFrame(routeSL, 
                                          data = df, 
                                          match.ID = FALSE)   
-      row.names(geodf) <- paste(src[1], dst[1],sep="_")
+      row.names(geodf) <- paste(src[1,1], dst[1,1],sep="_")
+      if (!is.na(x$oprj)){
+        geodf <- spTransform(geodf, x$oprj)
+      }
     }
     return(geodf)
   }, error=function(e) { message("osrmViarouteGeom function returns an error: \n", e)})
@@ -85,7 +99,26 @@ osrmViarouteGeom <- function(src, dst, sp = FALSE){
 
 
 
-
+# 
+# install.packages("SpatialPosition")
+# library(SpatialPosition)
+# 
+# 
+# library(rgdal)
+# src <- readOGR(dsn = "/home/tg", layer = "src")
+# dst <- readOGR(dsn = "/home/tg", layer = "dst")
+# 
+# coordinates(src[1,])[2]
+# 
+# src <- spTransform(src, "+init=epsg:28992")
+# dst <- spTransform(dst, "+init=epsg:28992")
+# 
+# 
+# osrmTable(src = src, dst = dst)
+# 
+# xx <- osrmViarouteGeom(src = src[1,], dst = dst[1,], sp = TRUE)
+# 
+# 
 
 
 

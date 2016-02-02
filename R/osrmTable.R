@@ -51,6 +51,13 @@ osrmTable <- function(loc, locId, locLat, locLon,
                       dst = NULL, dstId, dstLat, dstLon){
   tryCatch({
     if (is.null(src)){
+      x <- testSp(loc)
+      loc <- x$loc
+      locId <- x$id
+      locLat <- x$lat
+      locLon <- x$lon
+      oprj <- x$oprj
+      
       nSrc <- nrow(loc)
       nDst <- nSrc
       osrmLimit(nSrc = nSrc, nDst = nDst)
@@ -74,6 +81,18 @@ osrmTable <- function(loc, locId, locLat, locLon,
                   destination_coordinates = coords$destination_coordinates))
       
     } else {
+      x <- testSp(src)
+      src <- x$loc
+      srcId <- x$id
+      srcLat <- x$lat
+      srcLon <- x$lon
+      
+      x <- testSp(dst)
+      dst <- x$loc
+      dstId <- x$id
+      dstLat <- x$lat
+      dstLon <- x$lon
+      
       nSrc <- nrow(src)
       nDst <- nrow(dst)
       osrmLimit(nSrc = nSrc, nDst = nDst)
@@ -165,65 +184,33 @@ osrmLimit <- function(nSrc, nDst){
 }
 
 
-# src = com
-# srcId = "comm_id"
-# srcLat = "lat"
-# srcLon = "lon"
-# dst = com[1,]
-# dstId = "comm_id"
-# dstLat = "lat"
-# dstLon = "lon"
-# 
-# nSrc <- nrow(src)
-# nDst <- nrow(dst)
-# dimMat <- nSrc * nDst
-# d_t <- matrix(data = 1:dimMat, nrow = nSrc, ncol = nDst, 
-#               dimnames = list(src[,srcId], dst[, dstId]))
-# source_coordinates <- data.frame(row.names = src[,srcId], 
-#                                  Lat = rep(NA, nSrc), 
-#                                  Lon = rep(NA, nSrc))
-# destination_coordinates <- data.frame(row.names = dst[,dstId], 
-#                                       Lat = rep(NA, nDst), 
-#                                       Lon = rep(NA, nDst))
-# 
-# 
-# # nb de colonnes Full pour une requetes
-# nFullCol1Req <- 10000 %/% nSrc
-# 
-# # nb de requetes full necessaire
-# nReqFullCol <- nDst %/% nFullCol1Req
-# 
-# # nb col restantes
-# nColRest <- nDst - nReqFullCol * nFullCol1Req
-# 
-# init <- 1
-# for (i in 1:nReqFullCol){
-#   req <- tableSrcDst(src = src, srcLat = srcLat, srcLon = srcLon, 
-#                      dst = dst[init:(init+nFullCol1Req-1),], 
-#                      dstLat = dstLat, dstLon = dstLon)
-#   resRaw <- RCurl::getURL(utils::URLencode(req), 
-#                           useragent = "'osrm' R package")
-#   res <- jsonlite::fromJSON(resRaw)
-#   print(i)
-#   distance_table <- distTableFormat(res = res, 
-#                                     src = src, srcId = srcId, 
-#                                     dst = dst[init:(init+nFullCol1Req-1),], 
-#                                     dstId = dstId)
-#   d_t[,init:(init+nFullCol1Req-1)] <- distance_table
-#   init <- init+nFullCol1Req
-# }
-# 
-# # Pour les autres colonnes
-# req <- tableSrcDst(src = src, srcLat = srcLat, srcLon = srcLon, 
-#                    dst = dst[init:nDst,], 
-#                    dstLat = dstLat, dstLon = dstLon)
-# resRaw <- RCurl::getURL(utils::URLencode(req), 
-#                         useragent = "'osrm' R package")
-# res <- jsonlite::fromJSON(resRaw)
-# 
-# distance_table <- distTableFormat(res = res, 
-#                                   src = src, srcId = srcId, 
-#                                   dst = dst[init:nDst,], 
-#                                   dstId = dstId)
-# d_t[,init:nDst] <- distance_table
+
+
+
+
+
+testSp <- function(x, id, lat, lon){
+  if (class(x) %in% c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame")){
+    if (is.na(x@proj4string)){
+      stop(
+        paste(
+          "Your input (", quote(x),
+          ") does not have a valid coordinate reference system.", sep=""),
+        call. = F)
+    } else {
+      oprj <- x@proj4string
+      # transform to WGS84
+      x <- spTransform(x = x, CRSobj = "+init=epsg:4326")
+      # this function takes a SpatialDataFrame and transforms it into a dataframe
+      x <-  data.frame(id = row.names(x), 
+                       lat = coordinates(x)[,2], 
+                       lon = coordinates(x)[,1])
+      
+      return(list(loc = x, id = "id", lat = "lat", lon = "lon", oprj = oprj))
+    }
+    
+  }else{
+    return(list(loc = x, id = id, lat = lat, lon = lon, oprj = NA))
+  }
+}
 
