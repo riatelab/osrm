@@ -20,6 +20,29 @@
 NULL
 
 
+#' @title Communes Coordinates
+#' @name com
+#' @description Coordinates of a set of communes in France, Belgium and Luxembourg. Coordinates are in WGS84.
+#' @source UMS RIATE
+#' @docType data
+NULL
+
+
+#' @title SpatialPointsDataFrame of 10 Communes in France And Belgium
+#' @name src
+#' @description 10 communes in France & Belgium. The projection is RGF93 / Lambert-93.
+#' @source UMS RIATE
+#' @docType data
+NULL
+
+
+#' @title SpatialPointsDataFrame of 10 Communes in France
+#' @name dst
+#' @description 10 communes in France. The projection is RGF93 / Lambert-93.
+#' @source UMS RIATE
+#' @docType data
+NULL
+
 
 
 

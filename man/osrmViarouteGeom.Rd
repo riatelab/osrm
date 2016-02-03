@@ -7,17 +7,22 @@
 osrmViarouteGeom(src, dst, sp = FALSE)
 }
 \arguments{
-\item{src}{identifier, latitude and longitude of the origine point (vector of length 3).}
+\item{src}{a numeric vector of identifier, latitude and longitude (WGS84), a 
+SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine 
+point.}
 
-\item{dst}{identifier, latitude and longitude of the destination point (vector of length 3).}
+\item{dst}{a numeric vector of identifier, latitude and longitude (WGS84), a 
+SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the destination 
+point.}
 
 \item{sp}{if sp is TRUE the function returns a SpatialLinesDataFrame.}
 }
 \value{
 If sp is FALSE, a data frame is returned. It contains the longitudes and latitudes of 
 the travel path between the two points.\cr
-If sp is TRUE a SpatialLinesDataFrame is returned. It contains two fields : 
-identifiers of origine and destination.
+If sp is TRUE a SpatialLinesDataFrame is returned. It contains 4 fields : 
+identifiers of origine and destination, travel time in minutes and travel distance in 
+kilometers.
 }
 \description{
 Build and send an OSRM API query to get the travel geometry between two points.
@@ -37,14 +42,21 @@ points(routeGeom[,2:1], type = "l", lty = 2)
 text(com[c(1,15),3:4], labels = com[c(1,15),2], pos = 2)
 
 # Travel path between points - output a SpatialLinesDataFrame
-routeGeom2 <- osrmViarouteGeom(src=c("Bethune", 50.5199, 2.64781), 
-                               dst = c("Cassel", 50.80016, 2.486388), 
+routeGeom2 <- osrmViarouteGeom(src=c("Bethune", 50.5199, 2.64781),
+                               dst = c("Cassel", 50.80016, 2.486388),
                                sp = TRUE)
 class(routeGeom2)
 # Display the path
 plot(com[c(1,16),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
 plot(routeGeom2, lty = 2, add=TRUE)
 text(com[c(1,16),3:4], labels = com[c(1,16),2], pos = 2)
+
+
+# Inputs are SpatialPointsDataFrame
+routeGeom3 <- osrmViarouteGeom(src = src[1,], 
+                               dst = dst[1,], 
+                               sp = TRUE)
+routeGeom3@data
 }
 }
 \seealso{

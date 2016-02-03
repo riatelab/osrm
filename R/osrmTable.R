@@ -1,26 +1,44 @@
 #' @name osrmTable
 #' @title Get Travel Time Matrices Between Points
-#' @description Build and send OSRM API queries to get travel time matrices between points. 
-#' This function interface the \emph{table} OSRM service. 
-#' @param loc data frame containing points identifiers, longitudes and latitudes 
-#' (WGS84). If loc parameter is used, all pair-wise distances are computed.
-#' @param locId identifier field in loc.
-#' @param locLat latitude field in loc.
-#' @param locLon longitude field in loc.
-#' @param src data frame containing origin points identifiers, longitudes and latitudes 
-#' (WGS84). If dst and src parameters are used, only pairs between scr/dst are computed.
-#' @param srcId identifier field in src
-#' @param srcLat latitude fiels in src
-#' @param srcLon longitude field in src
-#' @param dst data frame containing destination points identifiers, longitudes and latitudes 
-#' (WGS84). If dst and src parameters are used, only pairs between scr/dst are computed.
-#' @param dstId identifier field in dst
-#' @param dstLat latitude field in dst
-#' @param dstLon longitude field in dst
+#' @description Build and send OSRM API queries to get travel time matrices 
+#' between points. This function interface the \emph{table} OSRM service. 
+#' @param loc a data frame containing points identifiers, longitudes and 
+#' latitudes (WGS84) or a SpatialPointsDataFrame or a SpatialPolygonsDataFrame.
+#' If loc parameter is used, all pair-wise distances are computed.
+#' @param locId identifier field in loc. If loc is a SpatialPointsDataFrame 
+#' or a SpatialPolygonsDataFrame this parameter is not used and row names 
+#' of the Spatial*DataFrame are used as identifiers.
+#' @param locLat latitude field in loc. Not used if loc is a 
+#' SpatialPointsDataFrame or a SpatialPolygonsDataFrame.
+#' @param locLon longitude field in loc. Not used if loc is a 
+#' SpatialPointsDataFrame or a SpatialPolygonsDataFrame.
+#' @param src data frame containing origin points identifiers, longitudes 
+#' and latitudes (WGS84) or a SpatialPointsDataFrame or a 
+#' SpatialPolygonsDataFrame. If dst and src parameters are used, only 
+#' pairs between scr/dst are computed.
+#' @param srcId identifier field in src. If src is a SpatialPointsDataFrame 
+#' or a SpatialPolygonsDataFrame this parameter is not used and row names 
+#' of the Spatial*DataFrame are used as identifiers.
+#' @param srcLat latitude field in src. Not used if src is a 
+#' SpatialPointsDataFrame or a SpatialPolygonsDataFrame.
+#' @param srcLon longitude field in src. Not used if src is a 
+#' SpatialPointsDataFrame or a SpatialPolygonsDataFrame.
+#' @param dst data frame containing destination points identifiers, 
+#' longitudes and latitudes (WGS84) or a SpatialPointsDataFrame or a 
+#' SpatialPolygonsDataFrame.. If dst and src parameters are used, only 
+#' pairs between scr/dst are computed.
+#' @param dstId identifier field in dst. If dst is a SpatialPointsDataFrame 
+#' or a SpatialPolygonsDataFrame this parameter is not used and row names 
+#' of the Spatial*DataFrame are used as identifiers.
+#' @param dstLat latitude field in dst. Not used if dst is a 
+#' SpatialPointsDataFrame or a SpatialPolygonsDataFrame.
+#' @param dstLon longitude field in dst. Not used if dst is a 
+#' SpatialPointsDataFrame or a SpatialPolygonsDataFrame.
 #' @return A list containing 3 data frames is returned. 
 #' distance_table is the matrix of travel times (in minutes), 
 #' source_coordinates and destination_coordinates are the coordinates of 
-#' the origin and destination points actually used to compute the travel times.
+#' the origin and destination points actually used to compute the travel 
+#' times.
 #' @note The public OSRM API does not allow more than 10 000 
 #' distances in query result. \cr
 #' If you use an other OSRM API service, make sure that 
@@ -31,17 +49,32 @@
 #' \dontrun{
 #' # Load data
 #' data("com")
+#' 
+#' # Inputs are data frames  
 #' # Travel time matrix
-#' distCom <- osrmTable(loc = com[1:50,], 
-#'                      locId = "comm_id", 
-#'                      locLat = "lat", 
+#' distCom <- osrmTable(loc = com[1:50,],
+#'                      locId = "comm_id",
+#'                      locLat = "lat",
 #'                      locLon = "lon")
 #' # First 5 rows and columns
 #' distCom$distance_table[1:5,1:5]
-#' distCom2 <- osrmTable(src = com[1:50,], 
-#'                       srcId = "comm_id", srcLat = "lat", srcLon = "lon", 
-#'                       dst = com[51:100,], 
+#' 
+#' # Travel time matrix with different sets of origins and destinations
+#' distCom2 <- osrmTable(src = com[1:10,],
+#'                       srcId = "comm_id", srcLat = "lat", srcLon = "lon",
+#'                       dst = com[11:20,],
 #'                       dstId = "comm_id", dstLat = "lat", dstLon = "lon")
+#' # First 5 rows and columns
+#' distCom2$distance_table[1:5,1:5]
+#' 
+#' 
+#' # Inputs are SpatialPointsDataFrames
+#' distCom <- osrmTable(loc = src)
+#' # First 5 rows and columns
+#' distCom$distance_table[1:5,1:5]
+#' 
+#' # Travel time matrix with different sets of origins and destinations
+#' distCom2 <- osrmTable(src = src, dst = dst)
 #' # First 5 rows and columns
 #' distCom2$distance_table[1:5,1:5]
 #' }
@@ -51,13 +84,14 @@ osrmTable <- function(loc, locId, locLat, locLon,
                       dst = NULL, dstId, dstLat, dstLon){
   tryCatch({
     if (is.null(src)){
-      x <- testSp(loc)
-      loc <- x$loc
-      locId <- x$id
-      locLat <- x$lat
-      locLon <- x$lon
-      oprj <- x$oprj
-      
+      # check if inpout is sp
+      if(testSp(loc)){
+        x <- spToDf(x = loc)
+        loc <- x$loc
+        locId <- x$id
+        locLat <- x$lat
+        locLon <- x$lon
+      }
       nSrc <- nrow(loc)
       nDst <- nSrc
       osrmLimit(nSrc = nSrc, nDst = nDst)
@@ -81,17 +115,22 @@ osrmTable <- function(loc, locId, locLat, locLon,
                   destination_coordinates = coords$destination_coordinates))
       
     } else {
-      x <- testSp(src)
-      src <- x$loc
-      srcId <- x$id
-      srcLat <- x$lat
-      srcLon <- x$lon
-      
-      x <- testSp(dst)
-      dst <- x$loc
-      dstId <- x$id
-      dstLat <- x$lat
-      dstLon <- x$lon
+      # check if inpout is sp
+      if(testSp(src)){
+        x <- spToDf(x = src)
+        src <- x$loc
+        srcId <- x$id
+        srcLat <- x$lat
+        srcLon <- x$lon
+      }
+      # check if inpout is sp
+      if(testSp(dst)){
+        x <- spToDf(x = dst)
+        dst <- x$loc
+        dstId <- x$id
+        dstLat <- x$lat
+        dstLon <- x$lon
+      }
       
       nSrc <- nrow(src)
       nDst <- nrow(dst)
@@ -185,32 +224,4 @@ osrmLimit <- function(nSrc, nDst){
 
 
 
-
-
-
-
-testSp <- function(x, id, lat, lon){
-  if (class(x) %in% c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame")){
-    if (is.na(x@proj4string)){
-      stop(
-        paste(
-          "Your input (", quote(x),
-          ") does not have a valid coordinate reference system.", sep=""),
-        call. = F)
-    } else {
-      oprj <- x@proj4string
-      # transform to WGS84
-      x <- spTransform(x = x, CRSobj = "+init=epsg:4326")
-      # this function takes a SpatialDataFrame and transforms it into a dataframe
-      x <-  data.frame(id = row.names(x), 
-                       lat = coordinates(x)[,2], 
-                       lon = coordinates(x)[,1])
-      
-      return(list(loc = x, id = "id", lat = "lat", lon = "lon", oprj = oprj))
-    }
-    
-  }else{
-    return(list(loc = x, id = id, lat = lat, lon = lon, oprj = NA))
-  }
-}
 

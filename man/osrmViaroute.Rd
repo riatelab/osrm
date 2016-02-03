@@ -7,16 +7,21 @@
 osrmViaroute(src, dst)
 }
 \arguments{
-\item{src}{latitude and longitude of the origine point (numeric vector of length 2)}
+\item{src}{a numeric vector of latitude and longitude (WGS84), a 
+SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine 
+point.}
 
-\item{dst}{latitude and longitude of the destination point (numeric vector of length 2).}
+\item{dst}{a numeric vector of latitude and longitude (WGS84), a 
+SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the 
+destination point.}
 }
 \value{
-A named numeric vector is returned. It contains travel time (in minutes) 
-and travel distance (in kilometers).
+A named numeric vector is returned. It contains travel time 
+(in minutes) and travel distance (in kilometers).
 }
 \description{
-Build and send an OSRM API query to get travel time and travel distance between two points.
+Build and send an OSRM API query to get travel time and 
+travel distance between two points.
 This function interface the \emph{viaroute} OSRM service.
 }
 \examples{
@@ -32,6 +37,11 @@ route[1]
 route[2]
 # Mean Speed (km/h)
 route[2]/(route[1]/60)
+
+# SpatialPointsDataFrame input
+route2 <- osrmViaroute(src = src[1,], dst = dst[5,])
+route
+
 }
 }
 \seealso{

@@ -1,13 +1,18 @@
 #' @name osrmViaroute
 #' @title Get Travel Time and Travel Distance Between Two Points
-#' @description Build and send an OSRM API query to get travel time and travel distance between two points.
+#' @description Build and send an OSRM API query to get travel time and 
+#' travel distance between two points.
 #' This function interface the \emph{viaroute} OSRM service. 
-#' @param src latitude and longitude of the origine point (numeric vector of length 2)
-#' @param dst latitude and longitude of the destination point (numeric vector of length 2).
-#' @return A named numeric vector is returned. It contains travel time (in minutes) 
-#' and travel distance (in kilometers).  
+#' @param src a numeric vector of latitude and longitude (WGS84), a 
+#' SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine 
+#' point. 
+#' @param dst a numeric vector of latitude and longitude (WGS84), a 
+#' SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the 
+#' destination point. 
+#' @return A named numeric vector is returned. It contains travel time 
+#' (in minutes) and travel distance (in kilometers).  
 #' @seealso \link{osrmViarouteGeom}
-#' @examples 
+#' @examples
 #' \dontrun{
 #' # Load data
 #' data("com")
@@ -20,10 +25,28 @@
 #' route[2]
 #' # Mean Speed (km/h)
 #' route[2]/(route[1]/60)
+#' 
+#' # SpatialPointsDataFrame input
+#' route2 <- osrmViaroute(src = src[1,], dst = dst[5,])
+#' route
+#' 
 #' }
 #' @export
 osrmViaroute <- function(src, dst){
   tryCatch({
+    
+    if(testSp(src)){
+      src <- src[1,]
+      x <- spToDf(x = src)
+      src <- c(x$loc[1,2], x$loc[1,3])
+    }
+    if(testSp(dst)){
+      dst <- dst[1,]
+      x <- spToDf(x = dst)
+      dst <- c(x$loc[1,2], x$loc[1,3])
+    }
+    
+    
     # Query build
     req <- paste(getOption("osrm.server"), "viaroute?loc=", 
                  src[1], ",", src[2], "&loc=",dst[1],",",dst[2], 
