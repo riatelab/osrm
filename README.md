@@ -1,8 +1,8 @@
 # osrm R package
 
 [![Version](http://www.r-pkg.org/badges/version/osrm)](https://cran.rstudio.com/web/packages/osrm/)
-![](http://cranlogs.r-pkg.org/badges/grand-total/osrm?color=brightgreen)  
-
+![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen)
+[![Travis-CI Build Status](https://travis-ci.org/rCarto/osrm.svg?branch=master)](https://travis-ci.org/rCarto/osrm)  
 
 ***Shortest Paths and Travel Time from OpenStreetMap via an OSRM API / Temps de trajet et matrices de distances entre points avec OpenStreetMap via une [API OSRM](http://project-osrm.org/)***
 
