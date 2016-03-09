@@ -1,3 +1,6 @@
+
+
+
 library(cartography)
 library(SpatialPosition)
 library(rgeos)
@@ -10,7 +13,26 @@ poppot <- stewart(knownpts = nuts3.spdf,
                   beta = 2, 
                   resolution = 50000, 
                   mask = nuts0.spdf)
+
+?rasterStewart
+
 ras <- rasterStewart(poppot)
+
+
+
+
+
+data(spatData)
+# Compute Stewart potentials from known points (spatPts) on a
+# grid defined by its resolution
+mystewart <- stewart(knownpts = spatPts, varname = "Capacite",
+                     typefct = "exponential", span = 1000, beta = 3,
+                     resolution = 50, longlat = FALSE, mask = spatMask)
+# Create a raster of potentials values
+ras <- rasterStewart(x = mystewart)
+
+plot(ras)
+
 
 # Discretize of the variable
 
@@ -25,7 +47,7 @@ raster2contourPolys <- function(r, nclass = 8, breaks = NULL, mask = NULL) {
   breaks = NULL
   r <- ras
   nclass = 8
-  mask <- nuts0.spdf
+  mask <- NULL
   
   # default breaks and nclass
   if(is.null(breaks)){
@@ -42,11 +64,11 @@ raster2contourPolys <- function(r, nclass = 8, breaks = NULL, mask = NULL) {
     xy <- coordinates(r)[which(!is.na(values(r))),]
     i <- chull(xy)
     b <- xy[c(i,i[1]),]
-    b <- SpatialPolygons(list(Polygons(list(Polygon(b, hole = FALSE)), 
+    mask <- SpatialPolygons(list(Polygons(list(Polygon(b, hole = FALSE)), 
                                        ID = "1")), 
-                         proj4string = CRS(proj4string(cl)))
+                         proj4string = CRS(proj4string(r)))
   }else{
-    b <- rgeos::gUnaryUnion(spgeom = mask, id = NULL)
+    mask <- rgeos::gUnaryUnion(spgeom = mask, id = NULL)
   }
   
   ## set-up levels
@@ -56,24 +78,31 @@ raster2contourPolys <- function(r, nclass = 8, breaks = NULL, mask = NULL) {
   llevels <- 1:length(plevels) 
   
   ## get contour lines and convert to SpatialLinesDataFrame
-  cl <- rasterToContour(r, levels = levels )
+  clevels <- levels
+  if (levels[1]==0) {
+    clevels[1] <- 0.0001
+  }
+  cl <- rasterToContour(r, levels = clevels)
+  
+  plot(cl)
+  plot(mask, add=T)
+  
   ## Converting contour lines to polygons
   cp <- contourlines2contourpoly(cl)
+
+  plot(cp)
+  final <- rgeos::gIntersection(spgeom1 = cp, spgeom2 = mask, byid = TRUE, 
+                                id = row.names(cp))
   
-  cp@data
-  min(cp$levels)
-  
-  final <- rgeos::gIntersection(spgeom1 = x, spgeom2 = mask, byid = TRUE, 
-                                id = row.names(x))
   df <- data.frame(id = sapply(methods::slot(final, "polygons"), 
                                methods::slot, "ID"))
   row.names(df) <- df$id
   final <- sp::SpatialPolygonsDataFrame(Sr = final, data = df)
   
+  (final@data)
+  plot(final)
   
-  plot(cp)
-  
-  
+  contourStewart
   
   cp <- x
   x@proj4string

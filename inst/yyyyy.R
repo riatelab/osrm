@@ -46,7 +46,7 @@ tmax <- 120
 speed <- 150
 dmax <- 2* 100000 * tmax/speed
 res <- 50
-
+install.packages('rgdal')
 pt <- sp::spTransform(x = pt, CRSobj =CRS( "+init=epsg:3857"))
 spatGrid <- rgrid(pt = pt, dmax = dmax, res = res)
 
@@ -61,6 +61,9 @@ dmat <- osrmTable(src = pt, dst = spatGrid)
 rpt <- SpatialPointsDataFrame(coords = dmat$destination_coordinates[ , c(2, 1)],
                               data = data.frame(dmat$destination_coordinates),
                               proj4string = CRS("+init=epsg:4326"))
+install.packages("rgdal")
+
+
 rpt <- spTransform(rpt, proj4string(pt))
 plot(spatGrid, add=T, cex = 0.2)
 plot(rpt, add=T, cex = 0.2, col = 'red')
