@@ -37,21 +37,21 @@ rasterer <- function(x){
   r <- rasterize(x, r, field = 'd')
   return(r)
 }
-
+library(osrm)
 library(cartography)
 library(SpatialPosition)
+library(rgeos)
 data("com")
-pt <- src[10,]
+pt <- src[5,]
 tmax <- 120
 speed <- 150
-dmax <- 2* 100000 * tmax/speed
-res <- 50
-install.packages('rgdal')
+dmax <-  4 * 100000 * tmax/speed
+res <- 30
+
 pt <- sp::spTransform(x = pt, CRSobj =CRS( "+init=epsg:3857"))
 spatGrid <- rgrid(pt = pt, dmax = dmax, res = res)
-
-plot(spatGrid)
 osm <- getTiles(spatGrid)
+par(mar=c(0,0,0,0))
 tilesLayer(x = osm, add=F)
 plot(pt, add=T)
 mask <- masker(x = spatGrid)
@@ -61,44 +61,34 @@ dmat <- osrmTable(src = pt, dst = spatGrid)
 rpt <- SpatialPointsDataFrame(coords = dmat$destination_coordinates[ , c(2, 1)],
                               data = data.frame(dmat$destination_coordinates),
                               proj4string = CRS("+init=epsg:4326"))
-install.packages("rgdal")
-
-
 rpt <- spTransform(rpt, proj4string(pt))
 plot(spatGrid, add=T, cex = 0.2)
 plot(rpt, add=T, cex = 0.2, col = 'red')
 rpt$d <- as.vector(dmat$distance_table)
 gridded(spatGrid) <- TRUE
 r <- raster(spatGrid)
-ras <- rasterize(rpt, r, field = 'd', fun = min, na.rm=TRUE, background= 2147483647)
-ras <- rasterize(rpt, r, field = 'd', fun = min, na.rm=TRUE, background= 0)
-cellStats(ras, summary)
+ras <- rasterize(rpt, r, field = 'd', fun = min, na.rm=TRUE,background= max(rpt$d)+1 )
 plot(ras)
-breaks <- seq(0,120,length.out = 12)
 
-cellStats(ras, summary)
-xx <- rasterToContour(x = ras, levels = breaks)
-
+?rasterize
+head(rpt@data)
 
 
-cellStats(ras, summary)
-r <- ras
-r[r!=max(rpt$d, na.rm=T)*10] <-  1
-r[r!=1] <-  NA
+breaks <- seq(0,120,length.out = 13)
 
-mask1 <- rasterToPolygons(x = r, dissolve = T)
-mask <- gBuffer(spgeom = mask1, width = +(5*(res(r)[1])))
-nclass <- 12
-breaks <- seq(0,120, length.out = (nclass+1))
-
-
-tilesLayer(osm)
-plot(mask1, add=T, border = "grey20")
-
-plot(mask, add=T, border = "blue")
-
-mlines <- contourStewart(x = ras, breaks = breaks, type = "line")
-plot(mlines, add=T, col = "red")
+rasterToContourPoly(r = ras, breaks = breaks)
 
 
 
+data(nuts2006)
+nuts3.spdf@data <- nuts3.df[match(nuts3.spdf$id, nuts3.df$id),]
+poppot <- stewart(knownpts = nuts3.spdf,
+                  varname = "pop2008",
+                  typefct = "exponential",
+                  span = 75000,
+                  beta = 2,
+                  resolution = 45000,
+                  mask = nuts0.spdf)
+
+ras <- rasterStewart(poppot)
+rasterToContourPoly(r = ras)
