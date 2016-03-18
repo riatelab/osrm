@@ -18,6 +18,8 @@ Imports:
     utils
 Depends:
     R (>= 2.10)
+Suggests:
+    rgeos
 URL: https://github.com/rCarto/osrm
 BugReports: https://github.com/rCarto/osrm/issues
 Encoding: UTF-8

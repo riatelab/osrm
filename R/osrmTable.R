@@ -216,8 +216,7 @@ tableSrcDst <- function(src, srcLat, srcLon,
 osrmLimit <- function(nSrc, nDst){
   e <- simpleError("The public OSRM API does not allow results with 
   a number of distances higher than 10000")
-  if(getOption("osrm.server") == "http://router.project-osrm.org/" & 
-     (nSrc*nDst) > 10000){
+  if(getOption("osrm.server") == "http://router.project-osrm.org/" & (nSrc*nDst) > 10000){
     stop(e)
   }
 }
