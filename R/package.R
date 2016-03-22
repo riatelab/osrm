@@ -14,6 +14,7 @@
 #' \item{\code{\link{osrmTable}} Get travel time matrices between points.}
 #' \item{\code{\link{osrmViaroute}} Get travel time and travel distance between two points.}
 #' \item{\code{\link{osrmViarouteGeom}} Get the travel geometry between two points.}
+#' \item{\code{\link{osrmTripGeom}} Get the travel geometry between multiple unordered points.}
 #' }
 #' 
 #' @docType package
