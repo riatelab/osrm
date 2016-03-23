@@ -1,4 +1,3 @@
-
 ################## FROM SpatialPosition PACKAGE ################################
 
 rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
@@ -9,7 +8,9 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
   if(!'package:rgeos' %in% search()){
     attachNamespace('rgeos')
   }
-  
+  r <- ra  
+  nclass=8
+  mask =NULL
   rmin <- raster::cellStats(r, min, na.rm = TRUE)
   rmax <- raster::cellStats(r, max, na.rm = TRUE)
   
@@ -124,8 +125,23 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
   final@data <- data.frame(id = final$id, x[match(final$id, x$id),2:4])
   final@plotOrder <- 1:nrow(final)
   
-  final@data
-  return(final)
+  # ring correction
+  df <- unique(final@data[,2:4])
+  df$id <- 1:nrow(df)
+  df <- df[order(df$center, decreasing = T),]
+  
+  z <- gIntersection(final[final$center==df[1,3],],final[final$center==df[1,3],], byid = F,
+                     id = as.character(df[1,4]))
+  for(i in 2:nrow(df)){
+    y <- gDifference(final[final$center==df[i,3],],final[final$center==df[i-1,3],], byid = F, 
+                     id = as.character(df[i,4]))
+    z <- rbind(z, y)
+  }
+  dfx <- data.frame(id = sapply(slot(z, "polygons"), slot, "ID"))
+  row.names(dfx) <- dfx$id
+  z <- SpatialPolygonsDataFrame(z, dfx)
+  z@data <- df[match(x=z@data$id, table = df$id),c(4,1:3)]
+  return(z)
 }
 
 
@@ -144,85 +160,22 @@ masker <- function(r){
 
 
 ################# osrm isolines stuff ##########################################
-rgrid <- function(pt, dmax, res){
-  ptc <- coordinates(pt)
-  boxCoordX <- seq(from = ptc[1] - dmax,
-                   to = ptc[1] + dmax,
+rgrid <- function(loc, dmax, res){
+  boxCoordX <- seq(from = loc[1] - dmax,
+                   to = loc[1] + dmax,
                    length.out = res)
-  boxCoordY <- seq(from = ptc[2] - dmax,
-                   to = ptc[2] + dmax,
+  boxCoordY <- seq(from = loc[2] - dmax,
+                   to = loc[2] + dmax,
                    length.out = res)
-  spatGrid <- expand.grid(boxCoordX, boxCoordY)
-  idSeq <- seq(1, nrow(spatGrid), 1)
-  spatGrid <- data.frame(ID = idSeq,
-                         COORDX = spatGrid[, 1],
-                         COORDY = spatGrid[, 2])
-  spatGrid <- SpatialPointsDataFrame(coords = spatGrid[ , c(2, 3)],
-                                     data = spatGrid,
-                                     proj4string = CRS(proj4string(pt)))
-  return(spatGrid)
+  sgrid <- expand.grid(boxCoordX, boxCoordY)
+  idSeq <- seq(1, nrow(sgrid), 1)
+  sgrid <- data.frame(ID = idSeq,
+                      COORDX = sgrid[, 1],
+                      COORDY = sgrid[, 2])
+  sgrid <- SpatialPointsDataFrame(coords = sgrid[ , c(2, 3)],
+                                  data = sgrid,
+                                  proj4string = CRS( "+init=epsg:3857"))
+  return(sgrid)
 }
-
-
-library(osrm)
-library(cartography)
-library(rgeos)
-data("com")
-pt <- src[5,]
-tmax <- 240
-speed <- 150
-dmax <-  3 * 100000 * tmax/speed
-res <- 30
-pt <- sp::spTransform(x = pt, CRSobj =CRS( "+init=epsg:3857"))
-spatGrid <- rgrid(pt = pt, dmax = dmax, res = res)
-dmat <- osrmTable(src = pt, dst = spatGrid)
-rpt <- SpatialPointsDataFrame(coords = dmat$destination_coordinates[ , c(2, 1)],
-                              data = data.frame(dmat$destination_coordinates),
-                              proj4string = CRS("+init=epsg:4326"))
-rpt <- spTransform(rpt, proj4string(pt))
-rpt$d <- as.vector(dmat$distance_table)
-gridded(spatGrid) <- TRUE
-library(raster)
-r <- raster(spatGrid)
-r <- rasterize(rpt, r, field = 'd', fun = min, na.rm=TRUE,
-               background= max(rpt$d)+1 )
-breaks <- seq(0,240,length.out = 13)
-cp <- rasterToContourPoly(r = r,nclass = 8)
 ################################################################################
-
-
-################ End the rasterToContourPoly story #############################
-library(SpatialPosition)
-
-data("spatData")
-# Compute a SpatialPolygonsDataFrame of potentials
-cp <- quickStewart(spdf = spatPts, 
-                   df = spatPts@data, 
-                   var = "Capacite", 
-                   span = 1000, 
-                   beta = 3, mask = spatMask)
-plot(cp, add=F)
-df <- unique(cp@data[,2:4])
-df$id <- 1:nrow(df)
-df <- df[order(df$center, decreasing = T),]
-z <- gIntersection(cp[cp$center==df[1,3],],cp[cp$center==df[1,3],], byid = F,
-                   id = as.character(df[1,4]))
-for(i in 2:nrow(df)){
-  y <- gDifference(cp[cp$center==df[i,3],],cp[cp$center==df[i-1,3],], byid = F, 
-                   id = as.character(df[i,4]))
-  z <- rbind(z, y)
-}
-dfx <- data.frame(id = sapply(slot(z, "polygons"), slot, "ID"))
-row.names(dfx) <- dfx$id
-z <- SpatialPolygonsDataFrame(z, dfx)
-plot(z, col = 10:18)
-
-################################################################################
-
-plot(r)
-plot(z, col = "#92005050", add=T)
-
-choroLayer(cp, cp@data, spdfid = "id", dfid  = "id",var = "center", 
-           add=T, border = NA, breaks = sort(unique(c(cp$min, cp$max))),
-           legend.values.rnd = 2)
 
