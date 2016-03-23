@@ -2,7 +2,7 @@ Package: osrm
 Type: Package
 Title: Interface Between R and the OpenStreetMap-Based Routing Service OSRM
 Version: 2.0.0.9000
-Date: 2016-01-20
+Date: 2016-03-23
 Authors@R: c(person("Timothée", "Giraud", email = "timothee.giraud@ums-riate.fr", role = c("cre","aut")))
 Description: An interface between R and the OSRM API. OSRM is a routing
     service based on OpenStreetMap data. See <http://project-osrm.org/> for more
@@ -19,7 +19,9 @@ Imports:
 Depends:
     R (>= 2.10)
 Suggests:
-    rgeos
+    rgeos,
+    methods, 
+    raster
 URL: https://github.com/rCarto/osrm
 BugReports: https://github.com/rCarto/osrm/issues
 Encoding: UTF-8

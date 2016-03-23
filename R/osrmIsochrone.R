@@ -33,18 +33,16 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7)){
   }else{
     loc <- sp::SpatialPointsDataFrame(coords = data.frame(loc), 
                                       data = loc, 
-                                      proj4string = CRS("+init=epsg:4326"))
-    loc <- sp::spTransform(x = loc, CRSobj =CRS( "+init=epsg:3857"))
+                                      proj4string = sp::CRS("+init=epsg:4326"))
+    loc <- sp::spTransform(x = loc, CRSobj = sp::CRS( "+init=epsg:3857"))
   }
   sgrid <- rgrid(loc = sp::coordinates(loc), dmax = dmax, res = res)
-  plot(sgrid)
-  layoutLayer()
   dmat <- osrmTable(src = loc, dst = sgrid)
   rpt <- sp::SpatialPointsDataFrame(coords = dmat$destination_coordinates[ , c(2, 1)],
                                     data = data.frame(dmat$destination_coordinates),
-                                    proj4string = CRS("+init=epsg:4326"))
+                                    proj4string = sp::CRS("+init=epsg:4326"))
   
-  rpt <- sp::spTransform(rpt, proj4string(loc))
+  rpt <- sp::spTransform(rpt, sp::proj4string(loc))
   rpt$d <- as.vector(dmat$distance_table)
   rpt$d[is.na(rpt$d)] <- max(rpt$d, na.rm=TRUE)
   sp::gridded(sgrid) <- TRUE
@@ -52,8 +50,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7)){
   r <- raster::raster(sgrid)
   r <- raster::rasterize(rpt, r, field = 'd', fun = min, na.rm=TRUE,
                          background= max(rpt$d, na.rm=TRUE)+1)
-  plot(r)
-  
+
   isolines <- rasterToContourPoly(r = r, breaks = breaks)
   isolines@data
   if (!is.na(oprj)){

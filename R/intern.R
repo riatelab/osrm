@@ -34,7 +34,7 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
   if(!'package:rgeos' %in% search()){
     attachNamespace('rgeos')
   }
-
+  
   rmin <- raster::cellStats(r, min, na.rm = TRUE)
   rmax <- raster::cellStats(r, max, na.rm = TRUE)
   
@@ -89,7 +89,7 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
   if(length(breaks)<2){stop("breaks values do not fit the raster values",
                             call. = FALSE)}
   # build the contour lines
-  cl <- rasterToContour(r, levels = breaks)
+  cl <- raster::rasterToContour(r, levels = breaks)
   cl$level <- as.numeric(as.character(cl$level))
   SPlist <- list()
   SPlevels <- character()
@@ -154,23 +154,26 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
   df$id <- 1:nrow(df)
   df <- df[order(df$center, decreasing = T),]
   
-  z <- gIntersection(final[final$center==df[1,3],],final[final$center==df[1,3],], byid = F,
-                     id = as.character(df[1,4]))
+  z <- rgeos::gIntersection(final[final$center==df[1,3],],
+                            final[final$center==df[1,3],], byid = F,
+                            id = as.character(df[1,4]))
   for(i in 2:nrow(df)){
-    y <- gDifference(final[final$center==df[i,3],],final[final$center==df[i-1,3],], byid = F, 
-                     id = as.character(df[i,4]))
+    y <- rgeos::gDifference(final[final$center==df[i,3],],
+                            final[final$center==df[i-1,3],], byid = F, 
+                            id = as.character(df[i,4]))
     z <- rbind(z, y)
   }
-  dfx <- data.frame(id = sapply(slot(z, "polygons"), slot, "ID"))
+  dfx <- data.frame(id = sapply(methods::slot(z, "polygons"), 
+                                methods::slot, "ID"))
   row.names(dfx) <- dfx$id
-  z <- SpatialPolygonsDataFrame(z, dfx)
+  z <- sp::SpatialPolygonsDataFrame(z, dfx)
   z@data <- df[match(x=z@data$id, table = df$id),c(4,1:3)]
   return(z)
 }
 
 
 masker <- function(r){
-  xy <- sp::coordinates(r)[which(!is.na(values(r))),]
+  xy <- sp::coordinates(r)[which(!is.na(raster::values(r))),]
   i <- grDevices::chull(xy)
   b <- xy[c(i,i[1]),]
   mask <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(b,
@@ -180,10 +183,6 @@ masker <- function(r){
   return(mask)
 }
 
-################################################################################
-
-
-################# osrm isolines stuff ##########################################
 rgrid <- function(loc, dmax, res){
   boxCoordX <- seq(from = loc[1] - dmax,
                    to = loc[1] + dmax,
@@ -196,8 +195,8 @@ rgrid <- function(loc, dmax, res){
   sgrid <- data.frame(ID = idSeq,
                       COORDX = sgrid[, 1],
                       COORDY = sgrid[, 2])
-  sgrid <- SpatialPointsDataFrame(coords = sgrid[ , c(2, 3)],
-                                  data = sgrid,
-                                  proj4string = CRS( "+init=epsg:3857"))
+  sgrid <- sp::SpatialPointsDataFrame(coords = sgrid[ , c(2, 3)],
+                                      data = sgrid,
+                                      proj4string = sp::CRS("+init=epsg:3857"))
   return(sgrid)
 }

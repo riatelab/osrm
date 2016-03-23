@@ -27,10 +27,6 @@ and distance (in kilometers)}
 Build and send an OSRM API query to get the shortest travel geometry between multiple points.
 This function interface the \emph{trip} OSRM service.
 }
-\examples{
-\dontrun{
-}
-}
 \seealso{
 \link{osrmViarouteGeom}
 }

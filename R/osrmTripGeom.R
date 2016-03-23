@@ -14,30 +14,30 @@
 #' and distance (in kilometers)}
 #' }
 #' @seealso \link{osrmViarouteGeom}
-#' @examples
-#' \dontrun{
-#' }
 #' @export
-
 osrmTripGeom <- function(userPoints, sp = FALSE){
   tryCatch({
-      oprj <- NA
-      if(testSp(userPoints)){
-        oprj <- sp::proj4string(userPoints)
-        x <- spToDf(x = userPoints)
-        coordsDF <- x$loc
-      } else {
-        coordsDF <- userPoints
-      }
-
-      locationsString <- paste(as.numeric(coordsDF$lat), as.numeric(coordsDF$lon), sep=",", collapse="&loc=")
-
-
+    oprj <- NA
+    if(testSp(userPoints)){
+      oprj <- sp::proj4string(userPoints)
+      x <- spToDf(x = userPoints)
+      coordsDF <- x$loc
+    } else {
+      coordsDF <- userPoints
+      names(coordsDF) <- "id"
+    }
+    names(coordsDF) <- c("id", "lon", "lat")
+    
+    locationsString <- paste(as.numeric(coordsDF$lat), 
+                             as.numeric(coordsDF$lon), 
+                             sep=",", collapse="&loc=")
+    
+    
     
     # build the query
     req <- paste(getOption("osrm.server"), 
                  "trip?loc=", locationsString,
-                 "&alt=false&geometry=true&",
+                 "&alt=false&geometry=true&uturns=true&",
                  "output=json&compression=false",
                  sep="")
     
@@ -52,64 +52,80 @@ osrmTripGeom <- function(userPoints, sp = FALSE){
     e <- simpleError(res$status_message)
     if(res$status != "200"){stop(e)}
     
-    # Coordinates of the line
-    geodf <- data.frame(res$trips$route_geometry)
-    names(geodf) <-  c("lat", "lon")
     
-    tripSummary <- list(startingPoint  = res$trips$route_summary$start_point,
-                    endingPoint = res$trips$route_summary$end_point,
-                    time = res$trips$route_summary$total_time/60,
-                    distance = res$trips$route_summary$total_distance/1000
-                    )
+    ntour <- dim(res$trips)[1]
     
-    pointsOrder <- unlist(res$trips$permutation) + 1
-    pointsIndexes <- unlist(res$trips$via_indices) + 1
-    pointsNames <- c(coordsDF$id[pointsOrder], coordsDF$id[pointsOrder][1])
-    geodf$step <- NA
-    
-    tripSegments <- list()
-    segmentNames <- c()
-    # Convert to SpatialLinesDataFrame
-    if (sp==TRUE){
-      if(!'package:sp' %in% search()){
-        attachNamespace('sp')
-      }
-      for (i in 1:(length(pointsIndexes)-1) ){
-        dfSegment <- geodf[pointsIndexes[i]:pointsIndexes[i+1],]
-        segmentName <- paste(pointsNames[i], pointsNames[i+1], sep="->")
+    trips <- vector("list", ntour)
+
+    nt <- 2
+    for (nt in 1:ntour){
+      # Coordinates of the line
+      geodf <- data.frame(res$trips[nt,]$route_geometry)
+      if (nrow(geodf)==1){
+        pointsOrder <- unlist(res$trips[nt,]$permutation) + 1
+        trips[[nt]] <- coordsDF$id[pointsOrder]
+      }else{
+        names(geodf) <-  c("lat", "lon")
         
-        segmentNames <- cbind(segmentNames, segmentName)
+        tripSummary <- list(startingPoint  = res$trips[nt,]$route_summary$start_point,
+                            endingPoint = res$trips[nt,]$route_summary$end_point,
+                            time = res$trips[nt,]$route_summary$total_time/60,
+                            distance = res$trips[nt,]$route_summary$total_distance/1000)    
         
-        geodf[pointsIndexes[i]:pointsIndexes[i+1],"step"] <- segmentName
+        pointsOrder <- unlist(res$trips[nt,]$permutation) + 1
+        pointsIndexes <- unlist(res$trips[nt,]$via_indices) + 1
+        pointsNames <- c(coordsDF$id[pointsOrder], coordsDF$id[pointsOrder][1])
+        geodf$step <- NA
         
-        lineSegment <- sp::Line(dfSegment[,2:1])
-        linesSegment <- sp::Lines(lineSegment,  ID = segmentName)
-        tripSegments[length(tripSegments) + 1] <- linesSegment
+        tripSegments <- list()
+        segmentNames <- c()
         
-      }
-      tripSL <- sp::SpatialLines(tripSegments,  proj4string = sp::CRS("+init=epsg:4326"))
-      df <- data.frame(stringsAsFactors = FALSE, Name = as.character(segmentNames))
-      
-      sldf <- sp::SpatialLinesDataFrame(tripSL, 
-                                        data = df, 
-                                        match.ID = FALSE)   
-      if (!is.na(oprj)){
-        sldf <- sp::spTransform(sldf, oprj)
-      }
-      return(list(tripPoints = geodf, geom = sldf, summary = tripSummary))
-    } else {
-      for (i in 1:(length(pointsIndexes)-1) ){
-        dfSegment <- geodf[pointsIndexes[i]:pointsIndexes[i+1],]
-        segmentName <- paste(pointsNames[i], pointsNames[i+1], sep="->")
-        
-        segmentNames <- cbind(segmentNames, segmentName)
-        
-        geodf[pointsIndexes[i]:pointsIndexes[i+1],"step"] <- segmentName
+        # Convert to SpatialLinesDataFrame
+        if (sp==TRUE){
+          if(!'package:sp' %in% search()){
+            attachNamespace('sp')
+          }
+          for (i in 1:(length(pointsIndexes)-1) ){
+            dfSegment <- geodf[pointsIndexes[i]:pointsIndexes[i+1],]
+            segmentName <- paste(pointsNames[i], pointsNames[i+1], sep="->")
+            
+            segmentNames <- cbind(segmentNames, segmentName)
+            
+            geodf[pointsIndexes[i]:pointsIndexes[i+1],"step"] <- segmentName
+            
+            lineSegment <- sp::Line(dfSegment[,2:1])
+            linesSegment <- sp::Lines(lineSegment,  ID = segmentName)
+            tripSegments[length(tripSegments) + 1] <- linesSegment
+            
+          }
+          tripSL <- sp::SpatialLines(tripSegments,  proj4string = sp::CRS("+init=epsg:4326"))
+          df <- data.frame(stringsAsFactors = FALSE, Name = as.character(segmentNames))
+          
+          sldf <- sp::SpatialLinesDataFrame(tripSL, 
+                                            data = df, 
+                                            match.ID = FALSE)   
+          if (!is.na(oprj)){
+            sldf <- sp::spTransform(sldf, oprj)
+          }
+          trips[[nt]] <- list(trip = sldf, summary = tripSummary)
+
+        } else {
+          for (i in 1:(length(pointsIndexes)-1) ){
+            dfSegment <- geodf[pointsIndexes[i]:pointsIndexes[i+1],]
+            segmentName <- paste(pointsNames[i], pointsNames[i+1], sep="->")
+            
+            segmentNames <- cbind(segmentNames, segmentName)
+            
+            geodf[pointsIndexes[i]:pointsIndexes[i+1],"step"] <- segmentName
+          }
+          trips[[nt]] <- list(trip = geodf, summary = tripSummary)
+        }
+
       }
     }
-    return(list(tripPoints = geodf, summary = tripSummary))
+    return(trips)
   }, error=function(e) { message("osrmTripGeom function returns an error: \n", e)})
-  return(NULL)
+      return(NULL)
 }
 
 
