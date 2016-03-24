@@ -1,32 +1,66 @@
 #' @name osrmTripGeom
-#' @title Get the travel geometry between multiple unordered points.
+#' @title Get the Travel Geometry Between Multiple Unordered Points
 #' @description Build and send an OSRM API query to get the shortest travel geometry between multiple points.
-#' This function interface the \emph{trip} OSRM service. 
-#' @param userPoints a SpatialPointsDataFrame of the waypoints, or a data.frame with points as rows
-#' and at least 3 columns : id, lat and long (WGS84 decimal degrees)
+#' This function interfaces the \emph{trip} OSRM service. 
+#' @param loc a SpatialPointsDataFrame of the waypoints, or a data.frame with points as rows
+#' and 3 columns: id, lat and lon (WGS84 decimal degrees).
 #' @param sp if sp is TRUE the function returns a SpatialLinesDataFrame.
-#' @return A list with components
+#' @details As stated in the osrm APi, if the input coordinates can not be joined by a single trip 
+#' (e.g. the coordinates are on several disconnecte islands) multiple trips for 
+#' each connected component are returned.
+#' @return A list of connected components. Each component contains:
 #' @return \describe{
-#' \item{tripPoints}{A data.frame with the points lat/long (WGS84) and the step they're part of}
-#' \item{geom}{Only when sp is TRUE, a SpatialLinesDataFrame (userPoints' CRS if there's one, WGS84 else),
+#' \item{trip}{A data.frame with the points lat/long (WGS84) and the step they're 
+#' part of or if sp is TRUE, a SpatialLinesDataFrame (loc's CRS if there's one, WGS84 else),
 #' containing a line for each step of the trip.}
-#' \item{summary}{A list with 4 components : startingPoint, endingPoint, time (in minutes)
-#' and distance (in kilometers)}
+#' \item{summary}{A list with 4 components: startingPoint, endingPoint, time (in minutes)
+#' and distance (in kilometers) or a message if a point is not connected to any trip}
 #' }
 #' @seealso \link{osrmViarouteGeom}
 #' @export
-osrmTripGeom <- function(userPoints, sp = FALSE){
+#' @examples
+#' \dontrun{
+#' # Load data
+#' data("com")
+#' 
+#' # Get a trip with a id lat lon data.frame
+#' trips <- osrmTripGeom(loc = com[1101:1200, c(1,4,3)])
+#' 
+#' # Display the trip
+#' plot(trips[[1]]$trip, col = 1:100)
+#' points(com[1101:1200, 3:4], pch = 20, col = "red", cex = 0.5)
+#' 
+#' # Map
+#' if(require("cartography")){
+#'   osm <- getTiles(spdf = trips[[1]]$trip, crop = TRUE)
+#'   tilesLayer(osm)
+#'   plot(trips[[1]]$trip, col = 1:100, add = TRUE)
+#'   points(com[1101:1200, 3:4], pch = 20, col = "red", cex = 0.5)
+#' }
+#' 
+#' 
+#' # Get a trip with a SpatialPointsDataFrame
+#' trips <- osrmTripGeom(loc = src)
+#' 
+#' # Map
+#' if(require("cartography")){
+#'   osm <- getTiles(spdf = trips[[1]]$trip, crop = TRUE)
+#'   tilesLayer(osm)
+#'   plot(src, pch = 20, col = "red", cex = 2, add = TRUE)
+#'   plot(trips[[1]]$trip, add = TRUE, lwd=2)
+#' }
+#' }
+osrmTripGeom <- function(loc, sp = TRUE){
   tryCatch({
     oprj <- NA
-    if(testSp(userPoints)){
-      oprj <- sp::proj4string(userPoints)
-      x <- spToDf(x = userPoints)
+    if(testSp(loc)){
+      oprj <- sp::proj4string(loc)
+      x <- spToDf(x = loc)
       coordsDF <- x$loc
     } else {
-      coordsDF <- userPoints
-      names(coordsDF) <- "id"
+      coordsDF <- loc
     }
-    names(coordsDF) <- c("id", "lon", "lat")
+    names(coordsDF) <- c("id", "lat", "lon")
     
     locationsString <- paste(as.numeric(coordsDF$lat), 
                              as.numeric(coordsDF$lon), 
@@ -37,7 +71,7 @@ osrmTripGeom <- function(userPoints, sp = FALSE){
     # build the query
     req <- paste(getOption("osrm.server"), 
                  "trip?loc=", locationsString,
-                 "&alt=false&geometry=true&uturns=true&",
+                 "&alt=false&geometry=true&",
                  "output=json&compression=false",
                  sep="")
     
@@ -57,13 +91,18 @@ osrmTripGeom <- function(userPoints, sp = FALSE){
     
     trips <- vector("list", ntour)
 
-    nt <- 2
     for (nt in 1:ntour){
       # Coordinates of the line
       geodf <- data.frame(res$trips[nt,]$route_geometry)
       if (nrow(geodf)==1){
         pointsOrder <- unlist(res$trips[nt,]$permutation) + 1
-        trips[[nt]] <- coordsDF$id[pointsOrder]
+        trips[[nt]] <- list(trip = NA, 
+                            summary = paste("This point (",
+                                            coordsDF$id[pointsOrder],
+                                            ") is not included in any trip.",
+                                            " Please check its coordinates", 
+                                            sep=""))
+                            
       }else{
         names(geodf) <-  c("lat", "lon")
         
@@ -82,9 +121,6 @@ osrmTripGeom <- function(userPoints, sp = FALSE){
         
         # Convert to SpatialLinesDataFrame
         if (sp==TRUE){
-          if(!'package:sp' %in% search()){
-            attachNamespace('sp')
-          }
           for (i in 1:(length(pointsIndexes)-1) ){
             dfSegment <- geodf[pointsIndexes[i]:pointsIndexes[i+1],]
             segmentName <- paste(pointsNames[i], pointsNames[i+1], sep="->")
@@ -98,8 +134,10 @@ osrmTripGeom <- function(userPoints, sp = FALSE){
             tripSegments[length(tripSegments) + 1] <- linesSegment
             
           }
-          tripSL <- sp::SpatialLines(tripSegments,  proj4string = sp::CRS("+init=epsg:4326"))
-          df <- data.frame(stringsAsFactors = FALSE, Name = as.character(segmentNames))
+          tripSL <- sp::SpatialLines(tripSegments,  
+                                     proj4string = sp::CRS("+init=epsg:4326"))
+          df <- data.frame(stringsAsFactors = FALSE, 
+                           Name = as.character(segmentNames))
           
           sldf <- sp::SpatialLinesDataFrame(tripSL, 
                                             data = df, 
@@ -108,7 +146,7 @@ osrmTripGeom <- function(userPoints, sp = FALSE){
             sldf <- sp::spTransform(sldf, oprj)
           }
           trips[[nt]] <- list(trip = sldf, summary = tripSummary)
-
+          
         } else {
           for (i in 1:(length(pointsIndexes)-1) ){
             dfSegment <- geodf[pointsIndexes[i]:pointsIndexes[i+1],]
@@ -120,12 +158,12 @@ osrmTripGeom <- function(userPoints, sp = FALSE){
           }
           trips[[nt]] <- list(trip = geodf, summary = tripSummary)
         }
-
+        
       }
     }
     return(trips)
   }, error=function(e) { message("osrmTripGeom function returns an error: \n", e)})
-      return(NULL)
+        return(NULL)
 }
 
 

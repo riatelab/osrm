@@ -22,7 +22,7 @@ A named numeric vector is returned. It contains travel time
 \description{
 Build and send an OSRM API query to get travel time and 
 travel distance between two points.
-This function interface the \emph{viaroute} OSRM service.
+This function interfaces the \emph{viaroute} OSRM service.
 }
 \examples{
 \dontrun{

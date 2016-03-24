@@ -21,6 +21,7 @@ To change the OSRM server, change the \code{osrm.server} option:\cr
 \item{\code{\link{osrmViaroute}} Get travel time and travel distance between two points.}
 \item{\code{\link{osrmViarouteGeom}} Get the travel geometry between two points.}
 \item{\code{\link{osrmTripGeom}} Get the travel geometry between multiple unordered points.}
+\item{\code{\link{osrmIsochrone}} Get a SpatialPolygonsDataFrame of isochrones.}
 }
 }
 

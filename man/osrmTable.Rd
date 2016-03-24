@@ -4,53 +4,42 @@
 \alias{osrmTable}
 \title{Get Travel Time Matrices Between Points}
 \usage{
-osrmTable(loc, locId, locLat, locLon, src = NULL, srcId, srcLat, srcLon,
-  dst = NULL, dstId, dstLat, dstLon)
+osrmTable(loc, src = NULL, dst = NULL, locId = NULL, locLat = NULL,
+  locLon = NULL, srcId = NULL, srcLat = NULL, srcLon = NULL,
+  dstId = NULL, dstLat = NULL, dstLon = NULL)
 }
 \arguments{
-\item{loc}{a data frame containing points identifiers, longitudes and 
-latitudes (WGS84) or a SpatialPointsDataFrame or a SpatialPolygonsDataFrame.
+\item{loc}{a data frame containing 3 fields: points identifiers, latitudes and 
+longitudes (WGS84). It can also be a SpatialPointsDataFrame or a 
+SpatialPolygonsDataFrame, then row names are used as identifiers.
 If loc parameter is used, all pair-wise distances are computed.}
 
-\item{locId}{identifier field in loc. If loc is a SpatialPointsDataFrame 
-or a SpatialPolygonsDataFrame this parameter is not used and row names 
-of the Spatial*DataFrame are used as identifiers.}
+\item{src}{a data frame containing origin points identifiers, latitudes and 
+longitudes (WGS84). It can also be a SpatialPointsDataFrame or a 
+SpatialPolygonsDataFrame, then row names are used as identifiers. 
+If dst and src parameters are used, only pairs between scr/dst are computed.}
 
-\item{locLat}{latitude field in loc. Not used if loc is a 
-SpatialPointsDataFrame or a SpatialPolygonsDataFrame.}
+\item{dst}{a data frame containing destination points identifiers, latitudes 
+and longitudes (WGS84). It can also be a SpatialPointsDataFrame or a 
+SpatialPolygonsDataFrame, then row names are used as identifiers.}
 
-\item{locLon}{longitude field in loc. Not used if loc is a 
-SpatialPointsDataFrame or a SpatialPolygonsDataFrame.}
+\item{locId}{identifier field in loc (optional, see Details).}
 
-\item{src}{data frame containing origin points identifiers, longitudes 
-and latitudes (WGS84) or a SpatialPointsDataFrame or a 
-SpatialPolygonsDataFrame. If dst and src parameters are used, only 
-pairs between scr/dst are computed.}
+\item{locLat}{latitude field in loc (optional).}
 
-\item{srcId}{identifier field in src. If src is a SpatialPointsDataFrame 
-or a SpatialPolygonsDataFrame this parameter is not used and row names 
-of the Spatial*DataFrame are used as identifiers.}
+\item{locLon}{longitude field in loc (optional).}
 
-\item{srcLat}{latitude field in src. Not used if src is a 
-SpatialPointsDataFrame or a SpatialPolygonsDataFrame.}
+\item{srcId}{identifier field in src (optional).}
 
-\item{srcLon}{longitude field in src. Not used if src is a 
-SpatialPointsDataFrame or a SpatialPolygonsDataFrame.}
+\item{srcLat}{latitude field in src (optional).}
 
-\item{dst}{data frame containing destination points identifiers, 
-longitudes and latitudes (WGS84) or a SpatialPointsDataFrame or a 
-SpatialPolygonsDataFrame.. If dst and src parameters are used, only 
-pairs between scr/dst are computed.}
+\item{srcLon}{longitude field in src (optional).}
 
-\item{dstId}{identifier field in dst. If dst is a SpatialPointsDataFrame 
-or a SpatialPolygonsDataFrame this parameter is not used and row names 
-of the Spatial*DataFrame are used as identifiers.}
+\item{dstId}{identifier field in dst (optional).}
 
-\item{dstLat}{latitude field in dst. Not used if dst is a 
-SpatialPointsDataFrame or a SpatialPolygonsDataFrame.}
+\item{dstLat}{latitude field in dst (optional).}
 
-\item{dstLon}{longitude field in dst. Not used if dst is a 
-SpatialPointsDataFrame or a SpatialPolygonsDataFrame.}
+\item{dstLon}{longitude field in dst (optional).}
 }
 \value{
 A list containing 3 data frames is returned. 
@@ -61,7 +50,12 @@ times.
 }
 \description{
 Build and send OSRM API queries to get travel time matrices 
-between points. This function interface the \emph{table} OSRM service.
+between points. This function interfaces the \emph{table} OSRM service.
+}
+\details{
+If loc, src or dst are data frames we assume that the 3 first 
+columns of the data.frame are: identifier, latitude and longitude. 
+If it is not the case, use fields parameters.
 }
 \note{
 The public OSRM API does not allow more than 10 000 
@@ -78,18 +72,13 @@ data("com")
 
 # Inputs are data frames  
 # Travel time matrix
-distCom <- osrmTable(loc = com[1:50,],
-                     locId = "comm_id",
-                     locLat = "lat",
-                     locLon = "lon")
+distCom <- osrmTable(loc = com[1:50, c("comm_id","lat","lon")])
 # First 5 rows and columns
 distCom$distance_table[1:5,1:5]
 
 # Travel time matrix with different sets of origins and destinations
-distCom2 <- osrmTable(src = com[1:10,],
-                      srcId = "comm_id", srcLat = "lat", srcLon = "lon",
-                      dst = com[11:20,],
-                      dstId = "comm_id", dstLat = "lat", dstLon = "lon")
+distCom2 <- osrmTable(src = com[1:10,c("comm_id","lat","lon")],
+                      dst = com[11:20,c("comm_id","lat","lon")])
 # First 5 rows and columns
 distCom2$distance_table[1:5,1:5]
 

@@ -4,14 +4,15 @@
 ![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen)
 [![Travis-CI Build Status](https://travis-ci.org/rCarto/osrm.svg?branch=master)](https://travis-ci.org/rCarto/osrm)  
 
-***Shortest Paths and Travel Time from OpenStreetMap via an OSRM API / Temps de trajet et matrices de distances entre points avec OpenStreetMap via une [API OSRM](http://project-osrm.org/)***
+***Interface Between R and the OpenStreetMap-Based Routing Service [OSRM](http://project-osrm.org/)***
 
 ![](http://f.hypotheses.org/wp-content/blogs.dir/1909/files/2015/10/route1.png)
 
 ## Description
 OSRM is a routing service based on OpenStreetMap data. See <http://project-osrm.org/> for more information. A public API exists but one can run its own instance. This package allows to compute distance (travel time and kilometric distance) between points and travel time matrices.
 
-This package relies on the usage of a running OSRM service. By default this service is the OSRM public API (http://router.project-osrm.org/). To change the OSRM server, change the osrm.server option:
+This package relies on the usage of a running OSRM service (tested with version 4.9.0 of the OSRM API). 
+By default this service is the OSRM public API (http://router.project-osrm.org/). To change the OSRM server, change the osrm.server option:
 `options(osrm.server = "http://address.of.the.server/")`
 
 ## Features
@@ -22,17 +23,24 @@ This package relies on the usage of a running OSRM service. By default this serv
 
 * `osrmViaRouteGeom` Get the travel geometry between two points.
 
+* `osrmTripGeom` Get the travel geometry between multiple unordered points.
+
+* `osrmIsochrone` Get a SpatialPolygonsDataFrame of isochrones.
+
+
 ## Installation
 
-### CRAN version
-```{r}
-install.packages("osrm")
-```
-
-### GitHub version :
+* Development version on GitHub
 ```{r}
 require(devtools)
 devtools::install_github("rCarto/osrm")
 ```
+
+* Stable version on [CRAN](https://CRAN.R-project.org/package=osrm/)
+```{r}
+install.packages("osrm")
+```
+
+
 
 

@@ -1,7 +1,7 @@
 #' @name osrmViarouteGeom
 #' @title Get the Travel Geometry Between Two Points
 #' @description Build and send an OSRM API query to get the travel geometry between two points.
-#' This function interface the \emph{viaroute} OSRM service. 
+#' This function interfaces the \emph{viaroute} OSRM service. 
 #' @param src a numeric vector of identifier, latitude and longitude (WGS84), a 
 #' SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine 
 #' point.
@@ -91,9 +91,6 @@ osrmViarouteGeom <- function(src, dst, sp = FALSE){
     
     # Convert to SpatialLinesDataFrame
     if (sp==TRUE){
-      if(!'package:sp' %in% search()){
-        attachNamespace('sp')
-      }
       routeLines <- sp::Lines(slinelist = sp::Line(geodf[,2:1]), 
                               ID = "x")
       routeSL <- sp::SpatialLines(LinesList = list(routeLines), 

@@ -10,19 +10,63 @@ osrmIsochrone(loc, breaks = seq(from = 0, to = 60, length.out = 7))
 \item{loc}{a numeric vector of latitude and longitude (WGS84) or a 
 SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.}
 
-\item{breaks}{a numeric vector of isochrone values.}
+\item{breaks}{a numeric vector of isochrone values (in minutes).}
 }
 \value{
 A SpatialPolygonsDateFrame of isochrones is returned. 
-The data frame of the outputed SpatialPolygonsDataFrame contains four fields: 
+The data frame of the output contains four fields: 
 id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
-center (central values of classes)
+center (central values of classes).
 }
 \description{
-Based on osrmTable this function buid a SpatialPolygonsDataFrame 
-of isochrones.
+Based on \code{\link{osrmTable}}, this function buids a 
+SpatialPolygonsDataFrame of isochrones.
 }
 \note{
-This function uses the rgeos package.
+This function uses raster and rgeos packages.
+}
+\examples{
+\dontrun{
+# Load data
+data("com")
+
+# Get isochones with lat/lon coordinates, default breaks
+iso <- osrmIsochrone(loc = c(49.24882, 5.936036))
+iso@proj4string
+plot(iso)
+points(5.936036, 49.24882, pch = 20, col = "red")
+
+# Map
+if(require("cartography")){
+  osm <- getTiles(spdf = iso, crop = TRUE)
+  tilesLayer(osm)
+  osm@crs
+  breaks <- sort(c(unique(iso$min), max(iso$max)))
+  cartography::choroLayer(spdf = iso, df = iso@data,
+                          var = "center", breaks = breaks,
+                          border = NA,
+                          legend.pos = "topleft",legend.frame = TRUE, 
+                          legend.title.txt = "Isochrones\\n(min)", 
+                          add = TRUE)
+}
+
+# Get isochones with a SpatialPointsDataFrame, custom breaks
+iso2 <- osrmIsochrone(loc = src[6,], breaks = seq(from = 0,to = 30, by = 5))
+plot(iso2)
+plot(src[6,], add = TRUE, pch = 20, col = "red") 
+
+# Map
+if(require("cartography")){
+  osm2 <- getTiles(spdf = iso2, crop = TRUE)
+  tilesLayer(osm2)
+  breaks2 <- sort(c(unique(iso2$min), max(iso2$max)))
+  cartography::choroLayer(spdf = iso2, df = iso2@data,
+                          var = "center", breaks = breaks2,
+                          border = NA,
+                          legend.pos = "topleft",legend.frame = TRUE, 
+                          legend.title.txt = "Isochrones\\n(min)", 
+                          add = TRUE)
+}
+}
 }
 

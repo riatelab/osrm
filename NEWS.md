@@ -1,3 +1,18 @@
+# osrm version 2.1.0 (Release date: 2016-03-24)
+
+## Major changes:
+* Functions now accept sp objects and data.frames
+* Add osrmIsochrone
+* Add osrmTripGeom
+
+
+## Minor changes
+* Better output for osrmViaRouteGeom (src, dst, time and km)
+* Default fields in osrmTable if input is data frame
+
+
+
+
 # osrm version 2.0.0 (Release date: 2016-01-20)
 
 
@@ -8,10 +23,6 @@ The backward compatibility is not ensured. The osrm package works with the versi
 * Supression of osrmTableOD and osrmTableErrors
 * Different parameters names and output in each functions
 * XML and reshape2 packages are no longer imported
-
-
-
-
 
 
 # osrm version 1.1 (Release date: 2015-11-06)

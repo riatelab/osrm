@@ -2,7 +2,7 @@
 #' @title Get Travel Time and Travel Distance Between Two Points
 #' @description Build and send an OSRM API query to get travel time and 
 #' travel distance between two points.
-#' This function interface the \emph{viaroute} OSRM service. 
+#' This function interfaces the \emph{viaroute} OSRM service. 
 #' @param src a numeric vector of latitude and longitude (WGS84), a 
 #' SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine 
 #' point. 

@@ -26,7 +26,7 @@ kilometers.
 }
 \description{
 Build and send an OSRM API query to get the travel geometry between two points.
-This function interface the \emph{viaroute} OSRM service.
+This function interfaces the \emph{viaroute} OSRM service.
 }
 \examples{
 \dontrun{

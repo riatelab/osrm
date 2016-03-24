@@ -2,30 +2,68 @@
 % Please edit documentation in R/osrmTripGeom.R
 \name{osrmTripGeom}
 \alias{osrmTripGeom}
-\title{Get the travel geometry between multiple unordered points.}
+\title{Get the Travel Geometry Between Multiple Unordered Points}
 \usage{
-osrmTripGeom(userPoints, sp = FALSE)
+osrmTripGeom(loc, sp = TRUE)
 }
 \arguments{
-\item{userPoints}{a SpatialPointsDataFrame of the waypoints, or a data.frame with points as rows
-and at least 3 columns : id, lat and long (WGS84 decimal degrees)}
+\item{loc}{a SpatialPointsDataFrame of the waypoints, or a data.frame with points as rows
+and 3 columns: id, lat and lon (WGS84 decimal degrees).}
 
 \item{sp}{if sp is TRUE the function returns a SpatialLinesDataFrame.}
 }
 \value{
-A list with components
+A list of connected components. Each component contains:
 
 \describe{
-\item{tripPoints}{A data.frame with the points lat/long (WGS84) and the step they're part of}
-\item{geom}{Only when sp is TRUE, a SpatialLinesDataFrame (userPoints' CRS if there's one, WGS84 else),
+\item{trip}{A data.frame with the points lat/long (WGS84) and the step they're 
+part of or if sp is TRUE, a SpatialLinesDataFrame (loc's CRS if there's one, WGS84 else),
 containing a line for each step of the trip.}
-\item{summary}{A list with 4 components : startingPoint, endingPoint, time (in minutes)
-and distance (in kilometers)}
+\item{summary}{A list with 4 components: startingPoint, endingPoint, time (in minutes)
+and distance (in kilometers) or a message if a point is not connected to any trip}
 }
 }
 \description{
 Build and send an OSRM API query to get the shortest travel geometry between multiple points.
-This function interface the \emph{trip} OSRM service.
+This function interfaces the \emph{trip} OSRM service.
+}
+\details{
+As stated in the osrm APi, if the input coordinates can not be joined by a single trip 
+(e.g. the coordinates are on several disconnecte islands) multiple trips for 
+each connected component are returned.
+}
+\examples{
+\dontrun{
+# Load data
+data("com")
+
+# Get a trip with a id lat lon data.frame
+trips <- osrmTripGeom(loc = com[1101:1200, c(1,4,3)])
+
+# Display the trip
+plot(trips[[1]]$trip, col = 1:100)
+points(com[1101:1200, 3:4], pch = 20, col = "red", cex = 0.5)
+
+# Map
+if(require("cartography")){
+  osm <- getTiles(spdf = trips[[1]]$trip, crop = TRUE)
+  tilesLayer(osm)
+  plot(trips[[1]]$trip, col = 1:100, add = TRUE)
+  points(com[1101:1200, 3:4], pch = 20, col = "red", cex = 0.5)
+}
+
+
+# Get a trip with a SpatialPointsDataFrame
+trips <- osrmTripGeom(loc = src)
+
+# Map
+if(require("cartography")){
+  osm <- getTiles(spdf = trips[[1]]$trip, crop = TRUE)
+  tilesLayer(osm)
+  plot(src, pch = 20, col = "red", cex = 2, add = TRUE)
+  plot(trips[[1]]$trip, add = TRUE, lwd=2)
+}
+}
 }
 \seealso{
 \link{osrmViarouteGeom}
