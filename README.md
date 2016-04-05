@@ -110,7 +110,7 @@ if(require("cartography")){
 
 ![](http://rgeomatic.hypotheses.org/files/2016/04/trips.png)
 
-### `osrmTripGeom`
+### `osrmIsochrone`
 
 ```r
 library(osrm)
