@@ -10,7 +10,7 @@ An interface between R and the OSRM API. OSRM is a routing
 service based on OpenStreetMap data. See <http://project-osrm.org/> for more
 information. A public API exists but one can run its own instance. This package
 allows to compute distances (travel time and kilometric distance) between points
-and travel time matrices..\cr
+and travel time matrices.\cr
 This package relies on the usage of a running OSRM service (tested with 
 version 4.9.0 of the OSRM API).\cr
 By default this service is the OSRM public API (http://router.project-osrm.org/).
