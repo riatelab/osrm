@@ -18,11 +18,11 @@ spToDf <- function(x){
   # transform to WGS84
   x <- sp::spTransform(x = x, CRSobj = "+init=epsg:4326")
   # this function takes a SpatialDataFrame and transforms it into a dataframe
-  x <-  data.frame(id = row.names(x), 
-                   lat = sp::coordinates(x)[,2], 
-                   lon = sp::coordinates(x)[,1], 
-                   stringsAsFactors = FALSE)
-  return(list(loc = x, id = "id", lat = "lat", lon = "lon"))
+  x <- data.frame(id = row.names(x), 
+                  lon = sp::coordinates(x)[,1], 
+                  lat = sp::coordinates(x)[,2], 
+                  stringsAsFactors = FALSE)
+  return(x)
 }
 
 

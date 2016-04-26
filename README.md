@@ -2,16 +2,17 @@
 
 [![Version](http://www.r-pkg.org/badges/version/osrm)](https://CRAN.R-project.org/package=osrm/)
 ![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen)
-[![Travis-CI Build Status](https://travis-ci.org/rCarto/osrm.svg?branch=master)](https://travis-ci.org/rCarto/osrm)  
+[![Travis-CI Build Status](https://travis-ci.org/rCarto/osrm.svg?branch=master)](https://travis-ci.org/rCarto/osrm)
+![](https://img.shields.io/badge/license-GPL--3-brightgreen.svg?style=flat)  
 
 ***Interface Between R and the OpenStreetMap-Based Routing Service [OSRM](http://project-osrm.org/)***
 
-![](http://f.hypotheses.org/wp-content/blogs.dir/1909/files/2015/10/route1.png)
+![](https://f.hypotheses.org/wp-content/blogs.dir/1909/files/2016/02/Rroads.png)
 
 ## Description
 OSRM is a routing service based on OpenStreetMap data. See <http://project-osrm.org/> for more information. A public API exists but one can run its own instance. This package allows to compute distance (travel time and kilometric distance) between points and travel time matrices.
 
-This package relies on the usage of a running OSRM service (tested with version 4.9.0 of the OSRM API). 
+This package relies on the usage of a running OSRM service (tested with version 5.0.0 of the OSRM API). 
 By default this service is the OSRM public API (http://router.project-osrm.org/). To change the OSRM server, change the osrm.server option:
 `options(osrm.server = "http://address.of.the.server/")`
 
@@ -37,17 +38,17 @@ library(osrm)
 # Load data
 data("com")
 # Travel time matrix
-distCom <- osrmTable(loc = com[1:50, c("comm_id","lat","lon")])
+distCom <- osrmTable(loc = com[1:50, c("comm_id","lon","lat")])
 # First 5 rows and columns
-distCom$distance_table[1:5,1:5]
+distCom$durattion[1:5,1:5]
 ```
 <table border=1>
 <tr> <th>  </th> <th> FR3162292119 </th> <th> FR3162212035 </th> <th> BE241011 </th> <th> BE241024 </th> <th> FR3162270520 </th>  </tr>
-<tr> <td align="right"> FR3162292119 </td> <td align="right"> 0.00 </td> <td align="right"> 5.50 </td> <td align="right"> 95.10 </td> <td align="right"> 91.60 </td> <td align="right"> 7.50 </td> </tr>
-<tr> <td align="right"> FR3162212035 </td> <td align="right"> 4.90 </td> <td align="right"> 0.00 </td> <td align="right"> 98.30 </td> <td align="right"> 94.70 </td> <td align="right"> 7.10 </td> </tr>
-<tr> <td align="right"> BE241011 </td> <td align="right"> 94.20 </td> <td align="right"> 97.30 </td> <td align="right"> 0.00 </td> <td align="right"> 10.40 </td> <td align="right"> 93.50 </td> </tr>
-<tr> <td align="right"> BE241024 </td> <td align="right"> 90.80 </td> <td align="right"> 93.80 </td> <td align="right"> 10.40 </td> <td align="right"> 0.00 </td> <td align="right"> 90.00 </td> </tr>
-<tr> <td align="right"> FR3162270520 </td> <td align="right"> 7.00 </td> <td align="right"> 6.90 </td> <td align="right"> 95.00 </td> <td align="right"> 91.50 </td> <td align="right"> 0.00 </td> </tr>
+  <tr> <td align="right"> FR3162292119 </td> <td align="right"> 0.0 </td> <td align="right"> 5.4 </td> <td align="right"> 95.1 </td> <td align="right"> 91.6 </td> <td align="right"> 7.5 </td> </tr>
+  <tr> <td align="right"> FR3162212035 </td> <td align="right"> 4.9 </td> <td align="right"> 0.0 </td> <td align="right"> 98.3 </td> <td align="right"> 94.7 </td> <td align="right"> 7.1 </td> </tr>
+  <tr> <td align="right"> BE241011 </td> <td align="right"> 94.2 </td> <td align="right"> 97.3 </td> <td align="right"> 0.0 </td> <td align="right"> 10.4 </td> <td align="right"> 93.5 </td> </tr>
+  <tr> <td align="right"> BE241024 </td> <td align="right"> 90.8 </td> <td align="right"> 93.8 </td> <td align="right"> 10.4 </td> <td align="right"> 0.0 </td> <td align="right"> 90.0 </td> </tr>
+  <tr> <td align="right"> FR3162270520 </td> <td align="right"> 7.0 </td> <td align="right"> 6.9 </td> <td align="right"> 93.5 </td> <td align="right"> 90.0 </td> <td align="right"> 0.0 </td> </tr>
 </table>
 
 
@@ -111,7 +112,7 @@ if(require("cartography")){
 ![](http://rgeomatic.hypotheses.org/files/2016/04/trips.png)
 
 ### `osrmIsochrone`
-  c
+
 ```r
 library(osrm)
 # Load data
