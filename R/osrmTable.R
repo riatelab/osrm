@@ -64,11 +64,14 @@ osrmTable <- function(loc, src = NULL, dst = NULL){
       }else{
         names(loc) <- c("id", "lon", "lat")
       }
+      
       # Check query size
       osrmLimit(nSrc = nrow(loc), nDst = nrow(loc))
+      
       # Format
       src <- loc
       dst <- loc
+      
       # Build the query
       req <- tableLoc(loc = loc)
     }else{
@@ -84,8 +87,10 @@ osrmTable <- function(loc, src = NULL, dst = NULL){
       }else{
         names(dst) <- c("id", "lon", "lat")
       }
+      
       # Check query size
       osrmLimit(nSrc = nrow(src), nDst = nrow(dst))
+      
       # Build the query
       loc <- rbind(src, dst)
       req <- paste(tableLoc(loc = loc),
@@ -100,13 +105,17 @@ osrmTable <- function(loc, src = NULL, dst = NULL){
                             useragent = "'osrm' R package")
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
+    
     # Check results
     e <- simpleError(res$message)
     if(res$code != "Ok"){stop(e)}
+    
     # get the distance table
     durations <- distTableFormat(res = res, src = src, dst = dst)
+    
     # get the coordinates
     coords <- coordFormat(res = res, src = src, dst = dst)
+    
     return(list(durations = durations, 
                 sources = coords$sources, 
                 destinations = coords$destinations))

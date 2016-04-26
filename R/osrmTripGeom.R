@@ -1,4 +1,4 @@
-#' @name osrmTripGeom
+#' @name osrmTrip
 #' @title Get the Travel Geometry Between Multiple Unordered Points
 #' @description Build and send an OSRM API query to get the shortest travel geometry between multiple points.
 #' This function interfaces the \emph{trip} OSRM service. 
@@ -16,7 +16,7 @@
 #' \item{summary}{A list with 4 components: startingPoint, endingPoint, time (in minutes)
 #' and distance (in kilometers) or a message if a point is not connected to any trip}
 #' }
-#' @seealso \link{osrmViarouteGeom}
+#' @seealso \link{osrmRoute}
 #' @export
 #' @examples
 #' \dontrun{
@@ -24,7 +24,7 @@
 #' data("com")
 #' 
 #' # Get a trip with a id lat lon data.frame
-#' trips <- osrmTripGeom(loc = com[1101:1200, c(1,4,3)])
+#' trips <- osrmTrip(loc = com[1101:1200, c(1,4,3)])
 #' 
 #' # Display the trip
 #' plot(trips[[1]]$trip, col = 1:100)
@@ -40,7 +40,7 @@
 #' 
 #' 
 #' # Get a trip with a SpatialPointsDataFrame
-#' trips <- osrmTripGeom(loc = src)
+#' trips <- osrmTrip(loc = src)
 #' 
 #' # Map
 #' if(require("cartography")){
@@ -50,7 +50,7 @@
 #'   plot(trips[[1]]$trip, add = TRUE, lwd=2)
 #' }
 #' }
-osrmTripGeom <- function(loc, sp = TRUE){
+osrmTrip <- function(loc, sp = TRUE){
   tryCatch({
     oprj <- NA
     if(testSp(loc)){
@@ -162,7 +162,7 @@ osrmTripGeom <- function(loc, sp = TRUE){
       }
     }
     return(trips)
-  }, error=function(e) { message("osrmTripGeom function returns an error: \n", e)})
+  }, error=function(e) { message("osrmTrip function returns an error: \n", e)})
         return(NULL)
 }
 

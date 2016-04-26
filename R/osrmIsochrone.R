@@ -62,15 +62,17 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7)){
   if(!'package:raster' %in% search()){
     attachNamespace('raster')
   }
-
+  breaks = seq(from = 0,to = 60, length.out = 7)
+  loc = c(5.936036, 49.24882)
+  
   oprj <- NA
   if(testSp(loc)){
     oprj <- sp::proj4string(loc)
     loc <- loc[1,]
     loc <- sp::spTransform(x = loc, CRSobj = "+init=epsg:3857")
   }else{
-    loc <- data.frame(lat = loc[1], lon = loc[2])
-    loc <- sp::SpatialPointsDataFrame(coords = loc[,2:1], 
+    loc <- data.frame(lon = loc[1], lat = loc[2])
+    loc <- sp::SpatialPointsDataFrame(coords = loc[,1:2], 
                                       data = loc, 
                                       proj4string = sp::CRS("+init=epsg:4326"))
     loc <- sp::spTransform(x = loc, CRSobj = sp::CRS( "+init=epsg:3857"))
@@ -83,14 +85,14 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7)){
   res <- 30
   sgrid <- rgrid(loc = sp::coordinates(loc), dmax = dmax, res = res)
   
+  row.names(loc) <- "0"
   dmat <- osrmTable(src = loc, dst = sgrid)
-  
 
-  rpt <- sp::SpatialPointsDataFrame(coords = dmat$destination_coordinates[ , c(2, 1)],
-                                    data = data.frame(dmat$destination_coordinates),
+  rpt <- sp::SpatialPointsDataFrame(coords = dmat$destinations[ , c(1, 2)],
+                                    data = data.frame(dmat$destinations),
                                     proj4string = sp::CRS("+init=epsg:4326"))
   rpt <- sp::spTransform(rpt, sp::proj4string(loc))
-  rpt$d <- as.vector(dmat$distance_table)
+  rpt$d <- as.vector(dmat$durations)
   rpt$d[is.na(rpt$d)] <- max(rpt$d, na.rm=TRUE)
   sp::gridded(sgrid) <- TRUE
   r <- raster::raster(sgrid)

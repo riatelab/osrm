@@ -20,11 +20,9 @@ By default this service is the OSRM public API (http://router.project-osrm.org/)
 
 * `osrmTable` Get travel time matrices between points.
 
-* `osrmViaRoute` Get travel time and travel distance between two points.
+* `osrmRoute` Get the shortest path between two points.
 
-* `osrmViaRouteGeom` Get the travel geometry between two points.
-
-* `osrmTripGeom` Get the travel geometry between multiple unordered points.
+* `osrmTrip` Get the travel geometry between multiple unordered points.
 
 * `osrmIsochrone` Get a SpatialPolygonsDataFrame of isochrones.
 
@@ -52,26 +50,7 @@ distCom$durattion[1:5,1:5]
 </table>
 
 
-### `osrmViaRoute`
-
-```r
-library(osrm)
-# Load data
-data("com")
-# Time and Distance between 2 points
-route <- osrmViaroute(src = com[1,c("lat","lon")],
-                      dst = com[15,c("lat","lon")] )
-# Time travel distance (min & km)
-route
-```
-<table border=1>
-<tr> <th>  </th> <th> route </th>  </tr>
-<tr> <td align="right"> total_time </td> <td align="right"> 35.75 </td> </tr>
-<tr> <td align="right"> total_distance </td> <td align="right"> 38.04 </td> </tr>
-</table>
-
-
-### `osrmViaRouteGeom`
+### `osrmRoute`
 
 ```r
 library(osrm)
@@ -79,17 +58,17 @@ library(osrm)
 data("com")
 
 # Travel path between SpatialPointsDataFrame
-routeGeom <- osrmViarouteGeom(src = src[1,], 
-                              dst = dst[1,], 
-                              sp = TRUE)
-plot(routeGeom, lty = 2, lwd = 2)
+route <- osrmRoute(src = src[1,], 
+                   dst = dst[1,],
+                   sp = TRUE)
+plot(route, lty = 2, lwd = 2)
 plot(src[1,], pch = 20, col = "green", cex = 3, add = TRUE)             
 plot(dst[1,], pch = 20, col = "red", cex = 3, add = TRUE) 
 ```
 ![](http://rgeomatic.hypotheses.org/files/2016/04/viageom.png)
 
 
-### `osrmTripGeom`
+### `osrmTrip`
 
 ```r
 library(osrm)
@@ -152,12 +131,4 @@ devtools::install_github("rCarto/osrm")
 ```{r}
 install.packages("osrm")
 ```
-
-
-
-
-
-
-
-
 
