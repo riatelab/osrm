@@ -1,14 +1,20 @@
-# osrm version 2.1.0 (Release date: 2016-03-24)
+# osrm version 3.0.0 (Release date: 2016-0X-XX)
+
+This is a major release. Changes have been made to reflect the evolution of the OSRM routing service/engine.
+The backward compatibility is not ensured. The osrm package works with the version 5.0.0 of the OSRM API.
+
 
 ## Major changes:
+* osrmViaroute is suppressed, use osrmRoute with `overview = FALSE` instead.
+* osrmViarouteGeom is replaced by osrmRoute. osrmRoute offers simplified or detailed (full) route geometry via `overview` parameter. 
 * Functions now accept sp objects and data.frames
-* Add osrmIsochrone
-* Add osrmTripGeom
-
+* Add osrmIsochrone. This function computes a SpatialPolygonsDataFrame of isochrones.
+* Add osrmTrip. This function gets the travel geometry between multiple unordered points.
+* Under the hood: some function now use google encoded polylines. 
 
 ## Minor changes
 * Better output for osrmViaRouteGeom (src, dst, time and km)
-* Default fields in osrmTable if input is data frame
+* Default fields in osrmTable if input is data frame.
 
 
 

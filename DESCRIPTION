@@ -16,13 +16,14 @@ Imports:
     jsonlite,
     sp,
     RCurl,
-    utils
+    utils, 
+    bitops,
+    rgeos,
+    methods, 
+    raster 
 Depends:
     R (>= 2.10)
 Suggests:
-    rgeos,
-    methods, 
-    raster, 
     cartography
 URL: https://github.com/rCarto/osrm
 BugReports: https://github.com/rCarto/osrm/issues

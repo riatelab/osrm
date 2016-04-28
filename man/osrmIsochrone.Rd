@@ -7,7 +7,7 @@
 osrmIsochrone(loc, breaks = seq(from = 0, to = 60, length.out = 7))
 }
 \arguments{
-\item{loc}{a numeric vector of latitude and longitude (WGS84) or a 
+\item{loc}{a numeric vector of longitude and latitude (WGS84) or a 
 SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.}
 
 \item{breaks}{a numeric vector of isochrone values (in minutes).}
@@ -30,9 +30,8 @@ This function uses raster and rgeos packages.
 # Load data
 data("com")
 
-# Get isochones with lat/lon coordinates, default breaks
-iso <- osrmIsochrone(loc = c(49.24882, 5.936036))
-iso@proj4string
+# Get isochones with lon/lat coordinates, default breaks
+iso <- osrmIsochrone(loc = c(5.936036, 49.24882))
 plot(iso)
 points(5.936036, 49.24882, pch = 20, col = "red")
 
@@ -51,9 +50,7 @@ if(require("cartography")){
 }
 
 # Get isochones with a SpatialPointsDataFrame, custom breaks
-iso2 <- osrmIsochrone(loc = src[6,], breaks = seq(from = 0,to = 30, by = 5))
-plot(iso2)
-plot(src[6,], add = TRUE, pch = 20, col = "red") 
+iso2 <- osrmIsochrone(loc = src[7,], breaks = seq(from = 0,to = 30, by = 5))
 
 # Map
 if(require("cartography")){
@@ -68,5 +65,8 @@ if(require("cartography")){
                           add = TRUE)
 }
 }
+}
+\seealso{
+\link{osrmTable}
 }
 

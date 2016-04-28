@@ -1,4 +1,4 @@
-
+## All Functions Utils
 testSp <- function(x){
   if (class(x) %in% c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame")){
     if (is.na(sp::proj4string(x))){
@@ -19,13 +19,15 @@ spToDf <- function(x){
   x <- sp::spTransform(x = x, CRSobj = "+init=epsg:4326")
   # this function takes a SpatialDataFrame and transforms it into a dataframe
   x <- data.frame(id = row.names(x), 
-                  lon = sp::coordinates(x)[,1], 
-                  lat = sp::coordinates(x)[,2], 
+                  lon = round(sp::coordinates(x)[,1],6), 
+                  lat = round(sp::coordinates(x)[,2],6), 
                   stringsAsFactors = FALSE)
   return(x)
 }
 
 
+
+## osrmIsochrone Utils
 rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
   if (!requireNamespace("rgeos", quietly = TRUE)) {
     stop("'rgeos' package needed for this function to work. Please install it.",
@@ -200,3 +202,110 @@ rgrid <- function(loc, dmax, res){
                                       proj4string = sp::CRS("+init=epsg:3857"))
   return(sgrid)
 }
+
+
+
+## Encoding Utils
+enc_coord <- function(coord){
+  output <- ""
+  pt <- round(coord * 1e5, digits = 0) * 2
+  if(coord < 0) pt <- bitops::bitFlip(pt)
+  while(pt >= 0x20){
+    output <- paste0(output, 
+                     intToUtf8(bitops::bitOr(0x20, bitops::bitAnd(pt, 0x1f)) + 63))
+    pt <- bitops::bitShiftR(pt, 5)
+  }
+  return(paste0(output, intToUtf8(pt + 63)))
+}
+
+encodeToPolyline <- function(df_coords){
+  dims <- dim(df_coords)[1]
+  output_string <- paste0(enc_coord(df_coords[1, 1]), enc_coord(df_coords[1, 2]))
+  for(i in seq(2, dims)){
+    output_string <- paste0(output_string,
+                            enc_coord(df_coords[i, 1] - df_coords[i-1, 1]),
+                            enc_coord(df_coords[i, 2] - df_coords[i-1, 2]))
+  }
+  return(output_string)
+}
+
+decodeFromPolyline <- function(encoded_polyline, factor = 1e5) {
+  if(class(encoded_polyline) != "character") stop("Wrong encoded string format")
+  
+  len <- nchar(encoded_polyline)
+  encoded_polyline <- strsplit(encoded_polyline, '')[[1]]
+  
+  idx <- 1
+  res_idx <- 0
+  lat = lon = 0
+  changes <- list(NULL, NULL)
+  pairs_points <- matrix(nrow = 0, ncol = 2)
+  
+  while(idx <= len) {
+    for(u in c(1, 2)){
+      shift = result = 0
+      while(TRUE){
+        byte <- as.integer(charToRaw(encoded_polyline[idx])) - 63
+        result <- bitops::bitOr(result,
+                                bitops::bitShiftL(bitops::bitAnd(byte, 0x1f), shift))
+        idx <- idx + 1
+        shift <- shift + 5
+        if(byte < 0x20) break
+      }
+      changes[u] <- ifelse(bitops::bitAnd(result, 1),
+                           -(result - (bitops::bitShiftR(result, 1))),
+                           bitops::bitShiftR(result, 1))
+    }
+    lat <- lat + changes[[1]]
+    lon <- lon + changes[[2]]
+    res_idx <- res_idx + 1
+    pairs_points <- rbind(pairs_points, c(lat, lon)/factor)
+  }
+  coords <- data.frame(pairs_points)
+  names(coords) <- c('lat', 'lon')
+  return(coords)
+}
+
+
+## osrmTable Utils
+distTableFormat <- function(res, src, dst){
+  # extract distance table
+  mat <- res$durations
+  # From sec to minutes
+  mat <- round(mat/(60), 1)
+  # NA management
+  mat[mat == 357913.94] <- NA
+  # col and row names management
+  dimnames(mat) <- list(src$id, dst$id)
+  return(mat)
+}  
+
+coordFormat <- function(res, src, dst){
+  sources <- data.frame(matrix(unlist(res$sources$location, 
+                                      use.names = T), 
+                               ncol = 2, byrow = T, 
+                               dimnames = list(src$id, c("lon", "lat"))))
+  destinations <- data.frame(matrix(unlist(res$destinations$location, 
+                                           use.names = T), 
+                                    ncol = 2, byrow = T, 
+                                    dimnames = list(dst$id, c("lon", "lat"))))
+  return(list(sources = sources, destinations = destinations)
+  )
+}
+
+tableLoc <- function(loc){
+  # Query build
+  tab <- paste(getOption("osrm.server"), "table/v1/driving/polyline(", sep = "")
+  tab <- paste0(tab, encodeToPolyline(loc[,c("lat","lon")]),")")
+  return(tab)
+}
+
+osrmLimit <- function(nSrc, nDst){
+  e <- simpleError("The public OSRM API does not allow results with 
+  a number of durations higher than 10000")
+  if(getOption("osrm.server") == "http://router.project-osrm.org/" & (nSrc*nDst) > 10000){
+    stop(e)
+  }
+}
+
+

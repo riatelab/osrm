@@ -26,6 +26,7 @@
 #' more distances are allowed in results 
 #' (i.e. the "max-table-size" argument, Max. locations supported in distance 
 #' table query).
+#' @seealso \link{osrmIsochrone}
 #' @examples
 #' \dontrun{
 #' # Load data
@@ -93,6 +94,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL){
       
       # Build the query
       loc <- rbind(src, dst)
+      
       req <- paste(tableLoc(loc = loc),
                    "?sources=", 
                    paste(0:(nrow(src)-1), collapse = ";"), 
@@ -100,9 +102,16 @@ osrmTable <- function(loc, src = NULL, dst = NULL){
                    paste(nrow(src):(nrow(loc)-1), collapse = ";"), 
                    sep="")
     }
+
     # Get the result
     resRaw <- RCurl::getURL(utils::URLencode(req), 
                             useragent = "'osrm' R package")
+    # Error if URL is too long
+    e <- simpleError("The URL sent to the OSRM public API is too long. Enter less 
+         sources or destinations.")
+    if(getOption("osrm.server") == "http://router.project-osrm.org/" & resRaw==""){
+      stop(e)
+    }
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
     
@@ -123,48 +132,3 @@ osrmTable <- function(loc, src = NULL, dst = NULL){
   return(NULL)
 }
 
-distTableFormat <- function(res, src, dst){
-  # extract distance table
-  mat <- res$durations
-  # From sec to minutes
-  mat <- round(mat/(60), 1)
-  # NA management
-  mat[mat == 357913.94] <- NA
-  # col and row names management
-  dimnames(mat) <- list(src$id, dst$id)
-  return(mat)
-}  
-
-coordFormat <- function(res, src, dst){
-  sources <- data.frame(matrix(unlist(res$sources$location, 
-                                      use.names = T), 
-                               ncol = 2, byrow = T, 
-                               dimnames = list(src$id, c("lon", "lat"))))
-  destinations <- data.frame(matrix(unlist(res$destinations$location, 
-                                           use.names = T), 
-                                    ncol = 2, byrow = T, 
-                                    dimnames = list(dst$id, c("lon", "lat"))))
-  return(list(sources = sources, destinations = destinations)
-  )
-}
-
-
-tableLoc <- function(loc){
-  # Query build
-  tab <- paste(getOption("osrm.server"), "table/v1/driving/", sep = "")
-  n <- nrow(loc)
-  for (i in 1:n){
-    tab <- paste(tab, loc[i, "lon"], ",", loc[i, "lat"], ";", sep="")
-  }
-  tab <- substr(x = tab, start = 1, stop = (nchar(tab)-1))
-  return(tab)
-}
-
-
-osrmLimit <- function(nSrc, nDst){
-  e <- simpleError("The public OSRM API does not allow results with 
-  a number of distances higher than 10000")
-  if(getOption("osrm.server") == "http://router.project-osrm.org/" & (nSrc*nDst) > 10000){
-    stop(e)
-  }
-}

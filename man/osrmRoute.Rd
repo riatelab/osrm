@@ -7,15 +7,15 @@
 osrmRoute(src, dst, overview = "simplified", sp = FALSE)
 }
 \arguments{
-\item{src}{a numeric vector of identifier, latitude and longitude (WGS84), a 
+\item{src}{a numeric vector of identifier, longitude and latitude (WGS84), a 
 SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine 
 point.}
 
-\item{dst}{a numeric vector of identifier, latitude and longitude (WGS84), a 
+\item{dst}{a numeric vector of identifier, longitude and latitude (WGS84), a 
 SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the destination 
 point.}
 
-\item{overview}{"full", "simplified" or FALSE. Add geometry either full, simplified 
+\item{overview}{"full", "simplified" or FALSE. Add geometry either full (detailed), simplified 
 according to highest zoom level it could be display on, or not at all.}
 
 \item{sp}{if sp is TRUE the function returns a SpatialLinesDataFrame.}

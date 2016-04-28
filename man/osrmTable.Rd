@@ -73,4 +73,7 @@ distCom2 <- osrmTable(src = src, dst = dst)
 distCom2$durations[1:5,1:5]
 }
 }
+\seealso{
+\link{osrmIsochrone}
+}
 

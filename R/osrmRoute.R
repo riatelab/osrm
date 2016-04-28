@@ -2,13 +2,13 @@
 #' @title Get the Shortest Path Between Two Points
 #' @description Build and send an OSRM API query to get the travel geometry between two points.
 #' This function interfaces the \emph{viaroute} OSRM service. 
-#' @param src a numeric vector of identifier, latitude and longitude (WGS84), a 
+#' @param src a numeric vector of identifier, longitude and latitude (WGS84), a 
 #' SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine 
 #' point.
-#' @param dst a numeric vector of identifier, latitude and longitude (WGS84), a 
+#' @param dst a numeric vector of identifier, longitude and latitude (WGS84), a 
 #' SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the destination 
 #' point.
-#' @param overview "full", "simplified" or FALSE. Add geometry either full, simplified 
+#' @param overview "full", "simplified" or FALSE. Add geometry either full (detailed), simplified 
 #' according to highest zoom level it could be display on, or not at all. 
 #' @param sp if sp is TRUE the function returns a SpatialLinesDataFrame.
 #' @return If sp is FALSE, a data frame is returned. It contains the longitudes and latitudes of 
@@ -51,6 +51,12 @@
 #' @export
 osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
   tryCatch({
+    
+    # src = com[1, c("comm_id", "lon","lat")]
+    # dst = com[2, c("comm_id", "lon","lat")]
+    # sp=TRUE
+    # overview = "simplified"
+    
     oprj <- NA
     if(testSp(src)){
       oprj <- sp::proj4string(src)
@@ -63,21 +69,25 @@ osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
       x <- spToDf(x = dst)
       dst <- c(x[1,1],x[1,2], x[1,3])
     }
-
+    
     # build the query
     req <- paste(getOption("osrm.server"), 
                  "route/v1/driving/", 
                  src[2], ",", src[3], 
                  ";",
                  dst[2],",",dst[3], 
-                 "?alternatives=false&geometries=geojson&steps=false&overview=",
+                 "?alternatives=false&geometries=polyline&steps=false&overview=",
                  tolower(overview),
                  sep="")
-
+    
     # Sending the query
     resRaw <- RCurl::getURL(utils::URLencode(req), 
                             useragent = "'osrm' R package")
-    
+    # Deal with \\u stuff
+    vres <- jsonlite::validate(resRaw)[1]
+    if(!vres){
+      resRaw <- gsub(pattern = "[\\]", replacement = "zorglub", x = resRaw)
+    }
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
     
@@ -89,10 +99,12 @@ osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
       return(round(c(duration = res$routes$duration/60, 
                      distance = res$routes$distance/1000), 2))
     }
-    
+    if(!vres){
+      res$routes$geometry <- gsub(pattern = "zorglub", replacement = "\\\\", 
+                                  x = res$routes$geometry)
+    }
     # Coordinates of the line
-    geodf <- data.frame(res$routes$geometry$coordinates)
-    names(geodf) <-  c("lon", "lat")
+    geodf <- decodeFromPolyline(res$routes$geometry)[,c(2,1)]
     
     # Convert to SpatialLinesDataFrame
     if (sp == TRUE){
@@ -103,9 +115,7 @@ osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
       df <- data.frame(src = src[1], dst = dst[1], 
                        duration = res$routes$legs[[1]]$duration/60,
                        distance = res$routes$legs[[1]]$distance/1000)
-      geodf <- sp::SpatialLinesDataFrame(routeSL, 
-                                         data = df, 
-                                         match.ID = FALSE)   
+      geodf <- sp::SpatialLinesDataFrame(routeSL, data = df, match.ID = FALSE)   
       row.names(geodf) <- paste(src[1], dst[1],sep="_")
       if (!is.na(oprj)){
         geodf <- sp::spTransform(geodf, oprj)
@@ -115,6 +125,5 @@ osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
   }, error=function(e) {message("osrmRoute function returns an error: \n", e)})
   return(NULL)
 }
-
 
 

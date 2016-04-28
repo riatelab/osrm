@@ -2,7 +2,7 @@
 #' @title Get a SpatialPolygonsDataFrame of Isochrones
 #' @description Based on \code{\link{osrmTable}}, this function buids a 
 #' SpatialPolygonsDataFrame of isochrones. 
-#' @param loc a numeric vector of latitude and longitude (WGS84) or a 
+#' @param loc a numeric vector of longitude and latitude (WGS84) or a 
 #' SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.
 #' @param breaks a numeric vector of isochrone values (in minutes).
 #' @return A SpatialPolygonsDateFrame of isochrones is returned. 
@@ -10,15 +10,15 @@
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
 #' center (central values of classes).
 #' @note This function uses raster and rgeos packages.
+#' @seealso \link{osrmTable}
 #' @export
 #' @examples
 #' \dontrun{
 #' # Load data
 #' data("com")
 #' 
-#' # Get isochones with lat/lon coordinates, default breaks
-#' iso <- osrmIsochrone(loc = c(49.24882, 5.936036))
-#' iso@proj4string
+#' # Get isochones with lon/lat coordinates, default breaks
+#' iso <- osrmIsochrone(loc = c(5.936036, 49.24882))
 #' plot(iso)
 #' points(5.936036, 49.24882, pch = 20, col = "red")
 #' 
@@ -37,9 +37,7 @@
 #' }
 #' 
 #' # Get isochones with a SpatialPointsDataFrame, custom breaks
-#' iso2 <- osrmIsochrone(loc = src[6,], breaks = seq(from = 0,to = 30, by = 5))
-#' plot(iso2)
-#' plot(src[6,], add = TRUE, pch = 20, col = "red") 
+#' iso2 <- osrmIsochrone(loc = src[7,], breaks = seq(from = 0,to = 30, by = 5))
 #' 
 #' # Map
 #' if(require("cartography")){
@@ -62,9 +60,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7)){
   if(!'package:raster' %in% search()){
     attachNamespace('raster')
   }
-  breaks = seq(from = 0,to = 60, length.out = 7)
-  loc = c(5.936036, 49.24882)
-  
+
   oprj <- NA
   if(testSp(loc)){
     oprj <- sp::proj4string(loc)
@@ -86,13 +82,24 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7)){
   sgrid <- rgrid(loc = sp::coordinates(loc), dmax = dmax, res = res)
   
   row.names(loc) <- "0"
-  dmat <- osrmTable(src = loc, dst = sgrid)
-
-  rpt <- sp::SpatialPointsDataFrame(coords = dmat$destinations[ , c(1, 2)],
-                                    data = data.frame(dmat$destinations),
+  
+  if(getOption("osrm.server") != "http://router.project-osrm.org/"){
+    dmat <- osrmTable(src = loc, dst = sgrid)
+    durations <- dmat$durations
+    destinations <- dmat$destinations
+  }else{
+    dmat <- osrmTable(src = loc, dst = sgrid[1:500,])
+    Sys.sleep(1)
+    dmat1 <- osrmTable(src = loc, dst = sgrid[501:900,])
+    durations <- cbind(dmat$durations, dmat1$durations)
+    destinations <- rbind(dmat$destinations, dmat1$destinations)
+  }
+  
+  rpt <- sp::SpatialPointsDataFrame(coords = destinations[ , c(1, 2)],
+                                    data = data.frame(destinations),
                                     proj4string = sp::CRS("+init=epsg:4326"))
   rpt <- sp::spTransform(rpt, sp::proj4string(loc))
-  rpt$d <- as.vector(dmat$durations)
+  rpt$d <- as.vector(durations)
   rpt$d[is.na(rpt$d)] <- max(rpt$d, na.rm=TRUE)
   sp::gridded(sgrid) <- TRUE
   r <- raster::raster(sgrid)
@@ -110,6 +117,5 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7)){
   }else{
     isolines <- sp::spTransform(x = isolines, CRSobj = "+init=epsg:4326")
   }
-  
   return(isolines)
 }
