@@ -4,11 +4,14 @@
 \alias{osrmTrip}
 \title{Get the Travel Geometry Between Multiple Unordered Points}
 \usage{
-osrmTrip(loc, sp = TRUE)
+osrmTrip(loc, overview = "simplified", sp = TRUE)
 }
 \arguments{
 \item{loc}{a SpatialPointsDataFrame of the waypoints, or a data.frame with points as rows
-and 3 columns: id, lat and lon (WGS84 decimal degrees).}
+and 3 columns: identifier, longitudes and latitudes (WGS84 decimal degrees).}
+
+\item{overview}{"full", "simplified" or FALSE. Add geometry either full (detailed), simplified 
+according to highest zoom level it could be display on, or not at all.}
 
 \item{sp}{if sp is TRUE the function returns a SpatialLinesDataFrame.}
 }

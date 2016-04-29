@@ -26,7 +26,6 @@
 #' # Travel path between points
 #' route <- osrmRoute(src = com[1, c("comm_id", "lon","lat")],
 #'                    dst = com[15, c("comm_id", "lon","lat")])
-#' 
 #' # Display the path
 #' plot(com[c(1,15),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
 #' points(route[,1:2], type = "l", lty = 2)
@@ -36,16 +35,13 @@
 #' route2 <- osrmRoute(src=c("Bethune", 2.64781, 50.5199),
 #'                     dst = c("Cassel", 2.486388, 50.80016),
 #'                     sp = TRUE)
-#' class(route2)
 #' # Display the path
 #' plot(com[c(1,16),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
 #' plot(route2, lty = 2, add=TRUE)
 #' text(com[c(1,16),3:4], labels = com[c(1,16),2], pos = 2)
 #' 
-#' # Inputs are SpatialPointsDataFrame
-#' route3 <- osrmRoute(src = src[1,],
-#'                     dst = dst[1,],
-#'                     sp = TRUE)
+#' # Input is SpatialPointsDataFrames
+#' route3 <- osrmRoute(src = src[1,], dst = dst[1,], sp = TRUE)
 #' route3@data
 #' }
 #' @export

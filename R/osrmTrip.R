@@ -3,15 +3,16 @@
 #' @description Build and send an OSRM API query to get the shortest travel geometry between multiple points.
 #' This function interfaces the \emph{trip} OSRM service. 
 #' @param loc a SpatialPointsDataFrame of the waypoints, or a data.frame with points as rows
-#' and 3 columns: id, lat and lon (WGS84 decimal degrees).
-#' @param sp if sp is TRUE the function returns a SpatialLinesDataFrame.
-#' @details As stated in the osrm APi, if the input coordinates can not be joined by a single trip 
+#' and 3 columns: identifier, longitudes and latitudes (WGS84 decimal degrees).
+#' @param overview "full", "simplified" or FALSE. Add geometry either full (detailed), simplified 
+#' according to highest zoom level it could be display on, or not at all. 
+#' @details As stated in the OSRM API, if input coordinates can not be joined by a single trip 
 #' (e.g. the coordinates are on several disconnecte islands) multiple trips for 
 #' each connected component are returned.
 #' @return A list of connected components. Each component contains:
 #' @return \describe{
-#' \item{trip}{A data.frame with the points lat/long (WGS84) and the step they're 
-#' part of or if sp is TRUE, a SpatialLinesDataFrame (loc's CRS if there's one, WGS84 else),
+#' \item{trip}{A data.frame with the points lat/long (WGS84) and the step they are 
+#' part of or, if sp is TRUE, a SpatialLinesDataFrame (loc's CRS if there is one, WGS84 else),
 #' containing a line for each step of the trip.}
 #' \item{summary}{A list with 4 components: startingPoint, endingPoint, time (in minutes)
 #' and distance (in kilometers) or a message if a point is not connected to any trip}
@@ -50,50 +51,94 @@
 #'   plot(trips[[1]]$trip, add = TRUE, lwd=2)
 #' }
 #' }
-osrmTrip <- function(loc, sp = TRUE){
+osrmTrip <- function(loc, overview = "simplified"){
   tryCatch({
+    data(com)
+    loc = com[1:100, c(1,3,4)]
+    options(osrm.server = "http://0.0.0.0:5000/")
+    overview = "full"
+    
+    
     oprj <- NA
     if(testSp(loc)){
       oprj <- sp::proj4string(loc)
-      x <- spToDf(x = loc)
-      coordsDF <- x$loc
-    } else {
-      coordsDF <- loc
+      loc <- spToDf(x = loc)
+    }else{
+      names(loc) <- c("id", "lon", "lat")
     }
-    names(coordsDF) <- c("id", "lat", "lon")
-    
-    locationsString <- paste(as.numeric(coordsDF$lat), 
-                             as.numeric(coordsDF$lon), 
-                             sep=",", collapse="&loc=")
-    
-    
     
     # build the query
     req <- paste(getOption("osrm.server"), 
-                 "trip?loc=", locationsString,
-                 "&alt=false&geometry=true&",
-                 "output=json&compression=false",
-                 sep="")
+                 "trip/v1/driving/polyline(", 
+                 encodeToPolyline(loc[,c("lat","lon")]),
+                 ")?steps=false&geometries=geojson&overview=",
+                 tolower(overview), sep="")
+    
     
     # Sending the query
-    resRaw <- RCurl::getURL(utils::URLencode(req), 
-                            useragent = "'osrm' R package")
+    ua <- "'osrm' R package"
+    resRaw <- RCurl::getURL(utils::URLencode(req), useragent = ua)
     
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
     
     # Error handling
-    e <- simpleError(res$status_message)
-    if(res$status != "200"){stop(e)}
+    e <- simpleError(res$message)
+    if(res$code != "Ok"){stop(e)}
     
     
     ntour <- dim(res$trips)[1]
     
     trips <- vector("list", ntour)
-
+    
+    
+    # 
+    # length(res$trips$legs[[1]])
+    # 
+    # res$trips$legs[[1]]$steps[[1]]$
+    nt <- 1
+    
+    waypointsg <- data.frame(res$waypoints[,c(1,5)], 
+                             matrix(unlist(res$waypoints$location), 
+                                    byrow=T, ncol=2), id = loc$id)
+    
+    
     for (nt in 1:ntour){
       # Coordinates of the line
-      geodf <- data.frame(res$trips[nt,]$route_geometry)
+      geodf <- data.frame(res$trips[nt,]$geometry$coordinates)
+      
+      if(geodf[nrow(geodf),1]!=geodf[1,1]){
+        geodf <- rbind(geodf,geodf[1,])
+      }
+      geodf$ind <- 1:nrow(geodf)
+      waypoints <- waypointsg[waypointsg$trips_index==(nt-1),]
+      geodf <- merge(geodf, waypoints, 
+                     by.x=c("X1", "X2"), by.y=c("X1","X2"), 
+                     all.x=T)
+      
+      geodf <- geodf[order(geodf$ind, decreasing = F),]
+      xx <- geodf[!is.na(geodf$waypoint_index),]
+      indexes <- c(1,(aggregate(xx$ind, by  = list(xx$waypoint_index), max)[,2]))
+      
+      wktl <- rep(NA,nrow(waypoints))
+      for(i in 1:(length(indexes)-1)){
+        wktl[i] <- paste("LINESTRING(",
+                         paste(geodf[indexes[i]:indexes[i+1],1]," ",
+                               geodf[indexes[i]:indexes[i+1],2], 
+                               sep = "", collapse=",")
+                         ,")",sep="")
+      }
+      
+      wkt <- paste("GEOMETRYCOLLECTION(", paste(wktl, collapse=","),")", sep ="")
+      sl <- rgeos::readWKT(wkt)
+      sl@proj4string <- sp::CRS("+init=epsg:4326")
+      start <- (waypoints[order(waypoints$waypoint_index, decreasing = F),"id"])
+      end <- start[c(2:length(start),1)]
+      sldf <- SpatialLinesDataFrame(sl = sl, 
+                                    data = data.frame(start,end), 
+                                    match.ID = F)
+
+      plot(sldf[4,], col=1:length(sldf), lwd = seq(10,0.1, length.out = 100))
       if (nrow(geodf)==1){
         pointsOrder <- unlist(res$trips[nt,]$permutation) + 1
         trips[[nt]] <- list(trip = NA, 
@@ -102,7 +147,7 @@ osrmTrip <- function(loc, sp = TRUE){
                                             ") is not included in any trip.",
                                             " Please check its coordinates", 
                                             sep=""))
-                            
+        
       }else{
         names(geodf) <-  c("lat", "lon")
         
@@ -163,10 +208,10 @@ osrmTrip <- function(loc, sp = TRUE){
     }
     return(trips)
   }, error=function(e) { message("osrmTrip function returns an error: \n", e)})
-        return(NULL)
+  return(NULL)
 }
 
-
+loc
 
 
 
