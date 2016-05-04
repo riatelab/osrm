@@ -9,7 +9,6 @@
 #' The data frame of the output contains four fields: 
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
 #' center (central values of classes).
-#' @note This function uses raster and rgeos packages.
 #' @seealso \link{osrmTable}
 #' @export
 #' @examples
