@@ -7,7 +7,7 @@
 osrmIsochrone(loc, breaks = seq(from = 0, to = 60, length.out = 7))
 }
 \arguments{
-\item{loc}{a numeric vector of latitude and longitude (WGS84) or a 
+\item{loc}{a numeric vector of longitude and latitude (WGS84) or a 
 SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.}
 
 \item{breaks}{a numeric vector of isochrone values (in minutes).}
@@ -22,25 +22,20 @@ center (central values of classes).
 Based on \code{\link{osrmTable}}, this function buids a 
 SpatialPolygonsDataFrame of isochrones.
 }
-\note{
-This function uses raster and rgeos packages.
-}
 \examples{
 \dontrun{
 # Load data
 data("com")
 
-# Get isochones with lat/lon coordinates, default breaks
-iso <- osrmIsochrone(loc = c(49.24882, 5.936036))
-iso@proj4string
+# Get isochones with lon/lat coordinates, default breaks
+iso <- osrmIsochrone(loc = c(5.936036, 49.24882))
 plot(iso)
 points(5.936036, 49.24882, pch = 20, col = "red")
 
 # Map
 if(require("cartography")){
-  osm <- getTiles(spdf = iso, crop = TRUE)
+  osm <- getTiles(spdf = iso, crop = TRUE, type = "osmgrayscale")
   tilesLayer(osm)
-  osm@crs
   breaks <- sort(c(unique(iso$min), max(iso$max)))
   cartography::choroLayer(spdf = iso, df = iso@data,
                           var = "center", breaks = breaks,
@@ -51,13 +46,11 @@ if(require("cartography")){
 }
 
 # Get isochones with a SpatialPointsDataFrame, custom breaks
-iso2 <- osrmIsochrone(loc = src[6,], breaks = seq(from = 0,to = 30, by = 5))
-plot(iso2)
-plot(src[6,], add = TRUE, pch = 20, col = "red") 
+iso2 <- osrmIsochrone(loc = src[7,], breaks = seq(from = 0,to = 30, by = 5))
 
 # Map
 if(require("cartography")){
-  osm2 <- getTiles(spdf = iso2, crop = TRUE)
+  osm2 <- getTiles(spdf = iso2, crop = TRUE, type = "osmgrayscale")
   tilesLayer(osm2)
   breaks2 <- sort(c(unique(iso2$min), max(iso2$max)))
   cartography::choroLayer(spdf = iso2, df = iso2@data,
@@ -68,5 +61,8 @@ if(require("cartography")){
                           add = TRUE)
 }
 }
+}
+\seealso{
+\link{osrmTable}
 }
 

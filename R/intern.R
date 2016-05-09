@@ -1,4 +1,4 @@
-
+## All Functions Utils
 testSp <- function(x){
   if (class(x) %in% c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame")){
     if (is.na(sp::proj4string(x))){
@@ -18,23 +18,18 @@ spToDf <- function(x){
   # transform to WGS84
   x <- sp::spTransform(x = x, CRSobj = "+init=epsg:4326")
   # this function takes a SpatialDataFrame and transforms it into a dataframe
-  x <-  data.frame(id = row.names(x), 
-                   lat = sp::coordinates(x)[,2], 
-                   lon = sp::coordinates(x)[,1], 
-                   stringsAsFactors = FALSE)
-  return(list(loc = x, id = "id", lat = "lat", lon = "lon"))
+  x <- data.frame(id = row.names(x), 
+                  lon = round(sp::coordinates(x)[,1],6), 
+                  lat = round(sp::coordinates(x)[,2],6), 
+                  stringsAsFactors = FALSE)
+  return(x)
 }
 
 
+
+## osrmIsochrone Utils
 rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
-  if (!requireNamespace("rgeos", quietly = TRUE)) {
-    stop("'rgeos' package needed for this function to work. Please install it.",
-         call. = FALSE)
-  }
-  if(!'package:rgeos' %in% search()){
-    attachNamespace('rgeos')
-  }
-  
+
   rmin <- raster::cellStats(r, min, na.rm = TRUE)
   rmax <- raster::cellStats(r, max, na.rm = TRUE)
   
@@ -104,10 +99,11 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
       x <- linex[[j]]@coords
       x <- sp::Polygon(coords =  x, hole = F)
       x <- sp::Polygons(srl = list(x), ID = j)
-      Plist[j] <- x
+      Plist[[j]] <- x
     }
     x <- sp::SpatialPolygons(Srl = Plist)
     x <- rgeos::union(x = x)
+
     if (class(x) != "SpatialPolygonsDataFrame"){
       x <- sp::SpatialPolygonsDataFrame(Sr = x,
                                         data = data.frame(
@@ -200,3 +196,49 @@ rgrid <- function(loc, dmax, res){
                                       proj4string = sp::CRS("+init=epsg:3857"))
   return(sgrid)
 }
+
+
+
+
+## osrmTable Utils
+distTableFormat <- function(res, src, dst){
+  # extract distance table
+  mat <- res$durations
+  # From sec to minutes
+  mat <- round(mat/(60), 1)
+  # NA management
+  mat[mat == 357913.94] <- NA
+  # col and row names management
+  dimnames(mat) <- list(src$id, dst$id)
+  return(mat)
+}  
+
+coordFormat <- function(res, src, dst){
+  sources <- data.frame(matrix(unlist(res$sources$location, 
+                                      use.names = T), 
+                               ncol = 2, byrow = T, 
+                               dimnames = list(src$id, c("lon", "lat"))))
+  destinations <- data.frame(matrix(unlist(res$destinations$location, 
+                                           use.names = T), 
+                                    ncol = 2, byrow = T, 
+                                    dimnames = list(dst$id, c("lon", "lat"))))
+  return(list(sources = sources, destinations = destinations)
+  )
+}
+
+tableLoc <- function(loc){
+  # Query build
+  tab <- paste(getOption("osrm.server"), "table/v1/driving/polyline(", sep = "")
+  tab <- paste0(tab, gepaf::encodePolyline(loc[,c("lat","lon")]),")")
+  return(tab)
+}
+
+osrmLimit <- function(nSrc, nDst){
+  e <- simpleError("The public OSRM API does not allow results with 
+  a number of durations higher than 10000")
+  if(getOption("osrm.server") == "http://router.project-osrm.org/" & (nSrc*nDst) > 10000){
+    stop(e)
+  }
+}
+
+
