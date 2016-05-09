@@ -79,7 +79,7 @@ library(osrm)
 data("com")
 
 # Get a trip with a SpatialPointsDataFrame
-trips <- osrmTripGeom(loc = src)
+trips <- osrmTrip(loc = src)
 
 # Map
 if(require("cartography")){
