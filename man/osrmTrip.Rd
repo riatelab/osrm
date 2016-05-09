@@ -41,7 +41,7 @@ data("com")
 trips <- osrmTrip(loc = com[1101:1150, c(1,3,4)])
 
 # Display the trip
-plot(trips[[1]]$trip , col = 1:5)
+sp::plot(trips[[1]]$trip , col = 1:5)
 points(com[1101:1150, 3:4], pch = 20, col = "red", cex = 0.5)
 
 # Map
@@ -49,7 +49,7 @@ if(require("cartography")){
   osm <- getTiles(spdf = trips[[1]]$trip, crop = TRUE, type = "osmgrayscale")
   tilesLayer(osm)
   plot(trips[[1]]$trip, col = 1:5, add = TRUE)
-  points(com[1101:1200, 3:4], pch = 20, col = "red", cex = 0.5)
+  points(com[1101:1150, 3:4], pch = 20, col = "red", cex = 0.5)
 }
 
 # Get a trip with a SpatialPointsDataFrame
@@ -60,7 +60,7 @@ if(require("cartography")){
   osm <- getTiles(spdf = trips[[1]]$trip, crop = TRUE, type = "osmgrayscale")
   tilesLayer(osm)
   plot(src, pch = 20, col = "red", cex = 2, add = TRUE)
-  plot(trips[[1]]$trip, add = TRUE, lwd=2)
+  plot(trips[[1]]$trip, col = 1:5, add = TRUE, lwd=2)
 }
 }
 }

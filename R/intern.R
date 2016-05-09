@@ -29,14 +29,7 @@ spToDf <- function(x){
 
 ## osrmIsochrone Utils
 rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
-  if (!requireNamespace("rgeos", quietly = TRUE)) {
-    stop("'rgeos' package needed for this function to work. Please install it.",
-         call. = FALSE)
-  }
-  if(!'package:rgeos' %in% search()){
-    attachNamespace('rgeos')
-  }
-  
+
   rmin <- raster::cellStats(r, min, na.rm = TRUE)
   rmax <- raster::cellStats(r, max, na.rm = TRUE)
   
@@ -106,10 +99,11 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
       x <- linex[[j]]@coords
       x <- sp::Polygon(coords =  x, hole = F)
       x <- sp::Polygons(srl = list(x), ID = j)
-      Plist[j] <- x
+      Plist[[j]] <- x
     }
     x <- sp::SpatialPolygons(Srl = Plist)
     x <- rgeos::union(x = x)
+
     if (class(x) != "SpatialPolygonsDataFrame"){
       x <- sp::SpatialPolygonsDataFrame(Sr = x,
                                         data = data.frame(

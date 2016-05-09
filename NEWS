@@ -7,15 +7,10 @@ The backward compatibility is not ensured. The osrm package works with the versi
 ## Major changes:
 * osrmViaroute is suppressed, use osrmRoute with `overview = FALSE` instead.
 * osrmViarouteGeom is replaced by osrmRoute. osrmRoute offers simplified or detailed (full) route geometry via `overview` parameter. 
-* Functions now accept sp objects and data.frames
+* Functions now accept sp objects and data.frames.
 * Add osrmIsochrone. This function computes a SpatialPolygonsDataFrame of isochrones.
 * Add osrmTrip. This function gets the travel geometry between multiple unordered points.
-* Under the hood: some function now use google encoded polylines. 
-
-## Minor changes
-* Better output for osrmViaRouteGeom (src, dst, time and km)
-* Default fields in osrmTable if input is data frame.
-
+* Under the hood: some function now use google encoded polylines via gepaf package. 
 
 
 
@@ -33,7 +28,6 @@ The backward compatibility is not ensured. The osrm package works with the versi
 
 # osrm version 1.1 (Release date: 2015-11-06)
 
-  
 ## Changes:
 * Install instruction in README
 * Add a SpatialLinesDataFrame export to the osrmViaRouteGeom

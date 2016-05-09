@@ -72,7 +72,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL){
       # Format
       src <- loc
       dst <- loc
-      print(tableLoc(loc = loc))
+
       # Build the query
       req <- tableLoc(loc = loc)
     }else{

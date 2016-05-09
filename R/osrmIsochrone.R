@@ -23,9 +23,8 @@
 #' 
 #' # Map
 #' if(require("cartography")){
-#'   osm <- getTiles(spdf = iso, crop = TRUE)
+#'   osm <- getTiles(spdf = iso, crop = TRUE, type = "osmgrayscale")
 #'   tilesLayer(osm)
-#'   osm@crs
 #'   breaks <- sort(c(unique(iso$min), max(iso$max)))
 #'   cartography::choroLayer(spdf = iso, df = iso@data,
 #'                           var = "center", breaks = breaks,
@@ -40,7 +39,7 @@
 #' 
 #' # Map
 #' if(require("cartography")){
-#'   osm2 <- getTiles(spdf = iso2, crop = TRUE)
+#'   osm2 <- getTiles(spdf = iso2, crop = TRUE, type = "osmgrayscale")
 #'   tilesLayer(osm2)
 #'   breaks2 <- sort(c(unique(iso2$min), max(iso2$max)))
 #'   cartography::choroLayer(spdf = iso2, df = iso2@data,
@@ -52,14 +51,6 @@
 #' }
 #' }
 osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7)){
-  if (!requireNamespace("raster", quietly = TRUE)) {
-    stop("'raster' package needed for this function to work. Please install it.",
-         call. = FALSE)
-  }
-  if(!'package:raster' %in% search()){
-    attachNamespace('raster')
-  }
-
   oprj <- NA
   if(testSp(loc)){
     oprj <- sp::proj4string(loc)
@@ -70,7 +61,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7)){
     loc <- sp::SpatialPointsDataFrame(coords = loc[,1:2], 
                                       data = loc, 
                                       proj4string = sp::CRS("+init=epsg:4326"))
-    loc <- sp::spTransform(x = loc, CRSobj = sp::CRS( "+init=epsg:3857"))
+    loc <- sp::spTransform(x = loc, CRSobj = sp::CRS("+init=epsg:3857"))
   }
   
   breaks <- unique(sort(breaks))

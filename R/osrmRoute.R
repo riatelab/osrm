@@ -1,7 +1,7 @@
 #' @name osrmRoute
 #' @title Get the Shortest Path Between Two Points
 #' @description Build and send an OSRM API query to get the travel geometry between two points.
-#' This function interfaces the \emph{viaroute} OSRM service. 
+#' This function interfaces the \emph{route} OSRM service. 
 #' @param src a numeric vector of identifier, longitude and latitude (WGS84), a 
 #' SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine 
 #' point.
