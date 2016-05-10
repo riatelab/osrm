@@ -1,4 +1,4 @@
-# osrm version 3.0.0 (Release date: 2016-0X-XX)
+# osrm version 3.0.0 (Release date: 2016-05-10)
 
 This is a major release. Changes have been made to reflect the evolution of the OSRM routing service/engine.
 The backward compatibility is not ensured. The osrm package works with the version 5.0.0 of the OSRM API.
