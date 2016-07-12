@@ -228,7 +228,7 @@ coordFormat <- function(res, src, dst){
 
 tableLoc <- function(loc){
   # Query build
-  tab <- paste(getOption("osrm.server"), "table/v1/driving/polyline(", sep = "")
+  tab <- paste(getOption("osrm.server"), "table/v1/", getOption("osrm.profile"), "/polyline(", sep = "")
   tab <- paste0(tab, gepaf::encodePolyline(loc[,c("lat","lon")]),")")
   return(tab)
 }

@@ -65,8 +65,8 @@ osrmTrip <- function(loc, overview = "simplified"){
     }
     
     # Build the query
-    req <- paste(getOption("osrm.server"), 
-                 "trip/v1/driving/polyline(", 
+    req <- paste(getOption("osrm.server"),
+                 "trip/v1/", getOption("osrm.profile"), "/polyline(", 
                  gepaf::encodePolyline(loc[,c("lat","lon")]),
                  ")?steps=false&geometries=geojson&overview=",
                  tolower(overview), sep="")
