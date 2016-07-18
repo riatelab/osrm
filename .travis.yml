@@ -1,3 +1,15 @@
+branches:
+  only:
+    - master
+
 language: r
-warnings_are_errors: true
 sudo: required
+dist: trusty
+cache: packages
+warnings_are_errors: true
+
+addons:
+  apt:
+    packages:
+      - libgdal-dev
+      - libproj-dev
