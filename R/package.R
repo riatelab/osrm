@@ -14,7 +14,7 @@
 #' 
 #' This package relies on the usage of a running OSRM service (tested with 
 #' version 5.0.0 of the OSRM API).\cr
-#' By default, this service is the OSRM public API (http://router.project-osrm.org/).
+#' By default, this service is the OSRM demo server (http://router.project-osrm.org/).
 #' To change the OSRM server, change the \code{osrm.server} option:\cr 
 #' \code{options(osrm.server = "http://address.of.the.server/")}. \cr
 #' To change the profilr (driving is set by default), use the \code{osrm.profile} 
