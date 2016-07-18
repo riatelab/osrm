@@ -68,9 +68,9 @@ osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
     }
     
     # build the query
-    req <- paste(getOption("osrm.server"), 
-                 "route/v1/driving/", 
-                 src[2], ",", src[3], 
+    req <- paste(getOption("osrm.server"),
+                 "route/v1/", getOption("osrm.profile"), "/", 
+                 src[2], ",", src[3],
                  ";",
                  dst[2],",",dst[3], 
                  "?alternatives=false&geometries=polyline&steps=false&overview=",
