@@ -13,9 +13,6 @@
 #' \item{\code{\link{osrmIsochrone}} Get a SpatialPolygonsDataFrame of isochrones.}
 #' }
 #' 
-#' \pkg{package_name}
-#' 
-#' 
 #' @note
 #' This package relies on the usage of a running OSRM service (tested with 
 #' version 5.0.0 of the OSRM API).\cr
