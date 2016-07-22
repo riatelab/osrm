@@ -18,8 +18,6 @@ and travel time matrices.\cr
 \item{\code{\link{osrmTrip}} Get the travel geometry between multiple unordered points.}
 \item{\code{\link{osrmIsochrone}} Get a SpatialPolygonsDataFrame of isochrones.}
 }
-
-\pkg{package_name}
 }
 \note{
 This package relies on the usage of a running OSRM service (tested with 
