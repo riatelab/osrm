@@ -107,8 +107,8 @@ osrmTable <- function(loc, src = NULL, dst = NULL){
     resRaw <- RCurl::getURL(utils::URLencode(req), 
                             useragent = "'osrm' R package")
     # Error if URL is too long
-    e <- simpleError("The URL sent to the OSRM public API is too long. Enter less 
-         sources or destinations.")
+    e <- simpleError("Something went wrong. It could be that the URL sent to the OSRM public API is too long. 
+         Try to enter less sources or destinations.")
     if(getOption("osrm.server") == "http://router.project-osrm.org/" & resRaw==""){
       stop(e)
     }
