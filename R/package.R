@@ -13,6 +13,7 @@
 #' \item{\code{\link{osrmIsochrone}} Get a SpatialPolygonsDataFrame of isochrones.}
 #' }
 #' 
+#' \pkg{package_name}
 #' 
 #' 
 #' @note
