@@ -1,6 +1,7 @@
 #' @title Shortest Paths and Travel Time from OpenStreetMap via an OSRM API
 #' @name  osrm
-#' @description An interface between R and the OSRM API. OSRM is a routing
+#' @description An interface between R and the OSRM API.\cr
+#' OSRM is a routing
 #' service based on OpenStreetMap data. See <http://project-osrm.org/> for more
 #' information. A public API exists but one can run its own instance. This package
 #' allows to compute distances (travel time and kilometric distance) between points
@@ -12,12 +13,23 @@
 #' \item{\code{\link{osrmIsochrone}} Get a SpatialPolygonsDataFrame of isochrones.}
 #' }
 #' 
+#' 
+#' 
+#' @note
 #' This package relies on the usage of a running OSRM service (tested with 
 #' version 5.0.0 of the OSRM API).\cr
 #' By default, this service is the OSRM demo server (http://router.project-osrm.org/).
+#' If you plan to use the OSRM demo server you should read the 
+#' \href{https://github.com/Project-OSRM/osrm-backend/wiki/Api-usage-policy}{OSRM API Usage Policy}.\cr
+#' You should also take into account "that there are no guarantees regarding 
+#' availability, stability or correctness of results. It's server to demonstrate 
+#' OSRM, not a production-ready API." 
+#' \href{https://github.com/Project-OSRM/osrm-backend/wiki/Demo-server}{Demo Server}\cr
+#' 
+#' 
 #' To change the OSRM server, change the \code{osrm.server} option:\cr 
-#' \code{options(osrm.server = "http://address.of.the.server/")}. \cr
-#' To change the profilr (driving is set by default), use the \code{osrm.profile} 
+#' \code{options(osrm.server = "http://address.of.the.server/")}. \cr\cr
+#' To change the profile (driving is set by default), use the \code{osrm.profile} 
 #' option:\cr
 #' \code{options(osrm.profile = "name.of.the.profile")}
 #' @docType package
