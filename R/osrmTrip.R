@@ -57,7 +57,7 @@ osrmTrip <- function(loc, overview = "simplified"){
     # overview = "simplified"
     # check if inpout is sp, transform and name columns
     oprj <- NA
-    if(testSp(loc)){
+    if (testSp(loc)) {
       oprj <- sp::proj4string(loc)
       loc <- spToDf(x = loc)
     }else{
@@ -69,43 +69,45 @@ osrmTrip <- function(loc, overview = "simplified"){
                  "trip/v1/", getOption("osrm.profile"), "/polyline(", 
                  gepaf::encodePolyline(loc[,c("lat","lon")]),
                  ")?steps=false&geometries=geojson&overview=",
-                 tolower(overview), sep="")
-    
+                 tolower(overview), sep = "")
     # Send the query
     ua <- "'osrm' R package"
     resRaw <- RCurl::getURL(utils::URLencode(req), useragent = ua)
+    if (length(resRaw) <= 1) {
+      stop("OSRM returned an empty string.")
+    }
     
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
     
     # Error handling
     e <- simpleError(res$message)
-    if(res$code != "Ok"){stop(e)}
+    if (res$code != "Ok") {stop(e)}
     
     # Get all the waypoints
     waypointsg <- data.frame(res$waypoints[,c(1,5)], 
                              matrix(unlist(res$waypoints$location), 
-                                    byrow=T, ncol=2), id = loc$id)
+                                    byrow = T, ncol = 2), id = loc$id)
     
     # In case of island, multiple trips
     ntour <- dim(res$trips)[1]
     trips <- vector("list", ntour)
     
-    for (nt in 1:ntour){
+    for (nt in 1:ntour) {
       # Coordinates of the line
       geodf <- data.frame(res$trips[nt,]$geometry$coordinates)
       # In case of unfinnish trip
-      if(geodf[nrow(geodf),1]!=geodf[1,1]){
+      if (geodf[nrow(geodf),1] != geodf[1,1]) {
         geodf <- rbind(geodf,geodf[1,])
       }
       geodf$ind <- 1:nrow(geodf)
       # Extract trip waypoints
-      waypoints <- waypointsg[waypointsg$trips_index==(nt-1),]
+      waypoints <- waypointsg[waypointsg$trips_index == (nt - 1),]
       
       # Get points order and indexes
       geodf <- merge(geodf, waypoints, 
-                     by.x=c("X1", "X2"), by.y=c("X1","X2"), 
-                     all.x=T)
+                     by.x = c("X1", "X2"), by.y = c("X1","X2"), 
+                     all.x = T)
       geodf <- geodf[order(geodf$ind, decreasing = F),]
       
 
@@ -116,14 +118,14 @@ osrmTrip <- function(loc, overview = "simplified"){
                    nrow(geodf))
       # Build the polylines
       wktl <- rep(NA,nrow(waypoints))
-      for(i in 1:(length(indexes)-1)){
+      for (i in 1:(length(indexes) - 1)) {
         wktl[i] <- paste("LINESTRING(",
-                         paste(geodf[indexes[i]:indexes[i+1],1]," ",
-                               geodf[indexes[i]:indexes[i+1],2], 
-                               sep = "", collapse=",")
-                         ,")",sep="")
+                         paste(geodf[indexes[i]:indexes[i + 1],1]," ",
+                               geodf[indexes[i]:indexes[i + 1],2], 
+                               sep = "", collapse = ",")
+                         ,")",sep = "")
       }
-      wkt <- paste("GEOMETRYCOLLECTION(", paste(wktl, collapse=","),")", sep ="")
+      wkt <- paste("GEOMETRYCOLLECTION(", paste(wktl, collapse = ","),")", sep = "")
       sl <- rgeos::readWKT(wkt)
       sl@proj4string <- sp::CRS("+init=epsg:4326")
       start <- (waypoints[order(waypoints$waypoint_index, decreasing = F),"id"])
@@ -134,7 +136,7 @@ osrmTrip <- function(loc, overview = "simplified"){
       sldf <- sp::SpatialLinesDataFrame(sl = sl, data = df, match.ID = F)
       
       # Reproj
-      if (!is.na(oprj)){
+      if (!is.na(oprj)) {
         sldf <- sp::spTransform(sldf, oprj)
       }
       
@@ -145,7 +147,7 @@ osrmTrip <- function(loc, overview = "simplified"){
       trips[[nt]] <- list(trip = sldf, summary = tripSummary)
     }
     return(trips)
-  }, error=function(e) { message("osrmTrip function returns an error: \n", e)})
+  }, error = function(e) { message("osrmTrip function returns an error: \n", e)})
   return(NULL)
 }
 
