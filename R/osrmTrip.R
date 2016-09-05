@@ -70,7 +70,6 @@ osrmTrip <- function(loc, overview = "simplified"){
                  gepaf::encodePolyline(loc[,c("lat","lon")]),
                  ")?steps=false&geometries=geojson&overview=",
                  tolower(overview), sep = "")
-    cat("Query is: \n", req, "\n")
     # Send the query
     ua <- "'osrm' R package"
     resRaw <- RCurl::getURL(utils::URLencode(req), useragent = ua)
