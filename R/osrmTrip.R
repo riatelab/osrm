@@ -73,8 +73,9 @@ osrmTrip <- function(loc, overview = "simplified"){
     # Send the query
     ua <- "'osrm' R package"
     resRaw <- RCurl::getURL(utils::URLencode(req), useragent = ua)
-    if (length(resRaw) <= 1) {
-      stop("OSRM returned an empty string.")
+
+    if (resRaw=="") {
+      stop("OSRM returned an empty string.", call. = FALSE)
     }
     
     # Parse the results
