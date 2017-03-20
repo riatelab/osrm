@@ -10,6 +10,7 @@
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
 #' center (central values of classes).
 #' @seealso \link{osrmTable}
+#' @import sp
 #' @export
 #' @examples
 #' \dontrun{

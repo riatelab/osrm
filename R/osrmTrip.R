@@ -132,8 +132,8 @@ osrmTrip <- function(loc, overview = "simplified"){
       start <- (waypoints[order(waypoints$waypoint_index, decreasing = F),"id"])
       end <- start[c(2:length(start),1)]
       df <- data.frame(start, end, 
-                       duration = res$trips[nt,]$legs[[1]][,3] / 60, 
-                       distance = res$trips[nt,]$legs[[1]][,4] / 1000)
+                       duration = res$trips[nt,]$legs[[1]][,"duration"] / 60, 
+                       distance = res$trips[nt,]$legs[[1]][,"distance"] / 1000)
       sldf <- sp::SpatialLinesDataFrame(sl = sl, data = df, match.ID = F)
       
       # Reproj
