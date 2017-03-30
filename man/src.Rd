@@ -10,4 +10,3 @@ UMS RIATE
 \description{
 10 communes in France & Belgium. The projection is RGF93 / Lambert-93.
 }
-

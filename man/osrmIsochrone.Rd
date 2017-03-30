@@ -65,4 +65,3 @@ if(require("cartography")){
 \seealso{
 \link{osrmTable}
 }
-

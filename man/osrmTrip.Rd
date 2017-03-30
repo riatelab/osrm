@@ -67,4 +67,3 @@ if(require("cartography")){
 \seealso{
 \link{osrmRoute}
 }
-

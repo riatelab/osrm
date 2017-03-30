@@ -37,4 +37,3 @@ To change the profile (driving is set by default), use the \code{osrm.profile}
 option:\cr
 \code{options(osrm.profile = "name.of.the.profile")}
 }
-

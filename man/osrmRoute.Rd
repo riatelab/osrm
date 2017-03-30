@@ -61,4 +61,3 @@ route3 <- osrmRoute(src = src[1,], dst = dst[1,], sp = TRUE)
 route3@data
 }
 }
-

@@ -10,4 +10,3 @@ UMS RIATE
 \description{
 10 communes in France. The projection is RGF93 / Lambert-93.
 }
-
