@@ -3,7 +3,7 @@
 
 ## Minor changes
 * Enable changing the profile via options(osrm.profile = "name.of.the.profile")(driving is set by default).  
-* small fixes and adaptations to the API
+* Small fixes and adaptations to the API (in osrmTrip  mainly)
 
 
 
