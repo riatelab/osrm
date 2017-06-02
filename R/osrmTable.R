@@ -103,6 +103,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL){
                    sep="")
     }
 
+    
     # Get the result
     resRaw <- RCurl::getURL(utils::URLencode(req), 
                             useragent = "'osrm' R package")

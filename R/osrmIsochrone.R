@@ -5,6 +5,8 @@
 #' @param loc a numeric vector of longitude and latitude (WGS84) or a 
 #' SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.
 #' @param breaks a numeric vector of isochrone values (in minutes).
+#' @param res number of points used to compute isochrones, one side of the square 
+#' grid, the total number of points will be res*res.  
 #' @return A SpatialPolygonsDateFrame of isochrones is returned. 
 #' The data frame of the output contains four fields: 
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
@@ -51,7 +53,8 @@
 #'                           add = TRUE)
 #' }
 #' }
-osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7)){
+osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7), res = 30){
+
   oprj <- NA
   if(testSp(loc)){
     oprj <- sp::proj4string(loc)
@@ -69,23 +72,46 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7)){
   tmax <- max(breaks)
   speed <- 140 * 1000/60
   dmax <- tmax * speed
-  res <- 30
   sgrid <- rgrid(loc = sp::coordinates(loc), dmax = dmax, res = res)
   
+  lsgr <- length(sgrid)
+  f500 <- lsgr %/% 500
+  r500 <- lsgr %% 500
+
   row.names(loc) <- "0"
-  
+  listDur <- list()
+  listDest <- list()
+
   if(getOption("osrm.server") != "http://router.project-osrm.org/"){
-    dmat <- osrmTable(src = loc, dst = sgrid)
-    durations <- dmat$durations
-    destinations <- dmat$destinations
+    sleeptime <- 0
   }else{
-    dmat <- osrmTable(src = loc, dst = sgrid[1:500,])
-    Sys.sleep(1)
-    dmat1 <- osrmTable(src = loc, dst = sgrid[501:900,])
-    durations <- cbind(dmat$durations, dmat1$durations)
-    destinations <- rbind(dmat$destinations, dmat1$destinations)
+    sleeptime <- 1
   }
   
+  if(f500>0){
+    for (i in 1:f500){
+      st <- (i-1) * 500 + 1
+      en <- i * 500
+      dmat <- osrmTable(src = loc, dst = sgrid[st:en,])
+      durations <- dmat$durations
+      listDur[[i]] <- dmat$durations
+      listDest[[i]] <- dmat$destinations
+      Sys.sleep(sleeptime)
+    }
+    if(r500>0){
+      dmat <- osrmTable(src = loc, dst = sgrid[(en+1):(en+r500),])
+      listDur[[i+1]] <- dmat$durations
+      listDest[[i+1]] <- dmat$destinations
+    }
+  }else{
+    dmat <- osrmTable(src = loc, dst = sgrid)
+    listDur[[1]] <- dmat$durations
+    listDest[[1]] <- dmat$destinations
+  }
+
+  durations <- do.call(c, listDur)
+  destinations <- do.call(rbind, listDest)
+
   rpt <- sp::SpatialPointsDataFrame(coords = destinations[ , c(1, 2)],
                                     data = data.frame(destinations),
                                     proj4string = sp::CRS("+init=epsg:4326"))
@@ -100,7 +126,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7)){
   # contour correction
   isolines <- isolines[-1,]
   isolines@data[nrow(isolines), "min"] <- 0
-  isolines@data[nrow(isolines), "center"] <- (isolines@data[nrow(isolines), "max"] - 
+  isolines@data[nrow(isolines), "center"] <- (isolines@data[nrow(isolines), "max"] -
                                                 isolines@data[nrow(isolines), "min"]) / 2
   # reproj
   if (!is.na(oprj)){

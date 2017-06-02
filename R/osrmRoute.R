@@ -78,7 +78,7 @@ osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
                  sep="")
     
     # Sending the query
-    resRaw <- RCurl::getURL(utils::URLencode(req), 
+    resRaw <- RCurl::getURL(utils::URLencode(req),
                             useragent = "'osrm' R package")
     # Deal with \\u stuff
     vres <- jsonlite::validate(resRaw)[1]
@@ -87,32 +87,32 @@ osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
     }
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
-    
+
     # Error handling
     e <- simpleError(res$message)
     if(res$code != "Ok"){stop(e)}
-    
+
     if (overview == FALSE){
-      return(round(c(duration = res$routes$duration/60, 
+      return(round(c(duration = res$routes$duration/60,
                      distance = res$routes$distance/1000), 2))
     }
     if(!vres){
-      res$routes$geometry <- gsub(pattern = "zorglub", replacement = "\\\\", 
+      res$routes$geometry <- gsub(pattern = "zorglub", replacement = "\\\\",
                                   x = res$routes$geometry)
     }
     # Coordinates of the line
     geodf <- gepaf::decodePolyline(res$routes$geometry)[,c(2,1)]
-    
+
     # Convert to SpatialLinesDataFrame
     if (sp == TRUE){
-      routeLines <- sp::Lines(slinelist = sp::Line(geodf[,1:2]), 
+      routeLines <- sp::Lines(slinelist = sp::Line(geodf[,1:2]),
                               ID = "x")
-      routeSL <- sp::SpatialLines(LinesList = list(routeLines), 
+      routeSL <- sp::SpatialLines(LinesList = list(routeLines),
                                   proj4string = sp::CRS("+init=epsg:4326"))
-      df <- data.frame(src = src[1], dst = dst[1], 
+      df <- data.frame(src = src[1], dst = dst[1],
                        duration = res$routes$legs[[1]]$duration/60,
                        distance = res$routes$legs[[1]]$distance/1000)
-      geodf <- sp::SpatialLinesDataFrame(routeSL, data = df, match.ID = FALSE)   
+      geodf <- sp::SpatialLinesDataFrame(routeSL, data = df, match.ID = FALSE)
       row.names(geodf) <- paste(src[1], dst[1],sep="_")
       if (!is.na(oprj)){
         geodf <- sp::spTransform(geodf, oprj)

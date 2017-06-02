@@ -4,13 +4,17 @@
 \alias{osrmIsochrone}
 \title{Get a SpatialPolygonsDataFrame of Isochrones}
 \usage{
-osrmIsochrone(loc, breaks = seq(from = 0, to = 60, length.out = 7))
+osrmIsochrone(loc, breaks = seq(from = 0, to = 60, length.out = 7),
+  res = 30)
 }
 \arguments{
 \item{loc}{a numeric vector of longitude and latitude (WGS84) or a 
 SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.}
 
 \item{breaks}{a numeric vector of isochrone values (in minutes).}
+
+\item{res}{number of points used to compute isochrones, one side of the square 
+grid, the total number of points will be res*res.}
 }
 \value{
 A SpatialPolygonsDateFrame of isochrones is returned. 
