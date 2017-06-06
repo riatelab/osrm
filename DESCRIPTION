@@ -14,7 +14,6 @@ License: GPL-3
 LazyData: TRUE
 Imports:
     jsonlite,
-    sp,
     RCurl,
     utils, 
     stats,
@@ -23,7 +22,8 @@ Imports:
     gepaf,
     raster 
 Depends:
-    R (>= 2.10)
+    R (>= 2.10), 
+    sp
 Suggests:
     cartography
 URL: https://github.com/rCarto/osrm
