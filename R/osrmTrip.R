@@ -27,7 +27,7 @@
 #' trips <- osrmTrip(loc = com[1101:1150, c(1,3,4)])
 #' 
 #' # Display the trip
-#' sp::plot(trips[[1]]$trip , col = 1:5)
+#' plot(trips[[1]]$trip , col = 1:5)
 #' points(com[1101:1150, 3:4], pch = 20, col = "red", cex = 0.5)
 #' 
 #' # Map
@@ -52,7 +52,7 @@
 osrmTrip <- function(loc, overview = "simplified"){
   tryCatch({
     # data("com")
-    # 
+    # overview = "simplified"
     #  loc = com[1:20, c(1,3,4)]
     # overview = "simplified"
     # check if inpout is sp, transform and name columns
@@ -86,14 +86,14 @@ osrmTrip <- function(loc, overview = "simplified"){
     if (res$code != "Ok") {stop(e)}
     
     # Get all the waypoints
-    waypointsg <- data.frame(res$waypoints[,c(1,5)], 
+    waypointsg <- data.frame(res$waypoints[,c(1,2,5)], 
                              matrix(unlist(res$waypoints$location), 
                                     byrow = T, ncol = 2), id = loc$id)
     
     # In case of island, multiple trips
     ntour <- dim(res$trips)[1]
     trips <- vector("list", ntour)
-    
+
     for (nt in 1:ntour) {
       # Coordinates of the line
       geodf <- data.frame(res$trips[nt,]$geometry$coordinates)
@@ -114,6 +114,7 @@ osrmTrip <- function(loc, overview = "simplified"){
 
       indexes2 <- geodf[!is.na(geodf$waypoint_index),"ind"]
       xx <- geodf[!is.na(geodf$waypoint_index),]
+
       indexes <- c(stats::aggregate(xx$ind, by  = list(xx$waypoint_index),
                                     min)[,2], 
                    nrow(geodf))

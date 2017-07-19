@@ -1,4 +1,11 @@
 
+# osrm version 3.0.2 (Release date: 2017-06-08)
+
+## Minor changes
+* set the grid size for computing isochrones in osrmIsochrone (more precise isopleth maps)
+* fix osrmTrip
+
+
 # osrm version 3.0.1 (Release date: 2017-03-31)
 
 ## Minor changes

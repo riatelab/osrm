@@ -41,7 +41,7 @@ data("com")
 trips <- osrmTrip(loc = com[1101:1150, c(1,3,4)])
 
 # Display the trip
-sp::plot(trips[[1]]$trip , col = 1:5)
+plot(trips[[1]]$trip , col = 1:5)
 points(com[1101:1150, 3:4], pch = 20, col = "red", cex = 0.5)
 
 # Map

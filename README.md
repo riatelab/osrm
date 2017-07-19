@@ -3,7 +3,6 @@
 [![Version](http://www.r-pkg.org/badges/version/osrm)](https://CRAN.R-project.org/package=osrm/)
 ![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen)
 [![Travis-CI Build Status](https://travis-ci.org/rCarto/osrm.svg?branch=master)](https://travis-ci.org/rCarto/osrm)
-![](https://img.shields.io/badge/license-GPL--3-brightgreen.svg?style=flat)  
 
 ***Interface Between R and the OpenStreetMap-Based Routing Service [OSRM](http://project-osrm.org/)***
 

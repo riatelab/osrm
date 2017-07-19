@@ -36,11 +36,10 @@
 #'                     dst = c("Cassel", 2.486388, 50.80016),
 #'                     sp = TRUE)
 #' # Display the path
-#' if(require(sp)){
-#'   plot(com[c(1,16),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
-#'   plot(route2, lty = 2, add=TRUE)
-#'   text(com[c(1,16),3:4], labels = com[c(1,16),2], pos = 2)
-#' }
+#' plot(com[c(1,16),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
+#' plot(route2, lty = 2, add=TRUE)
+#' text(com[c(1,16),3:4], labels = com[c(1,16),2], pos = 2)
+#'
 #' # Input is SpatialPointsDataFrames
 #' route3 <- osrmRoute(src = src[1,], dst = dst[1,], sp = TRUE)
 #' route3@data
