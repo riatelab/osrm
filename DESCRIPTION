@@ -2,7 +2,7 @@ Package: osrm
 Type: Package
 Title: Interface Between R and the OpenStreetMap-Based Routing Service OSRM
 Version: 3.0.2
-Date: 2017-08-01
+Date: 2017-08-10
 Authors@R: c(person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", role = c("cre","aut")),
     person("Robin", "Cura", role = c("ctb")), person("Matthieu", "Viry", role = c("ctb")))
 Description: An interface between R and the OSRM API. OSRM is a routing

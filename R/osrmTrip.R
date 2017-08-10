@@ -51,10 +51,6 @@
 #' }
 osrmTrip <- function(loc, overview = "simplified"){
   tryCatch({
-    # data("com")
-    # overview = "simplified"
-    #  loc = com[1:20, c(1,3,4)]
-    # overview = "simplified"
     # check if inpout is sp, transform and name columns
     oprj <- NA
     if (testSp(loc)) {
