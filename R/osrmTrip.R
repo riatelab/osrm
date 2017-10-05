@@ -70,10 +70,11 @@ osrmTrip <- function(loc, overview = "simplified"){
     ua <- "'osrm' R package"
     resRaw <- RCurl::getURL(utils::URLencode(req), useragent = ua)
 
-    if (resRaw=="") {
-      stop("OSRM returned an empty string.", call. = FALSE)
-    }
-    
+
+    # if (resRaw=="") {
+    #   stop("OSRM returned an empty string.", call. = FALSE)
+    # }
+    # 
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
     
@@ -145,7 +146,7 @@ osrmTrip <- function(loc, overview = "simplified"){
       trips[[nt]] <- list(trip = sldf, summary = tripSummary)
     }
     return(trips)
-  }, error = function(e) { message("osrmTrip function returns an error: \n", e)})
+  }, error = function(e) { message("OSRM returned an error:\n", e)})
   return(NULL)
 }
 

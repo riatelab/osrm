@@ -206,8 +206,8 @@ distTableFormat <- function(res, src, dst){
   mat <- res$durations
   # From sec to minutes
   mat <- round(mat/(60), 1)
-  # NA management
-  mat[mat == 357913.94] <- NA
+  # # NA management
+  # mat[mat == 357913.94] <- NA
   # col and row names management
   dimnames(mat) <- list(src$id, dst$id)
   return(mat)
@@ -229,16 +229,19 @@ coordFormat <- function(res, src, dst){
 tableLoc <- function(loc){
   # Query build
   tab <- paste(getOption("osrm.server"), "table/v1/", getOption("osrm.profile"), "/polyline(", sep = "")
+  
+  
+  
   tab <- paste0(tab, gepaf::encodePolyline(loc[,c("lat","lon")]),")")
   return(tab)
 }
 
-osrmLimit <- function(nSrc, nDst){
-  e <- simpleError("The public OSRM API does not allow results with 
-  a number of durations higher than 10000")
-  if(getOption("osrm.server") == "http://router.project-osrm.org/" & (nSrc*nDst) > 10000){
-    stop(e)
-  }
-}
+# osrmLimit <- function(nSrc, nDst){
+#   e <- simpleError("The public OSRM API does not allow results with 
+#   a number of durations higher than 10000")
+#   if(getOption("osrm.server") == "http://router.project-osrm.org/" & (nSrc*nDst) > 10000){
+#     stop(e)
+#   }
+# }
 
 

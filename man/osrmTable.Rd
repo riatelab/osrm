@@ -37,12 +37,9 @@ If loc, src or dst are data frames we assume that the 3 first
 columns of the data.frame are: identifiers, longitudes and latitudes.
 }
 \note{
-The public OSRM API does not allow more than 10 000 
-distances in query result. \cr
-If you use an other OSRM API service, make sure that 
-more distances are allowed in results 
-(i.e. the "max-table-size" argument, Max. locations supported in distance 
-table query).
+If you want to get a large number of distances make sure to set the 
+"max-table-size" argument (Max. locations supported in table) of the OSRM 
+server accordingly.
 }
 \examples{
 \dontrun{

@@ -9,15 +9,20 @@
 ![](https://f.hypotheses.org/wp-content/blogs.dir/1909/files/2016/02/Rroads.png)
 
 ## Description
-OSRM is a routing service based on OpenStreetMap data. See <http://project-osrm.org/> for more information. A public API exists but one can run its own instance. This package allows to compute distance (travel time and kilometric distance) between points and travel time matrices.
+OSRM is a routing service based on OpenStreetMap data. See <http://project-osrm.org/> for more information. This package allows to compute distances (travel time and kilometric distance) between points and travel time matrices.   
 
-This package relies on the usage of a running OSRM service (tested with version 5.0.0 of the OSRM API).
-By default, this service is the OSRM demo server (http://router.project-osrm.org/). If you plan to use the OSRM demo server you should read the [OSRM API Usage Policy](https://github.com/Project-OSRM/osrm-backend/wiki/Api-usage-policy).
-You should also take into account "that there are no guarantees regarding availability, stability or correctness of results. It's server to demonstrate OSRM, not a production-ready API." [Demo Server](https://github.com/Project-OSRM/osrm-backend/wiki/Demo-server)
-To change the OSRM server, change the osrm.server option:
-`options(osrm.server = "http://address.of.the.server/")`. 
-To change the profile (driving is set by default), use the osrm.profile option:
-`options(osrm.profile = "name.of.the.profile")`
+This package relies on the usage of a running OSRM service (tested with v5.12.0 of OSRM).    
+
+You can run your own instance of OSRM following guidelines provided here:    [https://github.com/Project-OSRM/osrm-backend](https://github.com/Project-OSRM/osrm-backend).     
+The simplest solution is probably the one based on [docker containers](https://github.com/Project-OSRM/osrm-backend#using-docker).    
+
+To set the OSRM server, use the `osrm.server` option: `options(osrm.server = "http://address.of.the.server/")`.     
+To set the profile (driving is set by default), use the `osrm.profile` option: `options(osrm.profile = "name.of.the.profile")`.    
+
+
+
+**There is [no OSRM demo server anymore](https://github.com/Project-OSRM/osrm-backend/wiki/Demo-server)! You need to use an other OSRM server.**  
+
 
 
 

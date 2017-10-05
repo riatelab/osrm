@@ -82,11 +82,11 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7), r
   listDur <- list()
   listDest <- list()
 
-  if(getOption("osrm.server") != "http://router.project-osrm.org/"){
-    sleeptime <- 0
-  }else{
-    sleeptime <- 1
-  }
+  # if(getOption("osrm.server") != "http://router.project-osrm.org/"){
+  #   sleeptime <- 0
+  # }else{
+  #   sleeptime <- 1
+  # }
   
   if(f500>0){
     for (i in 1:f500){
@@ -96,7 +96,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7), r
       durations <- dmat$durations
       listDur[[i]] <- dmat$durations
       listDest[[i]] <- dmat$destinations
-      Sys.sleep(sleeptime)
+      # Sys.sleep(sleeptime)
     }
     if(r500>0){
       dmat <- osrmTable(src = loc, dst = sgrid[(en+1):(en+r500),])

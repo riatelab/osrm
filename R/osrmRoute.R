@@ -47,12 +47,6 @@
 #' @export
 osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
   tryCatch({
-    
-    # src = com[1, c("comm_id", "lon","lat")]
-    # dst = com[2, c("comm_id", "lon","lat")]
-    # sp=TRUE
-    # overview = "simplified"
-    
     oprj <- NA
     if(testSp(src)){
       oprj <- sp::proj4string(src)
@@ -66,16 +60,23 @@ osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
       dst <- c(x[1,1],x[1,2], x[1,3])
     }
     
-    # build the query
-    req <- paste(getOption("osrm.server"),
-                 "route/v1/", getOption("osrm.profile"), "/", 
-                 src[2], ",", src[3],
-                 ";",
-                 dst[2],",",dst[3], 
-                 "?alternatives=false&geometries=polyline&steps=false&overview=",
-                 tolower(overview),
-                 sep="")
     
+    # if(getOption("osrm.server") == "https://api.mapbox.com/" ){
+    #   req <- paste(getOption("osrm.server"),
+    #                "directions/v5/", getOption("osrm.profile"), "/", 
+    #                src[2], ",", src[3], ";", dst[2],",",dst[3], 
+    #                "?alternatives=false&geometries=polyline&steps=false&overview=",
+    #                tolower(overview),"&access_token=", getOption("osrm.token"),
+    #                sep="")
+    # }else{
+      # build the query
+      req <- paste(getOption("osrm.server"),
+                   "route/v1/", getOption("osrm.profile"), "/", 
+                   src[2], ",", src[3], ";", dst[2],",",dst[3], 
+                   "?alternatives=false&geometries=polyline&steps=false&overview=",
+                   tolower(overview), sep="")
+    # }
+
     # Sending the query
     resRaw <- RCurl::getURL(utils::URLencode(req),
                             useragent = "'osrm' R package")
@@ -118,7 +119,7 @@ osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
       }
     }
     return(geodf)
-  }, error=function(e) {message("osrmRoute function returns an error: \n", e)})
+  }, error=function(e) {message("OSRM returned an error:\n", e)})
   return(NULL)
 }
 
