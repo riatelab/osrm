@@ -32,16 +32,15 @@ SpatialPolygonsDataFrame of isochrones.
 data("com")
 
 # Get isochones with lon/lat coordinates, default breaks
-iso <- osrmIsochrone(loc = c(5.936036, 49.24882))
-plot(iso)
-points(5.936036, 49.24882, pch = 20, col = "red")
+iso <- osrmIsochrone(loc = c(6.026875, 48.93447))
+plot(iso, col = paste0(rep("grey", nrow(iso)), c(seq(80,20,length.out = nrow(iso)))))
 
 # Map
 if(require("cartography")){
-  osm <- getTiles(spdf = iso, crop = TRUE, type = "osmgrayscale")
-  tilesLayer(osm)
+  osm <- getTiles(x = iso, crop = TRUE, type = "osmgrayscale")
+  tilesLayer(x = osm)
   breaks <- sort(c(unique(iso$min), max(iso$max)))
-  cartography::choroLayer(spdf = iso, df = iso@data,
+  cartography::choroLayer(spdf = iso,
                           var = "center", breaks = breaks,
                           border = NA,
                           legend.pos = "topleft",legend.frame = TRUE, 
@@ -50,14 +49,14 @@ if(require("cartography")){
 }
 
 # Get isochones with a SpatialPointsDataFrame, custom breaks
-iso2 <- osrmIsochrone(loc = src[7,], breaks = seq(from = 0,to = 30, by = 5))
+iso2 <- osrmIsochrone(loc = src[1,], breaks = seq(from = 0, to = 40, by = 5))
 
 # Map
 if(require("cartography")){
-  osm2 <- getTiles(spdf = iso2, crop = TRUE, type = "osmgrayscale")
-  tilesLayer(osm2)
+  osm2 <- getTiles(x = iso2, crop = TRUE, type = "osmgrayscale")
+  tilesLayer(x = osm2)
   breaks2 <- sort(c(unique(iso2$min), max(iso2$max)))
-  cartography::choroLayer(spdf = iso2, df = iso2@data,
+  cartography::choroLayer(spdf = iso2,
                           var = "center", breaks = breaks2,
                           border = NA,
                           legend.pos = "topleft",legend.frame = TRUE, 

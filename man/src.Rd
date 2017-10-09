@@ -3,10 +3,10 @@
 \docType{data}
 \name{src}
 \alias{src}
-\title{SpatialPointsDataFrame of 10 Communes in France And Belgium}
+\title{SpatialPointsDataFrame of 10 Communes in France}
 \source{
 UMS RIATE
 }
 \description{
-10 communes in France & Belgium. The projection is RGF93 / Lambert-93.
+8 communes in France. The projection is RGF93 / Lambert-93.
 }

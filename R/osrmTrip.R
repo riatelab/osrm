@@ -24,18 +24,18 @@
 #' data("com")
 #' 
 #' # Get a trip with a id lat lon data.frame
-#' trips <- osrmTrip(loc = com[1101:1150, c(1,3,4)])
+#' trips <- osrmTrip(loc = com[1:9, c(1,3,4)])
 #' 
 #' # Display the trip
 #' plot(trips[[1]]$trip , col = 1:5)
-#' points(com[1101:1150, 3:4], pch = 20, col = "red", cex = 0.5)
+#' points(com[1:10, 3:4], pch = 20, col = "red", cex = 0.5)
 #' 
 #' # Map
 #' if(require("cartography")){
-#'   osm <- getTiles(spdf = trips[[1]]$trip, crop = TRUE, type = "osmgrayscale")
-#'   tilesLayer(osm)
+#'   osm <- getTiles(x = trips[[1]]$trip, crop = TRUE, type = "osmgrayscale")
+#'   tilesLayer(x = osm)
 #'   plot(trips[[1]]$trip, col = 1:5, add = TRUE)
-#'   points(com[1101:1150, 3:4], pch = 20, col = "red", cex = 0.5)
+#'   points(com[1:9, 3:4], pch = 20, col = "red", cex = 2)
 #' }
 #' 
 #' # Get a trip with a SpatialPointsDataFrame
@@ -43,8 +43,8 @@
 #' 
 #' # Map
 #' if(require("cartography")){
-#'   osm <- getTiles(spdf = trips[[1]]$trip, crop = TRUE, type = "osmgrayscale")
-#'   tilesLayer(osm)
+#'   osm <- getTiles(x = trips[[1]]$trip, crop = TRUE, type = "osmgrayscale")
+#'   tilesLayer(x = osm)
 #'   plot(src, pch = 20, col = "red", cex = 2, add = TRUE)
 #'   plot(trips[[1]]$trip, col = 1:5, add = TRUE, lwd=2)
 #' }

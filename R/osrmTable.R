@@ -42,7 +42,6 @@
 #' # First 5 rows and columns
 #' distCom2$durations[1:5,1:5]
 #' 
-#' 
 #' # Inputs are SpatialPointsDataFrames
 #' distCom <- osrmTable(loc = src)
 #' # First 5 rows and columns

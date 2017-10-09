@@ -20,7 +20,6 @@
 #' and travel distance (in kilometers).
 #' @examples
 #' \dontrun{
-#' 
 #' # Load data
 #' data("com")
 #' # Travel path between points
@@ -33,13 +32,15 @@
 #' 
 #' # Travel path between points - output a SpatialLinesDataFrame
 #' route2 <- osrmRoute(src=c("Bethune", 2.64781, 50.5199),
-#'                     dst = c("Cassel", 2.486388, 50.80016),
-#'                     sp = TRUE)
+#'                     dst = c("Renescure", 2.369521, 50.72761),
+#'                     sp = TRUE, overview = "full")
+#' 
 #' # Display the path
-#' plot(com[c(1,16),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
-#' plot(route2, lty = 2, add=TRUE)
-#' text(com[c(1,16),3:4], labels = com[c(1,16),2], pos = 2)
-#'
+#' plot(com[c(1,4),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
+#' plot(route2, lty = 1,lwd = 4, add = TRUE)
+#' plot(route2, lty = 1, lwd = 1, col = "white", add=TRUE)
+#' text(com[c(1,4),3:4], labels = com[c(1,4),2], pos = 2)
+#' 
 #' # Input is SpatialPointsDataFrames
 #' route3 <- osrmRoute(src = src[1,], dst = dst[1,], sp = TRUE)
 #' route3@data
@@ -60,22 +61,12 @@ osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
       dst <- c(x[1,1],x[1,2], x[1,3])
     }
     
-    
-    # if(getOption("osrm.server") == "https://api.mapbox.com/" ){
-    #   req <- paste(getOption("osrm.server"),
-    #                "directions/v5/", getOption("osrm.profile"), "/", 
-    #                src[2], ",", src[3], ";", dst[2],",",dst[3], 
-    #                "?alternatives=false&geometries=polyline&steps=false&overview=",
-    #                tolower(overview),"&access_token=", getOption("osrm.token"),
-    #                sep="")
-    # }else{
-      # build the query
-      req <- paste(getOption("osrm.server"),
-                   "route/v1/", getOption("osrm.profile"), "/", 
-                   src[2], ",", src[3], ";", dst[2],",",dst[3], 
-                   "?alternatives=false&geometries=polyline&steps=false&overview=",
-                   tolower(overview), sep="")
-    # }
+    # build the query
+    req <- paste(getOption("osrm.server"),
+                 "route/v1/", getOption("osrm.profile"), "/", 
+                 src[2], ",", src[3], ";", dst[2],",",dst[3], 
+                 "?alternatives=false&geometries=polyline&steps=false&overview=",
+                 tolower(overview), sep="")
 
     # Sending the query
     resRaw <- RCurl::getURL(utils::URLencode(req),
@@ -87,11 +78,11 @@ osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
     }
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
-
+    
     # Error handling
     e <- simpleError(res$message)
     if(res$code != "Ok"){stop(e)}
-
+    
     if (overview == FALSE){
       return(round(c(duration = res$routes$duration/60,
                      distance = res$routes$distance/1000), 2))
@@ -102,7 +93,7 @@ osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
     }
     # Coordinates of the line
     geodf <- gepaf::decodePolyline(res$routes$geometry)[,c(2,1)]
-
+    
     # Convert to SpatialLinesDataFrame
     if (sp == TRUE){
       routeLines <- sp::Lines(slinelist = sp::Line(geodf[,1:2]),
