@@ -21,7 +21,7 @@ To set the profile (driving is set by default), use the `osrm.profile` option: `
 
 
 
-**There is [no OSRM demo server anymore](https://github.com/Project-OSRM/osrm-backend/wiki/Demo-server)! You need to use an other OSRM server.**  
+:warning: **There is [no OSRM demo server anymore](https://github.com/Project-OSRM/osrm-backend/wiki/Demo-server)! You need to use a different OSRM server.** :bangbang: 
 
 
 
