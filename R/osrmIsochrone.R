@@ -74,21 +74,32 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   sgrid <- rgrid(loc = sp::coordinates(loc), dmax = dmax, res = res)
   
   lsgr <- length(sgrid)
-  f500 <- lsgr %/% 500
-  r500 <- lsgr %% 500
+  f500 <- lsgr %/% 300
+  r500 <- lsgr %% 300
 
   row.names(loc) <- "0"
   listDur <- list()
   listDest <- list()
 
+  
+  
+  if(getOption("osrm.server") != "http://router.project-osrm.org/"){
+    sleeptime <- 0
+  }else{
+    sleeptime <- 1
+  }
+  
+  
+  
   if(f500>0){
     for (i in 1:f500){
-      st <- (i-1) * 500 + 1
-      en <- i * 500
+      st <- (i-1) * 300 + 1
+      en <- i * 300
       dmat <- osrmTable(src = loc, dst = sgrid[st:en,])
       durations <- dmat$durations
       listDur[[i]] <- dmat$durations
       listDest[[i]] <- dmat$destinations
+      Sys.sleep(sleeptime)
     }
     if(r500>0){
       dmat <- osrmTable(src = loc, dst = sgrid[(en+1):(en+r500),])

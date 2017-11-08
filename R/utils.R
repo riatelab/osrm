@@ -226,22 +226,28 @@ coordFormat <- function(res, src, dst){
   )
 }
 
-tableLoc <- function(loc){
+tableLoc <- function(loc, gepaf = FALSE){
   # Query build
-  tab <- paste(getOption("osrm.server"), "table/v1/", getOption("osrm.profile"), "/polyline(", sep = "")
-  
-  
-  
-  tab <- paste0(tab, gepaf::encodePolyline(loc[,c("lat","lon")]),")")
+  if (gepaf == TRUE){
+    tab <- paste0(getOption("osrm.server"), "table/v1/", getOption("osrm.profile"), "/polyline(")
+    tab <- paste0(tab, gepaf::encodePolyline(loc[,c("lat","lon")]),")")
+  }else{
+    tab <- paste0(getOption("osrm.server"), "table/v1/", getOption("osrm.profile"), "/")
+    tab <- paste0(tab, paste(loc$lon, loc$lat, sep=",",collapse = ";"))
+  }
   return(tab)
 }
 
-# osrmLimit <- function(nSrc, nDst){
-#   e <- simpleError("The public OSRM API does not allow results with 
-#   a number of durations higher than 10000")
-#   if(getOption("osrm.server") == "http://router.project-osrm.org/" & (nSrc*nDst) > 10000){
-#     stop(e)
-#   }
-# }
-
+osrmLimit <- function(nSrc, nDst, nreq){
+  e <- simpleError("The public OSRM API does not allow results with a number of durations 
+higher than 10000. Use your own server or ask for fewer durations.")
+  e2 <- simpleError("This request is to large for the public OSRM API. Use your own server 
+or ask for fewer durations.")
+  if(getOption("osrm.server") == "http://router.project-osrm.org/" & (nSrc*nDst) > 10000){
+    stop(e)
+  }
+  if(getOption("osrm.server") == "http://router.project-osrm.org/" & nreq >= 8000){
+    stop(e2)
+  }
+}
 

@@ -13,6 +13,9 @@
 #' @param dst a data frame containing destination points identifiers, longitudes 
 #' and latitudes (WGS84). It can also be a SpatialPointsDataFrame or a 
 #' SpatialPolygonsDataFrame, then row names are used as identifiers. 
+#' @param gepaf a boolean indicating if coordinates are sent encoded with the
+#' google encoded algorithm format (TRUE) or not (FALSE). Must be FALSE if using
+#' the public OSRM API.
 #' @return A list containing 3 data frames is returned. 
 #' durations is the matrix of travel times (in minutes), 
 #' sources and destinations are the coordinates of 
@@ -53,7 +56,7 @@
 #' distCom2$durations[1:5,1:5]
 #' }
 #' @export
-osrmTable <- function(loc, src = NULL, dst = NULL){
+osrmTable <- function(loc, src = NULL, dst = NULL, gepaf = FALSE){
   tryCatch({
     if (is.null(src)){
       # check if inpout is sp, transform and name columns
@@ -66,7 +69,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL){
       src <- loc
       dst <- loc
       # Build the query
-      req <- tableLoc(loc = loc)
+      req <- tableLoc(loc = loc, gepaf = gepaf)
     }else{
       # check if inpout is sp, transform and name columns
       if(testSp(src)){
@@ -84,23 +87,28 @@ osrmTable <- function(loc, src = NULL, dst = NULL){
       # Build the query
       loc <- rbind(src, dst)
 
-      req <- paste(tableLoc(loc = loc),
+      req <- paste(tableLoc(loc = loc, gepaf = gepaf),
                    "?sources=", 
                    paste(0:(nrow(src)-1), collapse = ";"), 
                    "&destinations=", 
                    paste(nrow(src):(nrow(loc)-1), collapse = ";"), 
                    sep="")
     }
-
+    
+    req <- utils::URLencode(req)
+    
+    osrmLimit(nSrc = nrow(src), nDst = nrow(dst), nreq = nchar(req))
+    
+    
     # Get the result
-    resRaw <- RCurl::getURL(utils::URLencode(req), 
+    resRaw <- RCurl::getURL(req, 
                             useragent = "'osrm' R package")
     
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
-    
+
     # Check results
-    e <- simpleError(res$message)
+    e <- simpleError(paste0(res$code,"\n",res$message))
     if(res$code != "Ok"){stop(e)}
 
     # get the distance table

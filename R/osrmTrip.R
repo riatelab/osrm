@@ -61,11 +61,19 @@ osrmTrip <- function(loc, overview = "simplified"){
     }
     
     # Build the query
+    # req <- paste(getOption("osrm.server"),
+    #              "trip/v1/", getOption("osrm.profile"), "/polyline(", 
+    #              gepaf::encodePolyline(loc[,c("lat","lon")]),
+    #              ")?steps=false&geometries=geojson&overview=",
+    #              tolower(overview), sep = "")
     req <- paste(getOption("osrm.server"),
-                 "trip/v1/", getOption("osrm.profile"), "/polyline(", 
-                 gepaf::encodePolyline(loc[,c("lat","lon")]),
-                 ")?steps=false&geometries=geojson&overview=",
+                 "trip/v1/", getOption("osrm.profile"), "/", 
+                 paste(loc$lon, loc$lat, sep=",",collapse = ";"),
+                 "?steps=false&geometries=geojson&overview=",
                  tolower(overview), sep = "")
+    paste(loc$lon, loc$lat, sep=",",collapse = ";")
+    
+    
     # Send the query
     ua <- "'osrm' R package"
     resRaw <- RCurl::getURL(utils::URLencode(req), useragent = ua)

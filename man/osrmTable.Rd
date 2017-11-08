@@ -4,7 +4,7 @@
 \alias{osrmTable}
 \title{Get Travel Time Matrices Between Points}
 \usage{
-osrmTable(loc, src = NULL, dst = NULL)
+osrmTable(loc, src = NULL, dst = NULL, gepaf = FALSE)
 }
 \arguments{
 \item{loc}{a data frame containing 3 fields: points identifiers, longitudes 
@@ -20,6 +20,10 @@ If dst and src parameters are used, only pairs between scr/dst are computed.}
 \item{dst}{a data frame containing destination points identifiers, longitudes 
 and latitudes (WGS84). It can also be a SpatialPointsDataFrame or a 
 SpatialPolygonsDataFrame, then row names are used as identifiers.}
+
+\item{gepaf}{a boolean indicating if coordinates are sent encoded with the
+google encoded algorithm format (TRUE) or not (FALSE). Must be FALSE if using
+the public OSRM API.}
 }
 \value{
 A list containing 3 data frames is returned. 
