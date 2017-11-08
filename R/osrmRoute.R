@@ -108,6 +108,7 @@ osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
       if (!is.na(oprj)){
         geodf <- sp::spTransform(geodf, oprj)
       }
+      names(geodf)[1:2] <- c("src", "dst")
     }
     return(geodf)
   }, error=function(e) {message("OSRM returned an error:\n", e)})
