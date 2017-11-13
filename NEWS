@@ -1,3 +1,11 @@
+# osrm version 3.1.0 (Release date: 2017-06-08)
+
+## Minor changes
+* Use last version of cartography in examples
+* Adaptation to the current osrm demo server (ex. gepaf arg in osrmTable). 
+* Examples in Berlin instead of north of France, easier with OSRM example docker image
+
+
 
 # osrm version 3.0.2 (Release date: 2017-06-08)
 
