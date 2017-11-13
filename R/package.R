@@ -25,30 +25,21 @@
 NULL
 
 
-#' @title Communes Coordinates
-#' @name com
-#' @description Coordinates of a set of communes in France. Coordinates are in WGS84.
-#' @source UMS RIATE
+
+
+
+#' @title SpatialPointsDataFrame of 100 Random Pharmacies in Berlin
+#' @name apotheke.sp
+#' @description 100 random pharmacies in Berlin. 
+#' The projection is WGS 84 / UTM zone 34N.
+#' @source © OpenStreetMap contributors - \url{https://www.openstreetmap.org/copyright/en}.
 #' @docType data
 NULL
 
-
-#' @title SpatialPointsDataFrame of 10 Communes in France
-#' @name src
-#' @description 8 communes in France. The projection is RGF93 / Lambert-93.
-#' @source UMS RIATE
+#' @title Coordinates of 100 Random Pharmacies in Berlin
+#' @name apotheke.df
+#' @description A data.frame of coordinates of 100 random pharmacies in Berlin. 
+#' The projection is WGS 84.
+#' @source © OpenStreetMap contributors - \url{https://www.openstreetmap.org/copyright/en}.
 #' @docType data
 NULL
-
-
-#' @title SpatialPointsDataFrame of 10 Communes in France
-#' @name dst
-#' @description 10 communes in France. The projection is RGF93 / Lambert-93.
-#' @source UMS RIATE
-#' @docType data
-NULL
-
-
-
-
-

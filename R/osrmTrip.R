@@ -21,32 +21,37 @@
 #' @examples
 #' \dontrun{
 #' # Load data
-#' data("com")
+#' data("berlin")
 #' 
 #' # Get a trip with a id lat lon data.frame
-#' trips <- osrmTrip(loc = com[1:9, c(1,3,4)])
+#' trips <- osrmTrip(loc = apotheke.df)
 #' 
 #' # Display the trip
-#' plot(trips[[1]]$trip , col = 1:5)
-#' points(com[1:10, 3:4], pch = 20, col = "red", cex = 0.5)
+#' plot(trips[[1]]$trip, col = "black", lwd = 4)
+#' plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
+#' points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
 #' 
 #' # Map
 #' if(require("cartography")){
-#'   osm <- getTiles(x = trips[[1]]$trip, crop = TRUE, type = "osmgrayscale")
+#'   osm <- getTiles(x = trips[[1]]$trip, crop = TRUE,
+#'                   type = "cartolight", zoom = 11)
 #'   tilesLayer(x = osm)
-#'   plot(trips[[1]]$trip, col = 1:5, add = TRUE)
-#'   points(com[1:9, 3:4], pch = 20, col = "red", cex = 2)
+#'   plot(trips[[1]]$trip, col = "black", lwd = 4, add=T)
+#'   plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
+#'   points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
 #' }
 #' 
 #' # Get a trip with a SpatialPointsDataFrame
-#' trips <- osrmTrip(loc = src)
+#' trips <- osrmTrip(loc = apotheke.sp[1:10,])
 #' 
 #' # Map
 #' if(require("cartography")){
-#'   osm <- getTiles(x = trips[[1]]$trip, crop = TRUE, type = "osmgrayscale")
+#'   osm <- getTiles(x = trips[[1]]$trip, crop = TRUE,
+#'                   type = "cartolight", zoom = 11)
 #'   tilesLayer(x = osm)
-#'   plot(src, pch = 20, col = "red", cex = 2, add = TRUE)
-#'   plot(trips[[1]]$trip, col = 1:5, add = TRUE, lwd=2)
+#'   plot(trips[[1]]$trip, col = "black", lwd = 4, add=T)
+#'   plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
+#'   plot(apotheke.sp[1:10,], pch = 21, bg = "red", cex = 1, add=T)
 #' }
 #' }
 osrmTrip <- function(loc, overview = "simplified"){

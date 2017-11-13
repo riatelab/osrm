@@ -31,29 +31,29 @@
 #' @examples
 #' \dontrun{
 #' # Load data
-#' data("com")
+#' data("berlin")
 #' 
-#' # Inputs are data frames  
+#' # Inputs are data frames
 #' # Travel time matrix
-#' distCom <- osrmTable(loc = com[1:50, c("comm_id","lon","lat")])
+#' distA <- osrmTable(loc = apotheke.df[1:50, c("id","lon","lat")])
 #' # First 5 rows and columns
-#' distCom$durations[1:5,1:5]
+#' distA$durations[1:5,1:5]
 #' 
 #' # Travel time matrix with different sets of origins and destinations
-#' distCom2 <- osrmTable(src = com[1:10,c("comm_id","lon","lat")],
-#'                       dst = com[11:20,c("comm_id","lon","lat")])
+#' distA2 <- osrmTable(src = apotheke.df[1:10,c("id","lon","lat")],
+#'                     dst = apotheke.df[11:20,c("id","lon","lat")])
 #' # First 5 rows and columns
-#' distCom2$durations[1:5,1:5]
+#' distA2$durations[1:5,1:5]
 #' 
 #' # Inputs are SpatialPointsDataFrames
-#' distCom <- osrmTable(loc = src)
+#' distA3 <- osrmTable(loc = apotheke.sp[1:10,])
 #' # First 5 rows and columns
-#' distCom$durations[1:5,1:5]
+#' distA3$durations[1:5,1:5]
 #' 
 #' # Travel time matrix with different sets of origins and destinations
-#' distCom2 <- osrmTable(src = src, dst = dst)
+#' distA4 <- osrmTable(src = apotheke.sp[1:10,], dst = apotheke.sp[11:20,])
 #' # First 5 rows and columns
-#' distCom2$durations[1:5,1:5]
+#' distA4$durations[1:5,1:5]
 #' }
 #' @export
 osrmTable <- function(loc, src = NULL, dst = NULL, gepaf = FALSE){

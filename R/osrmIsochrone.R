@@ -17,11 +17,11 @@
 #' @examples
 #' \dontrun{
 #' # Load data
-#' data("com")
+#' data("berlin")
 #' 
 #' # Get isochones with lon/lat coordinates, default breaks
-#' iso <- osrmIsochrone(loc = c(6.026875, 48.93447))
-#' plot(iso, col = paste0(rep("grey", nrow(iso)), c(seq(80,20,length.out = nrow(iso)))))
+#' iso <- osrmIsochrone(loc = c(13.43853,52.47728), breaks = seq(0,15,1), res = 70)
+#' plot(iso, col = colorRampPalette(colors = c('grey80', 'grey20'))(14))
 #' 
 #' # Map
 #' if(require("cartography")){
@@ -30,25 +30,29 @@
 #'   breaks <- sort(c(unique(iso$min), max(iso$max)))
 #'   cartography::choroLayer(spdf = iso,
 #'                           var = "center", breaks = breaks,
+#'                           col = paste0(rev(carto.pal("green.pal",
+#'                                                      length(breaks)+1)),99),
 #'                           border = NA,
-#'                           legend.pos = "topleft",legend.frame = TRUE, 
-#'                           legend.title.txt = "Isochrones\n(min)", 
+#'                           legend.pos = "topleft",legend.frame = TRUE,
+#'                           legend.title.txt = "Isochrones\n(min)",
 #'                           add = TRUE)
 #' }
 #' 
+#' 
 #' # Get isochones with a SpatialPointsDataFrame, custom breaks
-#' iso2 <- osrmIsochrone(loc = src[1,], breaks = seq(from = 0, to = 40, by = 5))
+#' iso2 <- osrmIsochrone(loc = apotheke.sp[10,],
+#'                       breaks = seq(from = 0, to = 16, by = 2))
 #' 
 #' # Map
 #' if(require("cartography")){
-#'   osm2 <- getTiles(x = iso2, crop = TRUE, type = "osmgrayscale")
+#'   osm2 <- getTiles(x = iso2, crop = FALSE, type = "osmgrayscale")
 #'   tilesLayer(x = osm2)
 #'   breaks2 <- sort(c(unique(iso2$min), max(iso2$max)))
 #'   cartography::choroLayer(spdf = iso2,
 #'                           var = "center", breaks = breaks2,
 #'                           border = NA,
-#'                           legend.pos = "topleft",legend.frame = TRUE, 
-#'                           legend.title.txt = "Isochrones\n(min)", 
+#'                           legend.pos = "topleft",legend.frame = TRUE,
+#'                           legend.title.txt = "Isochrones\n(min)",
 #'                           add = TRUE)
 #' }
 #' }
@@ -69,7 +73,16 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   
   breaks <- unique(sort(breaks))
   tmax <- max(breaks)
-  speed <- 140 * 1000/60
+  if(options('osrm.profile')=="walk"){
+    speed =  10 * 1000/60
+  }
+  if(options('osrm.profile')=="bike"){
+    speed =  20 * 1000/60
+  }
+  if(options('osrm.profile')=="driving"){
+    speed =  140 * 1000/60
+  }
+  # speed <- 140 * 1000/60
   dmax <- tmax * speed
   sgrid <- rgrid(loc = sp::coordinates(loc), dmax = dmax, res = res)
   

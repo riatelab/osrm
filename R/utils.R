@@ -102,7 +102,7 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
       Plist[[j]] <- x
     }
     x <- sp::SpatialPolygons(Srl = Plist)
-    x <- rgeos::union(x = x)
+    x <- raster::union(x = x)
 
     if (class(x) != "SpatialPolygonsDataFrame"){
       x <- sp::SpatialPolygonsDataFrame(Sr = x,

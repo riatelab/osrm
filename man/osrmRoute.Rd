@@ -36,28 +36,31 @@ This function interfaces the \emph{route} OSRM service.
 \examples{
 \dontrun{
 # Load data
-data("com")
+data("berlin")
+
 # Travel path between points
-route <- osrmRoute(src = com[1, c("comm_id", "lon","lat")],
-                   dst = com[15, c("comm_id", "lon","lat")])
+route <- osrmRoute(src = apotheke.df[1, c("id", "lon","lat")],
+                   dst = apotheke.df[15, c("id", "lon","lat")])
 # Display the path
-plot(com[c(1,15),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
-points(route[,1:2], type = "l", lty = 2)
-text(com[c(1,15),3:4], labels = com[c(1,15),2], pos = 2)
+plot(route[,1:2], type = "l", lty = 2, asp =1)
+points(apotheke.df[c(1,15),2:3], col = "red", pch = 20, cex = 1.5)
+text(apotheke.df[c(1,15),2:3], labels = c("A","B"), pos = 1)
 
 # Travel path between points - output a SpatialLinesDataFrame
-route2 <- osrmRoute(src=c("Bethune", 2.64781, 50.5199),
-                    dst = c("Renescure", 2.369521, 50.72761),
+route2 <- osrmRoute(src = c("A", 13.23889, 52.54250),
+                    dst = c("B", 13.45363, 52.42926),
                     sp = TRUE, overview = "full")
 
 # Display the path
-plot(com[c(1,4),3:4], asp =1, col = "red", pch = 20, cex = 1.5)
-plot(route2, lty = 1,lwd = 4, add = TRUE)
+plot(route2, lty = 1,lwd = 4, asp = 1)
 plot(route2, lty = 1, lwd = 1, col = "white", add=TRUE)
-text(com[c(1,4),3:4], labels = com[c(1,4),2], pos = 2)
+points(x = c(13.23889, 13.45363), y = c(52.54250,52.42926), 
+       col = "red", pch = 20, cex = 1.5)
+text(x = c(13.23889, 13.45363), y = c(52.54250,52.42926), 
+     labels = c("A","B"), pos = 2)
 
 # Input is SpatialPointsDataFrames
-route3 <- osrmRoute(src = src[1,], dst = dst[1,], sp = TRUE)
+route3 <- osrmRoute(src = apotheke.sp[1,], dst = apotheke.sp[2,], sp = TRUE)
 route3@data
 }
 }
