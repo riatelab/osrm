@@ -21,6 +21,7 @@
 #' 
 #' # Get isochones with lon/lat coordinates, default breaks
 #' iso <- osrmIsochrone(loc = c(13.43853,52.47728), breaks = seq(0,15,1), res = 70)
+#' library(sp)
 #' plot(iso, col = colorRampPalette(colors = c('grey80', 'grey20'))(14))
 #' 
 #' # Map

@@ -41,6 +41,7 @@ data("berlin")
 trips <- osrmTrip(loc = apotheke.df)
 
 # Display the trip
+library(sp)
 plot(trips[[1]]$trip, col = "black", lwd = 4)
 plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
 points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)

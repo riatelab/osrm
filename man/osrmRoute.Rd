@@ -52,6 +52,7 @@ route2 <- osrmRoute(src = c("A", 13.23889, 52.54250),
                     sp = TRUE, overview = "full")
 
 # Display the path
+library(sp)
 plot(route2, lty = 1,lwd = 4, asp = 1)
 plot(route2, lty = 1, lwd = 1, col = "white", add=TRUE)
 points(x = c(13.23889, 13.45363), y = c(52.54250,52.42926), 

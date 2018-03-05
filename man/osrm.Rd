@@ -21,7 +21,7 @@ and travel time matrices.\cr
 }
 \note{
 This package relies on the usage of a running OSRM service (tested with 
-version 5.12.0 of the OSRM API).\cr
+version 5.17.0 of the OSRM API).\cr
 To change the OSRM server, change the \code{osrm.server} option:\cr 
 \code{options(osrm.server = "http://address.of.the.server/")}. \cr\cr
 To change the profile (driving is set by default), use the \code{osrm.profile} 

@@ -96,7 +96,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL, gepaf = FALSE){
     }
     
     req <- utils::URLencode(req)
-    
+
     osrmLimit(nSrc = nrow(src), nDst = nrow(dst), nreq = nchar(req))
     
     

@@ -240,14 +240,20 @@ tableLoc <- function(loc, gepaf = FALSE){
 
 osrmLimit <- function(nSrc, nDst, nreq){
   e <- simpleError("The public OSRM API does not allow results with a number of durations 
-higher than 10000. Use your own server or ask for fewer durations.")
-  e2 <- simpleError("This request is to large for the public OSRM API. Use your own server 
-or ask for fewer durations.")
+higher than 10000. Ask for fewer durations or use your own server and set its 
+--max-table-size option.")
+  e2 <- simpleError("This request is to large for the public OSRM API. Ask for 
+fewer durations or use your own server and set its --max-table-size option.")
+  e3 <- simpleError("This request is to large for the public OSRM API. Ask for 
+fewer locations or use your own server and set its --max-trip-size option.")
   if(getOption("osrm.server") == "http://router.project-osrm.org/" & (nSrc*nDst) > 10000){
     stop(e)
   }
   if(getOption("osrm.server") == "http://router.project-osrm.org/" & nreq >= 8000){
     stop(e2)
   }
+  if(getOption("osrm.server") == "http://router.project-osrm.org/" & nSrc > 100 & nDst==0){
+    stop(e3)
+  }
+  
 }
-

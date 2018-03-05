@@ -27,6 +27,7 @@
 #' trips <- osrmTrip(loc = apotheke.df)
 #' 
 #' # Display the trip
+#' library(sp)
 #' plot(trips[[1]]$trip, col = "black", lwd = 4)
 #' plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
 #' points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
@@ -65,29 +66,17 @@ osrmTrip <- function(loc, overview = "simplified"){
       names(loc) <- c("id", "lon", "lat")
     }
     
-    # Build the query
-    # req <- paste(getOption("osrm.server"),
-    #              "trip/v1/", getOption("osrm.profile"), "/polyline(", 
-    #              gepaf::encodePolyline(loc[,c("lat","lon")]),
-    #              ")?steps=false&geometries=geojson&overview=",
-    #              tolower(overview), sep = "")
     req <- paste(getOption("osrm.server"),
                  "trip/v1/", getOption("osrm.profile"), "/", 
                  paste(loc$lon, loc$lat, sep=",",collapse = ";"),
                  "?steps=false&geometries=geojson&overview=",
                  tolower(overview), sep = "")
-    paste(loc$lon, loc$lat, sep=",",collapse = ";")
-    
-    
+
+    osrmLimit(nSrc = nrow(loc), nDst = 0, nreq=1)
     # Send the query
     ua <- "'osrm' R package"
     resRaw <- RCurl::getURL(utils::URLencode(req), useragent = ua)
 
-
-    # if (resRaw=="") {
-    #   stop("OSRM returned an empty string.", call. = FALSE)
-    # }
-    # 
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
     
@@ -130,14 +119,25 @@ osrmTrip <- function(loc, overview = "simplified"){
                    nrow(geodf))
       # Build the polylines
       wktl <- rep(NA,nrow(waypoints))
+      
       for (i in 1:(length(indexes) - 1)) {
+        ind0 <- indexes[i]
+        ind1 <- indexes[i+1]
+        if(ind1==ind0){
+          aind <- rep(ind0,2)
+        }else{
+          aind <- ind0:ind1
+        }
         wktl[i] <- paste("LINESTRING(",
-                         paste(geodf[indexes[i]:indexes[i + 1],1]," ",
-                               geodf[indexes[i]:indexes[i + 1],2], 
+                         paste(geodf[aind,1]," ",
+                               geodf[aind,2], 
                                sep = "", collapse = ",")
                          ,")",sep = "")
       }
+      
       wkt <- paste("GEOMETRYCOLLECTION(", paste(wktl, collapse = ","),")", sep = "")
+      
+      
       sl <- rgeos::readWKT(wkt)
       sl@proj4string <- sp::CRS("+init=epsg:4326")
       start <- (waypoints[order(waypoints$waypoint_index, decreasing = F),"id"])
@@ -162,6 +162,3 @@ osrmTrip <- function(loc, overview = "simplified"){
   }, error = function(e) { message("OSRM returned an error:\n", e)})
   return(NULL)
 }
-
-
-

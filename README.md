@@ -11,7 +11,7 @@
 ## Description
 OSRM is a routing service based on OpenStreetMap data. See <http://project-osrm.org/> for more information. This package allows to compute distances (travel time and kilometric distance) between points and travel time matrices.   
 
-This package relies on the usage of a running OSRM service (tested with v5.14.0 of OSRM).    
+This package relies on the usage of a running OSRM service (tested with v5.17.0 of OSRM).    
 
 You can run your own instance of OSRM following guidelines provided here:    [https://github.com/Project-OSRM/osrm-backend](https://github.com/Project-OSRM/osrm-backend).     
 The simplest solution is probably the one based on [docker containers](https://github.com/Project-OSRM/osrm-backend#using-docker).    
@@ -64,6 +64,7 @@ distCom$duration[1:5,1:5]
 
 ```r
 library(osrm)
+library(osrm)
 # Load data
 data("com")
 
@@ -85,6 +86,7 @@ if(require("cartography")){
 
 ```r
 library(osrm)
+library(sp)
 # Load data
 data("com")
 
@@ -107,6 +109,7 @@ if(require("cartography")){
 
 ```r
 library(osrm)
+library(sp)
 # Load data
 data("com")
 
