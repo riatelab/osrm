@@ -1,3 +1,11 @@
+# osrm version 3.1.1 (Release date: 2018-03-05)
+
+## Minor changes
+* Put sp in Import rather than in Depends
+* bug fix in osrmTrip.
+* Better error messages.
+
+
 # osrm version 3.1.0 (Release date: 2017-06-08)
 
 ## Minor changes
