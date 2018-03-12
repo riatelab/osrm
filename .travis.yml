@@ -1,7 +1,6 @@
 language: r
 r:
   - release
-  - devel
 
 cache: packages
 
