@@ -1,4 +1,4 @@
-# osrm version 3.1.1 (Release date: 2018-03-05)
+# osrm version 3.1.1 (Release date: 2018-03-12)
 
 ## Minor changes
 * Put sp in Import rather than in Depends
