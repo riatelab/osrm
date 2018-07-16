@@ -67,7 +67,7 @@ osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL, sp = FA
     }
     
     exclude_str <- ""
-    if (!is.null(exclude)) { exclude_str <- paste("&exclude=", exclude) }
+    if (!is.null(exclude)) { exclude_str <- paste("&exclude=", exclude, sep = "") }
     
     # build the query
     req <- paste(getOption("osrm.server"),
@@ -75,7 +75,7 @@ osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL, sp = FA
                  src[2], ",", src[3], ";", dst[2],",",dst[3], 
                  "?alternatives=false&geometries=polyline&steps=false&overview=",
                  tolower(overview), exclude_str, sep="")
-    
+
     # Sending the query
     resRaw <- RCurl::getURL(utils::URLencode(req),
                             useragent = "'osrm' R package")
