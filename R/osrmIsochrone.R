@@ -5,6 +5,7 @@
 #' @param loc a numeric vector of longitude and latitude (WGS84) or a 
 #' SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.
 #' @param breaks a numeric vector of isochrone values (in minutes).
+#' @param exclude pass an optional "exclude" request option to the OSRM API. 
 #' @param res number of points used to compute isochrones, one side of the square 
 #' grid, the total number of points will be res*res.  
 #' @return A SpatialPolygonsDateFrame of isochrones is returned. 
@@ -58,7 +59,7 @@
 #' }
 #' }
 osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7), 
-                          res = 30){
+                          exclude = NULL, res = 30){
   oprj <- NA
   if(testSp(loc)){
     oprj <- sp::proj4string(loc)
@@ -109,19 +110,19 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
     for (i in 1:f500){
       st <- (i-1) * 300 + 1
       en <- i * 300
-      dmat <- osrmTable(src = loc, dst = sgrid[st:en,])
+      dmat <- osrmTable(src = loc, dst = sgrid[st:en,], exclude = exclude)
       durations <- dmat$durations
       listDur[[i]] <- dmat$durations
       listDest[[i]] <- dmat$destinations
       Sys.sleep(sleeptime)
     }
     if(r500>0){
-      dmat <- osrmTable(src = loc, dst = sgrid[(en+1):(en+r500),])
+      dmat <- osrmTable(src = loc, dst = sgrid[(en+1):(en+r500),], exclude = exclude)
       listDur[[i+1]] <- dmat$durations
       listDest[[i+1]] <- dmat$destinations
     }
   }else{
-    dmat <- osrmTable(src = loc, dst = sgrid)
+    dmat <- osrmTable(src = loc, dst = sgrid, exclude = exclude)
     listDur[[1]] <- dmat$durations
     listDest[[1]] <- dmat$destinations
   }
