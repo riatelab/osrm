@@ -4,11 +4,13 @@
 \alias{osrmTrip}
 \title{Get the Travel Geometry Between Multiple Unordered Points}
 \usage{
-osrmTrip(loc, overview = "simplified")
+osrmTrip(loc, exclude = NULL, overview = "simplified")
 }
 \arguments{
 \item{loc}{a SpatialPointsDataFrame of the waypoints, or a data.frame with points as rows
 and 3 columns: identifier, longitudes and latitudes (WGS84 decimal degrees).}
+
+\item{exclude}{pass an optional "exclude" request option to the OSRM API.}
 
 \item{overview}{"full", "simplified". Add geometry either full (detailed) or simplified 
 according to highest zoom level it could be display on.}
