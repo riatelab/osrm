@@ -33,6 +33,17 @@
 #' plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
 #' points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
 #' 
+#' # Do not route through motorways
+#' trips_no_motorway <- osrmTrip(loc = apotheke.df, exclude = "motorway")
+#' 
+#' # Looks like it is more convenient to avoid motorways...
+#' mapply(`/`, trips_no_motorway[[1]]$summary, trips[[1]]$summary)
+#' 
+#' # Display the trips
+#' plot(trips[[1]]$trip, col = "black", lwd = 3)
+#' plot(trips_no_motorway[[1]]$trip, col = "green", lwd = 3, add = T)
+#' points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
+#' 
 #' # Map
 #' if(require("cartography")){
 #'   osm <- getTiles(x = trips[[1]]$trip, crop = TRUE,
