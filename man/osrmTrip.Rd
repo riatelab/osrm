@@ -49,7 +49,7 @@ plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
 points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
 
 # Do not route through motorways
-trips <- osrmTrip(loc = apotheke.df, exclude = "motorway")
+trips_no_motorway <- osrmTrip(loc = apotheke.df, exclude = "motorway")
 
 # Looks like it is more convenient to avoid motorways...
 mapply(`/`, trips_no_motorway[[1]]$summary, trips[[1]]$summary)
