@@ -4,6 +4,7 @@
 #' This function interfaces the \emph{trip} OSRM service. 
 #' @param loc a SpatialPointsDataFrame of the waypoints, or a data.frame with points as rows
 #' and 3 columns: identifier, longitudes and latitudes (WGS84 decimal degrees).
+#' @param exclude pass an optional "exclude" request option to the OSRM API. 
 #' @param overview "full", "simplified". Add geometry either full (detailed) or simplified 
 #' according to highest zoom level it could be display on. 
 #' @details As stated in the OSRM API, if input coordinates can not be joined by a single trip 
@@ -32,6 +33,17 @@
 #' plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
 #' points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
 #' 
+#' # Do not route through motorways
+#' trips_no_motorway <- osrmTrip(loc = apotheke.df, exclude = "motorway")
+#' 
+#' # Looks like it is more convenient to avoid motorways...
+#' mapply(`/`, trips_no_motorway[[1]]$summary, trips[[1]]$summary)
+#' 
+#' # Display the trips
+#' plot(trips[[1]]$trip, col = "black", lwd = 3)
+#' plot(trips_no_motorway[[1]]$trip, col = "green", lwd = 3, add = T)
+#' points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
+#' 
 #' # Map
 #' if(require("cartography")){
 #'   osm <- getTiles(x = trips[[1]]$trip, crop = TRUE,
@@ -55,7 +67,7 @@
 #'   plot(apotheke.sp[1:10,], pch = 21, bg = "red", cex = 1, add=T)
 #' }
 #' }
-osrmTrip <- function(loc, overview = "simplified"){
+osrmTrip <- function(loc, exclude = NULL, overview = "simplified"){
   tryCatch({
     # check if inpout is sp, transform and name columns
     oprj <- NA
@@ -66,11 +78,14 @@ osrmTrip <- function(loc, overview = "simplified"){
       names(loc) <- c("id", "lon", "lat")
     }
     
+    exclude_str <- ""
+    if (!is.null(exclude)) { exclude_str <- paste("&exclude=", exclude, sep = "") }
+    
     req <- paste(getOption("osrm.server"),
                  "trip/v1/", getOption("osrm.profile"), "/", 
                  paste(loc$lon, loc$lat, sep=",",collapse = ";"),
                  "?steps=false&geometries=geojson&overview=",
-                 tolower(overview), sep = "")
+                 tolower(overview), exclude_str, sep = "")
 
     osrmLimit(nSrc = nrow(loc), nDst = 0, nreq=1)
     # Send the query

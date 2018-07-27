@@ -13,6 +13,7 @@
 #' @param dst a data frame containing destination points identifiers, longitudes 
 #' and latitudes (WGS84). It can also be a SpatialPointsDataFrame or a 
 #' SpatialPolygonsDataFrame, then row names are used as identifiers. 
+#' @param exclude pass an optional "exclude" request option to the OSRM API. 
 #' @param gepaf a boolean indicating if coordinates are sent encoded with the
 #' google encoded algorithm format (TRUE) or not (FALSE). Must be FALSE if using
 #' the public OSRM API.
@@ -56,7 +57,7 @@
 #' distA4$durations[1:5,1:5]
 #' }
 #' @export
-osrmTable <- function(loc, src = NULL, dst = NULL, gepaf = FALSE){
+osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL, gepaf = FALSE){
   tryCatch({
     if (is.null(src)){
       # check if inpout is sp, transform and name columns
@@ -87,14 +88,17 @@ osrmTable <- function(loc, src = NULL, dst = NULL, gepaf = FALSE){
       # Build the query
       loc <- rbind(src, dst)
 
+      exclude_str <- ""
+      if (!is.null(exclude)) { exclude_str <- paste("&exclude=", exclude, sep = "") }
+      
       req <- paste(tableLoc(loc = loc, gepaf = gepaf),
                    "?sources=", 
                    paste(0:(nrow(src)-1), collapse = ";"), 
                    "&destinations=", 
-                   paste(nrow(src):(nrow(loc)-1), collapse = ";"), 
+                   paste(nrow(src):(nrow(loc)-1), collapse = ";"), exclude_str, 
                    sep="")
     }
-    
+    print(req)
     req <- utils::URLencode(req)
 
     osrmLimit(nSrc = nrow(src), nDst = nrow(dst), nreq = nchar(req))

@@ -4,11 +4,13 @@
 \alias{osrmTrip}
 \title{Get the Travel Geometry Between Multiple Unordered Points}
 \usage{
-osrmTrip(loc, overview = "simplified")
+osrmTrip(loc, exclude = NULL, overview = "simplified")
 }
 \arguments{
 \item{loc}{a SpatialPointsDataFrame of the waypoints, or a data.frame with points as rows
 and 3 columns: identifier, longitudes and latitudes (WGS84 decimal degrees).}
+
+\item{exclude}{pass an optional "exclude" request option to the OSRM API.}
 
 \item{overview}{"full", "simplified". Add geometry either full (detailed) or simplified 
 according to highest zoom level it could be display on.}
@@ -44,6 +46,17 @@ trips <- osrmTrip(loc = apotheke.df)
 library(sp)
 plot(trips[[1]]$trip, col = "black", lwd = 4)
 plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
+points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
+
+# Do not route through motorways
+trips_no_motorway <- osrmTrip(loc = apotheke.df, exclude = "motorway")
+
+# Looks like it is more convenient to avoid motorways...
+mapply(`/`, trips_no_motorway[[1]]$summary, trips[[1]]$summary)
+
+# Display the trips
+plot(trips[[1]]$trip, col = "black", lwd = 3)
+plot(trips_no_motorway[[1]]$trip, col = "green", lwd = 3, add = T)
 points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
 
 # Map

@@ -10,6 +10,7 @@
 #' point.
 #' @param overview "full", "simplified" or FALSE. Add geometry either full (detailed), simplified 
 #' according to highest zoom level it could be display on, or not at all. 
+#' @param exclude pass an optional "exclude" request option to the OSRM API. 
 #' @param sp if sp is TRUE the function returns a SpatialLinesDataFrame.
 #' @return If sp is FALSE, a data frame is returned. It contains the longitudes and latitudes of 
 #' the travel path between the two points.\cr
@@ -50,7 +51,7 @@
 #' route3@data
 #' }
 #' @export
-osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
+osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL, sp = FALSE){
   tryCatch({
     oprj <- NA
     if(testSp(src)){
@@ -65,12 +66,15 @@ osrmRoute <- function(src, dst, overview = "simplified", sp = FALSE){
       dst <- c(x[1,1],x[1,2], x[1,3])
     }
     
+    exclude_str <- ""
+    if (!is.null(exclude)) { exclude_str <- paste("&exclude=", exclude, sep = "") }
+    
     # build the query
     req <- paste(getOption("osrm.server"),
                  "route/v1/", getOption("osrm.profile"), "/", 
                  src[2], ",", src[3], ";", dst[2],",",dst[3], 
                  "?alternatives=false&geometries=polyline&steps=false&overview=",
-                 tolower(overview), sep="")
+                 tolower(overview), exclude_str, sep="")
 
     # Sending the query
     resRaw <- RCurl::getURL(utils::URLencode(req),

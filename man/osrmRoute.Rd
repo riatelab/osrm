@@ -4,7 +4,7 @@
 \alias{osrmRoute}
 \title{Get the Shortest Path Between Two Points}
 \usage{
-osrmRoute(src, dst, overview = "simplified", sp = FALSE)
+osrmRoute(src, dst, overview = "simplified", exclude = NULL, sp = FALSE)
 }
 \arguments{
 \item{src}{a numeric vector of identifier, longitude and latitude (WGS84), a 
@@ -17,6 +17,8 @@ point.}
 
 \item{overview}{"full", "simplified" or FALSE. Add geometry either full (detailed), simplified 
 according to highest zoom level it could be display on, or not at all.}
+
+\item{exclude}{pass an optional "exclude" request option to the OSRM API.}
 
 \item{sp}{if sp is TRUE the function returns a SpatialLinesDataFrame.}
 }
