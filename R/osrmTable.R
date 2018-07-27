@@ -69,8 +69,12 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL, gepaf = FALSE
       # Format
       src <- loc
       dst <- loc
+      
+      exclude_str <- ""
+      if (!is.null(exclude)) { exclude_str <- paste("?exclude=", exclude, sep = "") }
+      
       # Build the query
-      req <- tableLoc(loc = loc, gepaf = gepaf)
+      req <- paste0(tableLoc(loc = loc, gepaf = gepaf), exclude_str)
     }else{
       # check if inpout is sp, transform and name columns
       if(testSp(src)){
@@ -98,7 +102,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL, gepaf = FALSE
                    paste(nrow(src):(nrow(loc)-1), collapse = ";"), exclude_str, 
                    sep="")
     }
-    print(req)
+
     req <- utils::URLencode(req)
 
     osrmLimit(nSrc = nrow(src), nDst = nrow(dst), nreq = nchar(req))
