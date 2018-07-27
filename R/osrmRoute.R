@@ -88,8 +88,13 @@ osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL, sp = FA
     res <- jsonlite::fromJSON(resRaw)
     
     # Error handling
-    e <- simpleError(res$message)
-    if(res$code != "Ok"){stop(e)}
+    if(is.null(res$code)){
+      e <- simpleError(res$message)
+      stop(e)
+    }else{
+      e <- simpleError(paste0(res$code,"\n",res$message))
+      if(res$code != "Ok"){stop(e)}
+    }
     
     if (overview == FALSE){
       return(round(c(duration = res$routes$duration/60,

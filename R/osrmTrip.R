@@ -96,8 +96,13 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified"){
     res <- jsonlite::fromJSON(resRaw)
     
     # Error handling
-    e <- simpleError(res$message)
-    if (res$code != "Ok") {stop(e)}
+    if(is.null(res$code)){
+      e <- simpleError(res$message)
+      stop(e)
+    }else{
+      e <- simpleError(paste0(res$code,"\n",res$message))
+      if(res$code != "Ok"){stop(e)}
+    }
     
     # Get all the waypoints
     waypointsg <- data.frame(res$waypoints[,c(1,2,5)], 

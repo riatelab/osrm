@@ -88,10 +88,10 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL, gepaf = FALSE
       }else{
         names(dst) <- c("id", "lon", "lat")
       }
-
+      
       # Build the query
       loc <- rbind(src, dst)
-
+      
       exclude_str <- ""
       if (!is.null(exclude)) { exclude_str <- paste("&exclude=", exclude, sep = "") }
       
@@ -102,11 +102,10 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL, gepaf = FALSE
                    paste(nrow(src):(nrow(loc)-1), collapse = ";"), exclude_str, 
                    sep="")
     }
-
-    req <- utils::URLencode(req)
-
-    osrmLimit(nSrc = nrow(src), nDst = nrow(dst), nreq = nchar(req))
     
+    req <- utils::URLencode(req)
+    
+    osrmLimit(nSrc = nrow(src), nDst = nrow(dst), nreq = nchar(req))
     
     # Get the result
     resRaw <- RCurl::getURL(req, 
@@ -114,11 +113,16 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL, gepaf = FALSE
     
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
-
+    
     # Check results
-    e <- simpleError(paste0(res$code,"\n",res$message))
-    if(res$code != "Ok"){stop(e)}
-
+    if(is.null(res$code)){
+      e <- simpleError(res$message)
+      stop(e)
+    }else{
+      e <- simpleError(paste0(res$code,"\n",res$message))
+      if(res$code != "Ok"){stop(e)}
+    }
+    
     # get the distance table
     durations <- distTableFormat(res = res, src = src, dst = dst)
     
