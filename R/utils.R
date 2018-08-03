@@ -206,8 +206,6 @@ durTableFormat <- function(res, src, dst){
   mat <- res$durations
   # From sec to minutes
   mat <- round(mat/(60), 1)
-  # # NA management
-  # mat[mat == 357913.94] <- NA
   # col and row names management
   dimnames(mat) <- list(src$id, dst$id)
   return(mat)
@@ -217,10 +215,8 @@ durTableFormat <- function(res, src, dst){
 distTableFormat <- function(res, src, dst){
   # extract distance table
   mat <- res$distances
-  # From sec to minutes
+  # rounding meters
   mat <- round(mat, 0)
-  # # NA management
-  # mat[mat == 357913.94] <- NA
   # col and row names management
   dimnames(mat) <- list(src$id, dst$id)
   return(mat)
