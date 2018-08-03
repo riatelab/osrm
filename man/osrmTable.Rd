@@ -4,7 +4,8 @@
 \alias{osrmTable}
 \title{Get Travel Time Matrices Between Points}
 \usage{
-osrmTable(loc, src = NULL, dst = NULL, exclude = NULL, gepaf = FALSE)
+osrmTable(loc, src = NULL, dst = NULL, exclude = NULL, gepaf = FALSE,
+  measure = "duration")
 }
 \arguments{
 \item{loc}{a data frame containing 3 fields: points identifiers, longitudes 
@@ -26,6 +27,10 @@ SpatialPolygonsDataFrame, then row names are used as identifiers.}
 \item{gepaf}{a boolean indicating if coordinates are sent encoded with the
 google encoded algorithm format (TRUE) or not (FALSE). Must be FALSE if using
 the public OSRM API.}
+
+\item{measure}{a character indicating what measures are calculated. It can 
+be "duration" (in minutes), "distance" (meters), or both c('duration',
+'distance').}
 }
 \value{
 A list containing 3 data frames is returned. 

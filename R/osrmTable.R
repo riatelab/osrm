@@ -13,6 +13,9 @@
 #' @param dst a data frame containing destination points identifiers, longitudes 
 #' and latitudes (WGS84). It can also be a SpatialPointsDataFrame or a 
 #' SpatialPolygonsDataFrame, then row names are used as identifiers. 
+#' @param measure a character indicating what measures are calculated. It can 
+#' be "duration" (in minutes), "distance" (meters), or both c('duration',
+#' 'distance').
 #' @param exclude pass an optional "exclude" request option to the OSRM API. 
 #' @param gepaf a boolean indicating if coordinates are sent encoded with the
 #' google encoded algorithm format (TRUE) or not (FALSE). Must be FALSE if using
@@ -57,7 +60,8 @@
 #' distA4$durations[1:5,1:5]
 #' }
 #' @export
-osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL, gepaf = FALSE){
+osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL, 
+                      gepaf = FALSE, measure="duration"){
   tryCatch({
     if (is.null(src)){
       # check if inpout is sp, transform and name columns
@@ -69,12 +73,10 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL, gepaf = FALSE
       # Format
       src <- loc
       dst <- loc
-      
-      exclude_str <- ""
-      if (!is.null(exclude)) { exclude_str <- paste("?exclude=", exclude, sep = "") }
+      sep <- "?"
       
       # Build the query
-      req <- paste0(tableLoc(loc = loc, gepaf = gepaf), exclude_str)
+      req <- tableLoc(loc = loc, gepaf = gepaf)
     }else{
       # check if inpout is sp, transform and name columns
       if(testSp(src)){
@@ -91,17 +93,38 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL, gepaf = FALSE
       
       # Build the query
       loc <- rbind(src, dst)
-      
-      exclude_str <- ""
-      if (!is.null(exclude)) { exclude_str <- paste("&exclude=", exclude, sep = "") }
-      
+      sep = "&"
+          
       req <- paste(tableLoc(loc = loc, gepaf = gepaf),
                    "?sources=", 
                    paste(0:(nrow(src)-1), collapse = ";"), 
                    "&destinations=", 
-                   paste(nrow(src):(nrow(loc)-1), collapse = ";"), exclude_str, 
+                   paste(nrow(src):(nrow(loc)-1), collapse = ";"),
                    sep="")
     }
+    
+    # exclude mngmnt
+    if (!is.null(exclude)) {
+      exclude_str <- paste0(sep,"exclude=", exclude, sep = "") 
+      sep="&"
+    }else{
+      exclude_str <- ""
+    }
+    
+    # annotation mngmnt
+    annotations <- paste0(sep, "annotations=", paste0(measure, collapse=','))
+    
+    if(getOption("osrm.server") == "http://router.project-osrm.org/"){
+      annotations <- ""
+    }
+    
+    
+    
+    # final req
+    req <- paste0(req,exclude_str,annotations)
+    
+    print(req)
+    
     
     req <- utils::URLencode(req)
     
@@ -123,15 +146,20 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL, gepaf = FALSE
       if(res$code != "Ok"){stop(e)}
     }
     
+    output <- list()
+    if(!is.null(res$durations)){
+      # get the duration table
+      output$durations <- durTableFormat(res = res, src = src, dst = dst)
+    }
+    if(!is.null(res$distances)){
     # get the distance table
-    durations <- distTableFormat(res = res, src = src, dst = dst)
-    
+      output$distances <- distTableFormat(res = res, src = src, dst = dst)  
+    }
     # get the coordinates
     coords <- coordFormat(res = res, src = src, dst = dst)
-    
-    return(list(durations = durations, 
-                sources = coords$sources, 
-                destinations = coords$destinations))
+    output$sources <- coords$sources
+    output$destinations = coords$destinations
+    return(output)
   }, error=function(e) {message("OSRM returned an error:\n", e)})
   return(NULL)
 }
