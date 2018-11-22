@@ -179,6 +179,6 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified"){
       trips[[nt]] <- list(trip = sldf, summary = tripSummary)
     }
     return(trips)
-  }, error = function(e) { message("OSRM returned an error:\n", e)})
+  }, error = function(e) { message("The OSRM server returned an error:\n", e)})
   return(NULL)
 }

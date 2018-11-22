@@ -124,7 +124,7 @@ osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL, sp = FA
       names(geodf)[1:2] <- c("src", "dst")
     }
     return(geodf)
-  }, error=function(e) {message("OSRM returned an error:\n", e)})
+  }, error=function(e) {message("The OSRM server returned an error:\n", e)})
   return(NULL)
 }
 
