@@ -3,3 +3,4 @@
 ^NEWS\.md$
 ^\.travis\.yml$
 ^data-raw$
+^img$

@@ -123,7 +123,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
     # final req
     req <- paste0(req,exclude_str,annotations)
     
-    print(req)
+    # print(req)
     
     
     req <- utils::URLencode(req)
@@ -160,7 +160,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
     output$sources <- coords$sources
     output$destinations = coords$destinations
     return(output)
-  }, error=function(e) {message("OSRM returned an error:\n", e)})
+  }, error=function(e) {message("The OSRM server returned an error:\n", e)})
   return(NULL)
 }
 

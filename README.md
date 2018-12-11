@@ -6,7 +6,7 @@
 
 ***Interface Between R and the OpenStreetMap-Based Routing Service [OSRM](http://project-osrm.org/)***
 
-![](https://f.hypotheses.org/wp-content/blogs.dir/1909/files/2016/02/Rroads.png)
+![](img/cover.png)
 
 ## Description
 OSRM is a routing service based on OpenStreetMap data. See <http://project-osrm.org/> for more information. This package allows to compute distances (travel time and kilometric distance) between points and travel time matrices.   
@@ -44,42 +44,45 @@ To set the profile (driving is set by default), use the `osrm.profile` option: `
 ```r
 library(osrm)
 # Load data
-data("com")
+data("berlin")
+# Inputs are data frames
 # Travel time matrix
-distCom <- osrmTable(loc = com[1:50, c("name","lon","lat")])
+distA <- osrmTable(loc = apotheke.df[1:50, c("id","lon","lat")])
 # First 5 rows and columns
-distCom$duration[1:5,1:5]
-```
-<table border=1>
-<tr> <th>  </th> <th> Bethune </th> <th> Annezin </th> <th> Denderleeuw </th> <th> Haaltert </th> <th> Locon </th>  </tr>
-  <tr> <td align="right"> Bethune </td> <td align="right"> 0.00 </td> <td align="right"> 5.40 </td> <td align="right"> 95.10 </td> <td align="right"> 91.60 </td> <td align="right"> 7.50 </td> </tr>
-  <tr> <td align="right"> Annezin </td> <td align="right"> 4.90 </td> <td align="right"> 0.00 </td> <td align="right"> 98.30 </td> <td align="right"> 94.70 </td> <td align="right"> 7.10 </td> </tr>
-  <tr> <td align="right"> Denderleeuw </td> <td align="right"> 94.20 </td> <td align="right"> 97.30 </td> <td align="right"> 0.00 </td> <td align="right"> 10.40 </td> <td align="right"> 93.50 </td> </tr>
-  <tr> <td align="right"> Haaltert </td> <td align="right"> 90.80 </td> <td align="right"> 93.80 </td> <td align="right"> 10.40 </td> <td align="right"> 0.00 </td> <td align="right"> 90.00 </td> </tr>
-  <tr> <td align="right"> Locon </td> <td align="right"> 7.00 </td> <td align="right"> 6.90 </td> <td align="right"> 93.50 </td> <td align="right"> 90.00 </td> <td align="right"> 0.00 </td> </tr>
-   </table>
+distA$durations[1:5,1:5]
 
+```
+|           | 440338666| 538057637| 977657079| 3770254015| 364363337|
+|:----------|---------:|---------:|---------:|----------:|---------:|
+|440338666  |       0.0|      26.2|      45.4|       25.0|      13.8|
+|538057637  |      26.8|       0.0|      44.4|       17.1|      20.8|
+|977657079  |      45.4|      43.1|       0.0|       37.4|      35.9|
+|3770254015 |      28.8|      17.8|      35.0|        0.0|      14.5|
+|364363337  |      17.7|      24.7|      34.7|       13.8|       0.0|
 
 ### `osrmRoute`
 
 ```r
 library(osrm)
-library(osrm)
+library(sp)
+library(cartography)
 # Load data
-data("com")
+data("berlin")
+route <- osrmRoute(src = c("A", 13.23889, 52.54250),
+                   dst = c("B", 13.45363, 52.42926),
+                   sp = TRUE, overview = "full")
+# Display the path
+osm <- getTiles(x = route, crop = TRUE, type = "osm")
+tilesLayer(osm)
+plot(route, lty = 1,lwd = 4, asp = 1, add=TRUE)
+plot(route, lty = 1, lwd = 1, col = "white", add=TRUE)
+points(x = c(13.23889, 13.45363), y = c(52.54250,52.42926), 
+       col = "red", pch = 20, cex = 1.5)
+text(x = c(13.23889, 13.45363), y = c(52.54250,52.42926), 
+     labels = c("A","B"), pos = c(1,2))
 
-# Travel path between SpatialPointsDataFrame
-route <- osrmRoute(src = src[1,], dst = dst[1,], sp = TRUE)
-if(require("cartography")){
-  osm <- getTiles(spdf = route, crop = TRUE, type = "osmtransport")
-  tilesLayer(osm)
-  plot(route, lwd = 5, col = "blue", add = TRUE)
-  plot(src[1,], pch = 20, col = "green", cex = 5, add = TRUE)             
-  plot(dst[1,], pch = 20, col = "red", cex = 5, add = TRUE) 
-  dev.off()
-}
 ```
-![](http://rgeomatic.hypotheses.org/files/2016/05/osrmRoute.png)
+![](img/route.png)
 
 
 ### `osrmTrip`
@@ -87,60 +90,57 @@ if(require("cartography")){
 ```r
 library(osrm)
 library(sp)
+library(cartography)
 # Load data
-data("com")
-
+data("berlin")
 # Get a trip with a SpatialPointsDataFrame
-trips <- osrmTrip(loc = src)
-
+trips <- osrmTrip(loc = apotheke.sp[10:20,])
 # Map
-if(require("cartography")){
-  osm <- getTiles(spdf = trips[[1]]$trip, crop = TRUE, type = "osmtransport")
-  tilesLayer(osm)
-  plot(trips[[1]]$trip, add = TRUE, col = 1:5, lwd = 5)
-  plot(src, pch = 21, bg = "red", cex = 2, col = "black", add = TRUE)
-}
+osm <- getTiles(x = trips[[1]]$trip, crop = TRUE,
+                type = "cartolight", zoom = 11)
+tilesLayer(x = osm)
+plot(trips[[1]]$trip, col = "black", lwd = 4, add=T)
+plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
+plot(apotheke.sp[10:20,], pch = 21, bg = "red", cex = 1.5, add=T)
 
 ```
 
-![](http://rgeomatic.hypotheses.org/files/2016/05/osrmTrip.png)
+![](img/trip.png)
 
 ### `osrmIsochrone`
 
 ```r
 library(osrm)
 library(sp)
+library(cartography)
 # Load data
-data("com")
-
+data("berlin")
 # Get isochones with a SpatialPointsDataFrame, custom breaks
-iso <- osrmIsochrone(loc = src[6,], breaks = seq(from = 0,to = 30, by = 5))
-
+iso <- osrmIsochrone(loc = apotheke.sp[10,],
+                     breaks = seq(from = 0, to = 14, by = 2), res = 50)
 # Map
-if(require("cartography")){
-  osm <- getTiles(spdf = iso, crop = TRUE, type = "osmtransport")
-  tilesLayer(osm)
-  breaks <- sort(c(unique(iso$min), max(iso$max)))
-  pal <- paste(carto.pal("taupe.pal", length(breaks)-1), "95", sep="")
-  cartography::choroLayer(spdf = iso, df = iso@data,
-                          var = "center", breaks = breaks,
-                          border = "grey50", lwd = 0.5, col = pal,
-                          legend.pos = "topleft",legend.frame = TRUE, 
-                          legend.title.txt = "Driving Time\nto Renescure\n(min)", 
-                          add = TRUE)
-  plot(src[6,], cex = 2, pch = 20, col ="red", add=T)
-  text(src[6,], label = "Renescure", pos = 3)
-}
+osm <- getTiles(x = iso, crop = FALSE, type = "osm", zoom = 13)
+tilesLayer(x = osm)
+bks <- sort(c(unique(iso$min), max(iso$max)))
+cols <- paste0(carto.pal("turquoise.pal", n1 = length(bks)-1), 80)
+choroLayer(spdf = iso,
+           var = "center", breaks = bks,
+           border = NA, col = cols,
+           legend.pos = "topleft",legend.frame = TRUE,
+           legend.title.txt = "Isochrones\n(min)",
+           add = TRUE)
+plot(apotheke.sp[10,], add=TRUE, col ="red", pch = 20)
+
 ```
-![](http://rgeomatic.hypotheses.org/files/2016/05/osrmIsochrone.png)
+![](img/iso.png)
 
 
 ## Installation
 
 * Development version on GitHub
 ```{r}
-require(devtools)
-devtools::install_github("rCarto/osrm")
+require(remotes)
+remotes::install_github("rCarto/osrm")
 ```
 
 * Stable version on [CRAN](https://CRAN.R-project.org/package=osrm/)
