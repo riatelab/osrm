@@ -15,7 +15,7 @@
 #' SpatialPolygonsDataFrame, then row names are used as identifiers. 
 #' @param measure a character indicating what measures are calculated. It can 
 #' be "duration" (in minutes), "distance" (meters), or both c('duration',
-#' 'distance').
+#' 'distance'). The demo server only allows "duration". 
 #' @param exclude pass an optional "exclude" request option to the OSRM API. 
 #' @param gepaf a boolean indicating if coordinates are sent encoded with the
 #' google encoded algorithm format (TRUE) or not (FALSE). Must be FALSE if using

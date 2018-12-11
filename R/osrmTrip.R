@@ -36,7 +36,7 @@
 #' # Do not route through motorways
 #' trips_no_motorway <- osrmTrip(loc = apotheke.df, exclude = "motorway")
 #' 
-#' # Looks like it is more convenient to avoid motorways...
+#' # Looks like it may be convenient to avoid motorways...
 #' mapply(`/`, trips_no_motorway[[1]]$summary, trips[[1]]$summary)
 #' 
 #' # Display the trips

@@ -26,29 +26,40 @@
 #' 
 #' # Travel path between points
 #' route <- osrmRoute(src = apotheke.df[1, c("id", "lon","lat")],
-#'                    dst = apotheke.df[15, c("id", "lon","lat")])
-#' # Display the path
+#'                    dst = apotheke.df[16, c("id", "lon","lat")])
+#' # Travel path between points excluding motorways
+#' route2 <- osrmRoute(src = apotheke.df[1, c("id", "lon","lat")],
+#'                     dst = apotheke.df[16, c("id", "lon","lat")], 
+#'                     exclude = "motorway")
+#' # Display paths
 #' plot(route[,1:2], type = "l", lty = 2, asp =1)
-#' points(apotheke.df[c(1,15),2:3], col = "red", pch = 20, cex = 1.5)
-#' text(apotheke.df[c(1,15),2:3], labels = c("A","B"), pos = 1)
+#' points(route2[,1:2], type = "l", lty = 2, asp = 1, col = "red")
+#' points(apotheke.df[c(1,16),2:3], col = "red", pch = 20, cex = 1.5)
+#' text(apotheke.df[c(1,16),2:3], labels = c("A","B"), pos = c(1, 2))
 #' 
-#' # Travel path between points - output a SpatialLinesDataFrame
-#' route2 <- osrmRoute(src = c("A", 13.23889, 52.54250),
-#'                     dst = c("B", 13.45363, 52.42926),
+#' 
+#' # Travel path between points between points - output a SpatialLinesDataFrame
+#' route3 <- osrmRoute(src = c("A", 13.43853, 52.47728),
+#'                     dst = c("B", 13.32247, 52.48882),
 #'                     sp = TRUE, overview = "full")
-#' 
+#' # Travel path between points between points - output a SpatialLinesDataFrame 
+#' # excluding motorways
+#' route4 <- osrmRoute(src = c("A", 13.43853, 52.47728),
+#'                     dst = c("B", 13.32247, 52.48882),
+#'                     sp = TRUE, overview = "full", exclude = "motorway")
 #' # Display the path
 #' library(sp)
-#' plot(route2, lty = 1,lwd = 4, asp = 1)
-#' plot(route2, lty = 1, lwd = 1, col = "white", add=TRUE)
-#' points(x = c(13.23889, 13.45363), y = c(52.54250,52.42926), 
+#' plot(route3, lty = 2, asp = 1)
+#' plot(route4, lty = 2, asp = 1, col = "red", add = T)
+#' points(x = c(13.43853,13.32247 ), y = c(52.47728, 52.48882), 
 #'        col = "red", pch = 20, cex = 1.5)
-#' text(x = c(13.23889, 13.45363), y = c(52.54250,52.42926), 
-#'      labels = c("A","B"), pos = 2)
+#' text(x = c(13.43853,13.32247 ), y = c(52.47728, 52.48882), 
+#'      labels = c("A","B"), pos = c(1, 2))
+#' 
 #' 
 #' # Input is SpatialPointsDataFrames
-#' route3 <- osrmRoute(src = apotheke.sp[1,], dst = apotheke.sp[2,], sp = TRUE)
-#' route3@data
+#' route5 <- osrmRoute(src = apotheke.sp[1,], dst = apotheke.sp[2,], sp = TRUE)
+#' route5@data
 #' }
 #' @export
 osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL, sp = FALSE){
