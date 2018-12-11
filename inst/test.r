@@ -76,7 +76,8 @@ points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
 if(require("cartography")){
   osm <- getTiles(x = trips[[1]]$trip, crop = TRUE,
                   type = "cartolight", zoom = 11)
-  tilesLayer(x = osm)
+
+    tilesLayer(x = osm)
   plot(trips[[1]]$trip, col = "black", lwd = 4, add=T)
   plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
   points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
@@ -108,7 +109,7 @@ A <- osrmTable(src = apotheke.df[1:10,c("id","lon","lat")],
 B <- osrmTable(loc = apotheke.df[1:10, c("id","lon","lat")], 
                measure = c("distance", "duration"))
 min(A$distances==B$distances)
-min(A$durations-B$durations)
+min(A$durations==B$durations)
 
 
 

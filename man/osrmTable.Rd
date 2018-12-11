@@ -30,7 +30,7 @@ the public OSRM API.}
 
 \item{measure}{a character indicating what measures are calculated. It can 
 be "duration" (in minutes), "distance" (meters), or both c('duration',
-'distance').}
+'distance'). The demo server only allows "duration".}
 }
 \value{
 A list containing 3 data frames is returned. 
