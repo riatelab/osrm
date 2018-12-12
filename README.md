@@ -11,13 +11,13 @@
 ## Description
 OSRM is a routing service based on OpenStreetMap data. See <http://project-osrm.org/> for more information. This package allows to compute distances (travel time and kilometric distance) between points and travel time matrices.   
 
-This package relies on the usage of a running OSRM service (tested with v5.18.0 of OSRM).    
+This package relies on the usage of a running OSRM service (tested with v5.20.0 of OSRM).    
 
 You can run your own instance of OSRM following guidelines provided here:    [https://github.com/Project-OSRM/osrm-backend](https://github.com/Project-OSRM/osrm-backend).     
 The simplest solution is probably the one based on [docker containers](https://github.com/Project-OSRM/osrm-backend#using-docker).    
 
 To set the OSRM server, use the `osrm.server` option: `options(osrm.server = "http://address.of.the.server/")`.     
-To set the profile (driving is set by default), use the `osrm.profile` option: `options(osrm.profile = "name.of.the.profile")`.    
+To set the profile ("driving" is set by default and it is the only profile available on the demo server), use the `osrm.profile` option: `options(osrm.profile = "name.of.the.profile")`.    
 
 
 
@@ -139,7 +139,6 @@ plot(apotheke.sp[10,], add=TRUE, col ="red", pch = 20)
 
 * Development version on GitHub
 ```{r}
-require(remotes)
 remotes::install_github("rCarto/osrm")
 ```
 
