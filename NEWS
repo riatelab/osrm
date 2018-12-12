@@ -1,3 +1,13 @@
+# osrm version 3.2.0 (Release date: 2018-12-12)
+
+## Minor changes
+* Add the exclude option to exclude some road types. Thanks to PR #32 by @mbask 
+* Better info message when the public server receive too many requests. 
+* Add a "measure" arg to osrmTable to obtain distance table (meters). fix #33.   
+* Berlin example in README
+
+
+
 # osrm version 3.1.1 (Release date: 2018-03-12)
 
 ## Minor changes
