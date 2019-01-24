@@ -6,7 +6,7 @@
 
 ***Interface Between R and the OpenStreetMap-Based Routing Service [OSRM](http://project-osrm.org/)***
 
-![](img/cover.png)
+![](https://raw.githubusercontent.com/rCarto/osrm/master/img/cover.png)
 
 ## Description
 OSRM is a routing service based on OpenStreetMap data. See <http://project-osrm.org/> for more information. This package allows to compute distances (travel time and kilometric distance) between points and travel time matrices.   
@@ -82,7 +82,7 @@ text(x = c(13.23889, 13.45363), y = c(52.54250,52.42926),
      labels = c("A","B"), pos = c(1,2))
 
 ```
-![](img/route.png)
+![](https://raw.githubusercontent.com/rCarto/osrm/master/img/route.png)
 
 
 ### `osrmTrip`
@@ -105,7 +105,7 @@ plot(apotheke.sp[10:20,], pch = 21, bg = "red", cex = 1.5, add=T)
 
 ```
 
-![](img/trip.png)
+![](https://raw.githubusercontent.com/rCarto/osrm/master/img/trip.png)
 
 ### `osrmIsochrone`
 
@@ -132,7 +132,7 @@ choroLayer(spdf = iso,
 plot(apotheke.sp[10,], add=TRUE, col ="red", pch = 20)
 
 ```
-![](img/iso.png)
+![](https://raw.githubusercontent.com/rCarto/osrm/master/img/iso.png)
 
 
 ## Installation
