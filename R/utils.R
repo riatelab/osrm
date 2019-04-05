@@ -1,7 +1,25 @@
 ## All Functions Utils
 testSp <- function(x){
-  if (class(x) %in% c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame")){
-    if (is.na(sp::proj4string(x))){
+  if (methods::is(x,"Spatial")){
+    return(TRUE)
+  }
+  return(FALSE)
+}
+
+# spToDf <- function(x){
+#   # transform to WGS84
+#   x <- sp::spTransform(x = x, CRSobj = "+init=epsg:4326")
+#   # this function takes a SpatialDataFrame and transforms it into a dataframe
+#   x <- data.frame(id = row.names(x), 
+#                   lon = round(sp::coordinates(x)[,1],6), 
+#                   lat = round(sp::coordinates(x)[,2],6), 
+#                   stringsAsFactors = FALSE)
+#   return(x)
+# }
+
+testSf <- function(x){
+  if (methods::is(x,"sf")){
+    if (is.na(sf::st_crs(x))){
       stop(
         paste(
           "Your input (", quote(x),
@@ -9,23 +27,24 @@ testSp <- function(x){
         call. = F)
     }
     return(TRUE)
-  }else{
-    return(FALSE)
   }
+  return(FALSE)
 }
 
-spToDf <- function(x){
-  # transform to WGS84
-  x <- sp::spTransform(x = x, CRSobj = "+init=epsg:4326")
-  # this function takes a SpatialDataFrame and transforms it into a dataframe
+
+sfToDf <- function(x){
+  # transform to centroid and to wgs84
+  sf::st_geometry(x) <- sf::st_centroid(x = sf::st_geometry(x),
+                                        of_largest_polygon = T)
+  x <- sf::st_transform(x = x, crs = 4326)
+  coords <- sf::st_coordinates(x)
+  # this function takes an sf and transforms it into a dataframe
   x <- data.frame(id = row.names(x), 
-                  lon = round(sp::coordinates(x)[,1],6), 
-                  lat = round(sp::coordinates(x)[,2],6), 
+                  lon = round(coords[,1],6), 
+                  lat = round(coords[,2],6), 
                   stringsAsFactors = FALSE)
   return(x)
 }
-
-
 
 ## osrmIsochrone Utils
 rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){

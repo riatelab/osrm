@@ -64,37 +64,39 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
                       gepaf = FALSE, measure="duration"){
   tryCatch({
     if (is.null(src)){
-      # check if inpout is sp, transform and name columns
       if(testSp(loc)){
-        loc <- spToDf(x = loc)
-      }else{
-        names(loc) <- c("id", "lon", "lat")
+        loc <- sf::st_as_sf(x = loc)
       }
-      # Format
+      if(testSf(loc)){
+        loc <- sfToDf(x = loc)
+      }
+      names(loc) <- c("id", "lon", "lat")
       src <- loc
       dst <- loc
       sep <- "?"
-      
-      # Build the query
       req <- tableLoc(loc = loc, gepaf = gepaf)
     }else{
-      # check if inpout is sp, transform and name columns
       if(testSp(src)){
-        src <- spToDf(x = src)
-      }else{
-        names(src) <- c("id", "lon", "lat")
+        src <- sf::st_as_sf(x = src)
       }
-      # check if inpout is sp, transform and name columns
+      if(testSf(src)){
+        src <- sfToDf(x = src)
+      }
       if(testSp(dst)){
-        dst <- spToDf(x = dst)
-      }else{
-        names(dst) <- c("id", "lon", "lat")
+        dst <- sf::st_as_sf(x = dst)
       }
+      if(testSf(dst)){
+        dst <- sfToDf(x = dst)
+      }
+      
+      names(src) <- c("id", "lon", "lat")
+      names(dst) <- c("id", "lon", "lat")
+      
       
       # Build the query
       loc <- rbind(src, dst)
       sep = "&"
-          
+      
       req <- paste(tableLoc(loc = loc, gepaf = gepaf),
                    "?sources=", 
                    paste(0:(nrow(src)-1), collapse = ";"), 
@@ -118,21 +120,15 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
       annotations <- ""
     }
     
-    
-    
     # final req
     req <- paste0(req,exclude_str,annotations)
     
     # print(req)
-    
-    
     req <- utils::URLencode(req)
-    
     osrmLimit(nSrc = nrow(src), nDst = nrow(dst), nreq = nchar(req))
     
     # Get the result
-    resRaw <- RCurl::getURL(req, 
-                            useragent = "'osrm' R package")
+    resRaw <- RCurl::getURL(req, useragent = "'osrm' R package")
     
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
@@ -152,7 +148,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
       output$durations <- durTableFormat(res = res, src = src, dst = dst)
     }
     if(!is.null(res$distances)){
-    # get the distance table
+      # get the distance table
       output$distances <- distTableFormat(res = res, src = src, dst = dst)  
     }
     # get the coordinates
