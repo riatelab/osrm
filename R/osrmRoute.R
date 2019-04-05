@@ -62,18 +62,21 @@
 #' route5@data
 #' }
 #' @export
-osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL, sp = FALSE){
+osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL,
+                      sp = FALSE){
   tryCatch({
     oprj <- NA
     if(testSp(src)){
-      oprj <- sp::proj4string(src)
-      src <- src[1,]
-      x <- spToDf(x = src)
+      src <- sf::st_as_sf(src[1,])
+    }
+      oprj <- sf::st_crs(src)
+      x <- sfToDf(x = src)
       src <- c(x[1,1],x[1,2], x[1,3])
     }
     if(testSp(dst)){
-      dst <- dst[1,]
-      x <- spToDf(x = dst)
+      dst <- sf::st_as_sf(dst[1,])
+    }
+      x <- sfToDf(x = dst)
       dst <- c(x[1,1],x[1,2], x[1,3])
     }
     
