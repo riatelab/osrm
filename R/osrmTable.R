@@ -3,12 +3,12 @@
 #' @description Build and send OSRM API queries to get travel time matrices 
 #' between points. This function interfaces the \emph{table} OSRM service. 
 #' @param loc a data frame containing 3 fields: points identifiers, longitudes 
-#' and latitudes (WGS84). It can also be a SpatialPointsDataFrame or a 
-#' SpatialPolygonsDataFrame, then row names are used as identifiers.
+#' and latitudes (WGS84). It can also be a SpatialPointsDataFrame, a 
+#' SpatialPolygonsDataFrame or an sf object, then row names are used as identifiers.
 #' If loc parameter is used, all pair-wise distances are computed.
 #' @param src a data frame containing origin points identifiers, longitudes 
-#' and latitudes (WGS84). It can also be a SpatialPointsDataFrame or a 
-#' SpatialPolygonsDataFrame, then row names are used as identifiers. 
+#' and latitudes (WGS84). It can also be a SpatialPointsDataFrame, a 
+#' SpatialPolygonsDataFrame or an sf object, then row names are used as identifiers. 
 #' If dst and src parameters are used, only pairs between scr/dst are computed.
 #' @param dst a data frame containing destination points identifiers, longitudes 
 #' and latitudes (WGS84). It can also be a SpatialPointsDataFrame or a 

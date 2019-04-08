@@ -9,13 +9,13 @@ osrmTable(loc, src = NULL, dst = NULL, exclude = NULL,
 }
 \arguments{
 \item{loc}{a data frame containing 3 fields: points identifiers, longitudes 
-and latitudes (WGS84). It can also be a SpatialPointsDataFrame or a 
-SpatialPolygonsDataFrame, then row names are used as identifiers.
+and latitudes (WGS84). It can also be a SpatialPointsDataFrame, a 
+SpatialPolygonsDataFrame or an sf object, then row names are used as identifiers.
 If loc parameter is used, all pair-wise distances are computed.}
 
 \item{src}{a data frame containing origin points identifiers, longitudes 
-and latitudes (WGS84). It can also be a SpatialPointsDataFrame or a 
-SpatialPolygonsDataFrame, then row names are used as identifiers. 
+and latitudes (WGS84). It can also be a SpatialPointsDataFrame, a 
+SpatialPolygonsDataFrame or an sf object, then row names are used as identifiers. 
 If dst and src parameters are used, only pairs between scr/dst are computed.}
 
 \item{dst}{a data frame containing destination points identifiers, longitudes 
