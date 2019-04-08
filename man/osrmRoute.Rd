@@ -4,16 +4,16 @@
 \alias{osrmRoute}
 \title{Get the Shortest Path Between Two Points}
 \usage{
-osrmRoute(src, dst, overview = "simplified", exclude = NULL,
-  sp = FALSE)
+osrmRoute(src, dst, overview = "simplified", exclude = NULL, sp,
+  returnclass)
 }
 \arguments{
 \item{src}{a numeric vector of identifier, longitude and latitude (WGS84), a 
-SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine 
+SpatialPointsDataFrame, a SpatialPolygonsDataFrame or an sf object of the origine 
 point.}
 
 \item{dst}{a numeric vector of identifier, longitude and latitude (WGS84), a 
-SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the destination 
+SpatialPointsDataFrame, a SpatialPolygonsDataFrame or an sf object of the destination 
 point.}
 
 \item{overview}{"full", "simplified" or FALSE. Add geometry either full (detailed), simplified 
@@ -21,12 +21,15 @@ according to highest zoom level it could be display on, or not at all.}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API.}
 
-\item{sp}{if sp is TRUE the function returns a SpatialLinesDataFrame.}
+\item{sp}{deprecated, if sp is TRUE the function returns a SpatialLinesDataFrame.}
+
+\item{returnclass}{if returnclass="sf" an sf LINESTRING is returned. 
+If returnclass="sp" a SpatialLineDataFrame is returned.}
 }
 \value{
-If sp is FALSE, a data frame is returned. It contains the longitudes and latitudes of 
+If returnclass, a data frame is returned. It contains the longitudes and latitudes of 
 the travel path between the two points.\cr
-If sp is TRUE a SpatialLinesDataFrame is returned. It contains 4 fields : 
+If returnclass is TRUE a SpatialLinesDataFrame or an sf LINESTRING is returned. It contains 4 fields : 
 identifiers of origine and destination, travel time in minutes and travel distance in 
 kilometers.\cr
 If overview is FALSE, a named numeric vector is returned. It contains travel time (in minutes) 
