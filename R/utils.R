@@ -34,8 +34,10 @@ testSf <- function(x){
 
 sfToDf <- function(x){
   # transform to centroid and to wgs84
-  sf::st_geometry(x) <- sf::st_centroid(x = sf::st_geometry(x),
-                                        of_largest_polygon = T)
+  if (methods::is(st_geometry(x), c("sfc_POLYGON", "sfc_MULTIPOLYGON"))){
+    sf::st_geometry(x) <- sf::st_centroid(x = sf::st_geometry(x),
+                                          of_largest_polygon = T)
+  }
   x <- sf::st_transform(x = x, crs = 4326)
   coords <- sf::st_coordinates(x)
   # this function takes an sf and transforms it into a dataframe
@@ -48,7 +50,7 @@ sfToDf <- function(x){
 
 ## osrmIsochrone Utils
 rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
-
+  
   rmin <- raster::cellStats(r, min, na.rm = TRUE)
   rmax <- raster::cellStats(r, max, na.rm = TRUE)
   
@@ -122,7 +124,7 @@ rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
     }
     x <- sp::SpatialPolygons(Srl = Plist)
     x <- raster::union(x = x)
-
+    
     if (class(x) != "SpatialPolygonsDataFrame"){
       x <- sp::SpatialPolygonsDataFrame(Sr = x,
                                         data = data.frame(
