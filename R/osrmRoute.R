@@ -21,6 +21,7 @@
 #' kilometers.\cr
 #' If overview is FALSE, a named numeric vector is returned. It contains travel time (in minutes) 
 #' and travel distance (in kilometers).
+#' @importFrom sf st_as_sfc st_crs st_geometry st_sf
 #' @examples
 #' \dontrun{
 #' # Load data
