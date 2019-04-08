@@ -4,7 +4,8 @@
 \alias{osrmTrip}
 \title{Get the Travel Geometry Between Multiple Unordered Points}
 \usage{
-osrmTrip(loc, exclude = NULL, overview = "simplified")
+osrmTrip(loc, exclude = NULL, overview = "simplified",
+  returnclass = "sp")
 }
 \arguments{
 \item{loc}{a SpatialPointsDataFrame of the waypoints, or a data.frame with points as rows
@@ -14,12 +15,15 @@ and 3 columns: identifier, longitudes and latitudes (WGS84 decimal degrees).}
 
 \item{overview}{"full", "simplified". Add geometry either full (detailed) or simplified 
 according to highest zoom level it could be display on.}
+
+\item{returnclass}{if returnclass="sf" an sf LINESTRING is returned. 
+If returnclass="sp" a SpatialLineDataFrame is returned.}
 }
 \value{
 A list of connected components. Each component contains:
 
 \describe{
-\item{trip}{A SpatialLinesDataFrame (loc's CRS if there is one, WGS84 else)
+\item{trip}{A SpatialLinesDataFrame (loc's CRS if there is one, WGS84 if not)
 containing a line for each step of the trip.}
 \item{summary}{A list with 2 components: duration (in minutes)
 and distance (in kilometers).}
