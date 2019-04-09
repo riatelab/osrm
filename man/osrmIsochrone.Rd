@@ -5,11 +5,11 @@
 \title{Get a SpatialPolygonsDataFrame of Isochrones}
 \usage{
 osrmIsochrone(loc, breaks = seq(from = 0, to = 60, length.out = 7),
-  exclude = NULL, res = 30)
+  exclude = NULL, res = 30, returnclass = "sp")
 }
 \arguments{
-\item{loc}{a numeric vector of longitude and latitude (WGS84) or a 
-SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.}
+\item{loc}{a numeric vector of longitude and latitude (WGS84), an sf object, 
+a SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.}
 
 \item{breaks}{a numeric vector of isochrone values (in minutes).}
 
@@ -17,9 +17,11 @@ SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.}
 
 \item{res}{number of points used to compute isochrones, one side of the square 
 grid, the total number of points will be res*res.}
+
+\item{returnclass}{class of the returned polygons. Either "sp" of "sf".}
 }
 \value{
-A SpatialPolygonsDateFrame of isochrones is returned. 
+A SpatialPolygonsDateFrame or sf MULTIPOLYGON of isochrones is returned. 
 The data frame of the output contains four fields: 
 id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
 center (central values of classes).
