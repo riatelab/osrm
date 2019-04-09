@@ -15,10 +15,10 @@ Imports:
     RCurl,
     utils, 
     stats,
-    rgeos,
+    lwgeom,
+    isoband,
     methods,
     gepaf,
-    raster,
     sp, 
     sf
 Depends:
