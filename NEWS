@@ -1,3 +1,12 @@
+# osrm version 3.3.0 (Release date: 2019-04-xx)
+
+## Major changes
+* sf support in all function
+* change the algorithm for isochrone creation, results may differ...
+
+
+
+
 # osrm version 3.2.0 (Release date: 2018-12-12)
 
 ## Minor changes

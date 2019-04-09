@@ -1,78 +1,73 @@
 #' @name osrmIsochrone
-#' @title Get a SpatialPolygonsDataFrame of Isochrones
-#' @description Based on \code{\link{osrmTable}}, this function buids a 
-#' SpatialPolygonsDataFrame of isochrones. 
-#' @param loc a numeric vector of longitude and latitude (WGS84) or a 
-#' SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.
+#' @title Get Polygons of Isochrones
+#' @description Based on \code{\link{osrmTable}}, this function buids polygons 
+#'  of isochrones. 
+#' @param loc a numeric vector of longitude and latitude (WGS84), an sf object, 
+#' a SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.
 #' @param breaks a numeric vector of isochrone values (in minutes).
 #' @param exclude pass an optional "exclude" request option to the OSRM API. 
 #' @param res number of points used to compute isochrones, one side of the square 
 #' grid, the total number of points will be res*res.  
-#' @return A SpatialPolygonsDateFrame of isochrones is returned. 
+#' @param returnclass class of the returned polygons. Either "sp" of "sf".
+#' @return A SpatialPolygonsDateFrame or an sf MULTIPOLYGON of isochrones is returned. 
 #' The data frame of the output contains four fields: 
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
 #' center (central values of classes).
 #' @seealso \link{osrmTable}
-#' @import sp
+#' @importFrom sf st_as_sf st_crs st_transform st_convex_hull st_union st_intersects
 #' @export
 #' @examples
 #' \dontrun{
 #' # Load data
+#' library(sf)
 #' data("berlin")
-#' 
-#' # Get isochones with lon/lat coordinates, default breaks
-#' iso <- osrmIsochrone(loc = c(13.43853,52.47728), breaks = seq(0,15,1), res = 70)
-#' library(sp)
-#' plot(iso, col = colorRampPalette(colors = c('grey80', 'grey20'))(14))
-#' 
+#' # Get isochones with lon/lat coordinates
+#' iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2), 
+#'                      returnclass="sf")
+#' plot(st_geometry(iso), col = c('grey80','grey60','grey50',
+#'                                'grey40','grey30','grey20'))
 #' # Map
 #' if(require("cartography")){
-#'   osm <- getTiles(x = iso, crop = TRUE, type = "osmgrayscale")
-#'   tilesLayer(x = osm)
 #'   breaks <- sort(c(unique(iso$min), max(iso$max)))
-#'   cartography::choroLayer(spdf = iso,
+#'   cartography::choroLayer(x = iso,
 #'                           var = "center", breaks = breaks,
-#'                           col = paste0(rev(carto.pal("green.pal",
-#'                                                      length(breaks)+1)),99),
+#'                           col = rev(carto.pal("green.pal",6)),
 #'                           border = NA,
 #'                           legend.pos = "topleft",legend.frame = TRUE,
-#'                           legend.title.txt = "Isochrones\n(min)",
-#'                           add = TRUE)
+#'                           legend.title.txt = "Isochrones\n(min)")
 #' }
 #' 
-#' 
-#' # Get isochones with a SpatialPointsDataFrame, custom breaks
-#' iso2 <- osrmIsochrone(loc = apotheke.sp[10,],
+#' # Get isochones with an sf POINT
+#' iso2 <- osrmIsochrone(loc = apotheke.sf[10,], returnclass="sf",
 #'                       breaks = seq(from = 0, to = 16, by = 2))
-#' 
 #' # Map
 #' if(require("cartography")){
-#'   osm2 <- getTiles(x = iso2, crop = FALSE, type = "osmgrayscale")
-#'   tilesLayer(x = osm2)
 #'   breaks2 <- sort(c(unique(iso2$min), max(iso2$max)))
-#'   cartography::choroLayer(spdf = iso2,
-#'                           var = "center", breaks = breaks2,
-#'                           border = NA,
+#'   cartography::choroLayer(x = iso2, var = "center", 
+#'                           breaks = breaks2, border = NA,
 #'                           legend.pos = "topleft",legend.frame = TRUE,
-#'                           legend.title.txt = "Isochrones\n(min)",
-#'                           add = TRUE)
+#'                           legend.title.txt = "Isochrones\n(min)")
 #' }
 #' }
 osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7), 
-                          exclude = NULL, res = 30){
+                          exclude = NULL, res = 30, returnclass = "sp"){
+  
+  # imput mngmnt
   oprj <- NA
   if(testSp(loc)){
-    oprj <- sp::proj4string(loc)
+    loc <- st_as_sf(loc[1,])
+  }    
+  if(testSf(loc)){
+    oprj <- st_crs(loc)
     loc <- loc[1,]
-    loc <- sp::spTransform(x = loc, CRSobj = "+init=epsg:3857")
   }else{
     loc <- data.frame(lon = loc[1], lat = loc[2])
-    loc <- sp::SpatialPointsDataFrame(coords = loc[,1:2], 
-                                      data = loc, 
-                                      proj4string = sp::CRS("+init=epsg:4326"))
-    loc <- sp::spTransform(x = loc, CRSobj = sp::CRS("+init=epsg:3857"))
+    loc <- st_as_sf(loc, coords=c("lon","lat"), crs = 4326)
   }
+  loc <- st_transform(loc, 3857)
+  row.names(loc) <- "0"
   
+  # max distance mngmnt to see how far to extend the grid to get measures
   breaks <- unique(sort(breaks))
   tmax <- max(breaks)
   if(options('osrm.profile')=="walk"){
@@ -82,30 +77,25 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
     speed =  20 * 1000/60
   }
   if(options('osrm.profile')=="driving"){
-    speed =  140 * 1000/60
+    speed =  100 * 1000/60
   }
-  # speed <- 140 * 1000/60
   dmax <- tmax * speed
-  sgrid <- rgrid(loc = sp::coordinates(loc), dmax = dmax, res = res)
   
-  lsgr <- length(sgrid)
+  # create a grid to obtain measures
+  sgrid <- rgrid(loc = loc, dmax = dmax, res = res)
+  
+  # slice the grid to make several API calls  
+  lsgr <- nrow(sgrid)
   f500 <- lsgr %/% 300
   r500 <- lsgr %% 300
-
-  row.names(loc) <- "0"
   listDur <- list()
   listDest <- list()
-
-  
-  
+  # gentle sleeptime for demo server
   if(getOption("osrm.server") != "http://router.project-osrm.org/"){
     sleeptime <- 0
   }else{
     sleeptime <- 1
   }
-  
-  
-  
   if(f500>0){
     for (i in 1:f500){
       st <- (i-1) * 300 + 1
@@ -117,7 +107,8 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
       Sys.sleep(sleeptime)
     }
     if(r500>0){
-      dmat <- osrmTable(src = loc, dst = sgrid[(en+1):(en+r500),], exclude = exclude)
+      dmat <- osrmTable(src = loc, dst = sgrid[(en+1):(en+r500),], 
+                        exclude = exclude)
       listDur[[i+1]] <- dmat$durations
       listDest[[i+1]] <- dmat$destinations
     }
@@ -126,31 +117,36 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
     listDur[[1]] <- dmat$durations
     listDest[[1]] <- dmat$destinations
   }
-
   durations <- do.call(c, listDur)
+  sgrid$OUTPUT <- durations
+  
+  # mgmnt of edge cases of points out of reach
   destinations <- do.call(rbind, listDest)
-
-  rpt <- sp::SpatialPointsDataFrame(coords = destinations[ , c(1, 2)],
-                                    data = data.frame(destinations),
-                                    proj4string = sp::CRS("+init=epsg:4326"))
-  rpt <- sp::spTransform(rpt, sp::proj4string(loc))
-  rpt$d <- as.vector(durations)
-  rpt$d[is.na(rpt$d)] <- max(rpt$d, na.rm=TRUE)
-  sp::gridded(sgrid) <- TRUE
-  r <- raster::raster(sgrid)
-  r <- raster::rasterize(rpt, r, field = 'd', fun = min, na.rm=TRUE,
-                         background= max(rpt$d, na.rm=TRUE)+1)
-  isolines <- rasterToContourPoly(r = r, breaks = breaks)
-  # contour correction
-  isolines <- isolines[-1,]
-  isolines@data[nrow(isolines), "min"] <- 0
-  isolines@data[nrow(isolines), "center"] <- (isolines@data[nrow(isolines), "max"] -
-                                                isolines@data[nrow(isolines), "min"]) / 2
-  # reproj
+  rpt <- st_as_sf(destinations, coords = c('lon', 'lat'), crs = 4326)
+  rpt <- st_transform(rpt, st_crs(loc))
+  cvx <- st_convex_hull(st_union(rpt))
+  sgrid[!st_intersects(sgrid, cvx,sparse = F),"OUTPUT"] <- tmax + 1
+  
+  # computes isopolygones
+  iso <- isopoly(x = sgrid, breaks = breaks)
+  
+  # proj mgmnt
   if (!is.na(oprj)){
-    isolines <- sp::spTransform(x = isolines, CRSobj = oprj)
+    iso <- st_transform(x = iso, oprj)
   }else{
-    isolines <- sp::spTransform(x = isolines, CRSobj = "+init=epsg:4326")
+    iso <- st_transform(x = iso, 4326)
   }
-  return(isolines)
+  
+  # output mgmnt
+  if(returnclass=="sp"){
+    iso <- methods::as(iso, "Spatial")
+  }
+  
+  return(iso)
 }
+
+
+
+
+
+

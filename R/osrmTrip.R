@@ -2,17 +2,19 @@
 #' @title Get the Travel Geometry Between Multiple Unordered Points
 #' @description Build and send an OSRM API query to get the shortest travel geometry between multiple points.
 #' This function interfaces the \emph{trip} OSRM service. 
-#' @param loc a SpatialPointsDataFrame of the waypoints, or a data.frame with points as rows
+#' @param loc a SpatialPointsDataFrame or an sf object of the waypoints, or a data.frame with points as rows
 #' and 3 columns: identifier, longitudes and latitudes (WGS84 decimal degrees).
 #' @param exclude pass an optional "exclude" request option to the OSRM API. 
 #' @param overview "full", "simplified". Add geometry either full (detailed) or simplified 
 #' according to highest zoom level it could be display on. 
+#' @param returnclass if returnclass="sf" an sf LINESTRING is returned. 
+#' If returnclass="sp" a SpatialLineDataFrame is returned.
 #' @details As stated in the OSRM API, if input coordinates can not be joined by a single trip 
 #' (e.g. the coordinates are on several disconnecte islands) multiple trips for 
 #' each connected component are returned.
 #' @return A list of connected components. Each component contains:
 #' @return \describe{
-#' \item{trip}{A SpatialLinesDataFrame (loc's CRS if there is one, WGS84 else)
+#' \item{trip}{A SpatialLinesDataFrame or sf LINESTRING (loc's CRS if there is one, WGS84 if not)
 #' containing a line for each step of the trip.}
 #' \item{summary}{A list with 2 components: duration (in minutes)
 #' and distance (in kilometers).}
@@ -23,61 +25,29 @@
 #' \dontrun{
 #' # Load data
 #' data("berlin")
-#' 
-#' # Get a trip with a id lat lon data.frame
-#' trips <- osrmTrip(loc = apotheke.df)
-#' 
+#' library(sf)
+#' # Get a trip with a set of points (sf POINT)
+#' trips <- osrmTrip(loc = apotheke.sf, returnclass = "sf")
+#' mytrip <- trips[[1]]$trip
 #' # Display the trip
-#' library(sp)
-#' plot(trips[[1]]$trip, col = "black", lwd = 4)
-#' plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
-#' points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
-#' 
-#' # Do not route through motorways
-#' trips_no_motorway <- osrmTrip(loc = apotheke.df, exclude = "motorway")
-#' 
-#' # Looks like it may be convenient to avoid motorways...
-#' mapply(`/`, trips_no_motorway[[1]]$summary, trips[[1]]$summary)
-#' 
-#' # Display the trips
-#' plot(trips[[1]]$trip, col = "black", lwd = 3)
-#' plot(trips_no_motorway[[1]]$trip, col = "green", lwd = 3, add = T)
-#' points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
-#' 
-#' # Map
-#' if(require("cartography")){
-#'   osm <- getTiles(x = trips[[1]]$trip, crop = TRUE,
-#'                   type = "cartolight", zoom = 11)
-#'   tilesLayer(x = osm)
-#'   plot(trips[[1]]$trip, col = "black", lwd = 4, add=T)
-#'   plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
-#'   points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
+#' plot(st_geometry(mytrip), col = "black", lwd = 4)
+#' plot(st_geometry(mytrip), col = c("red", "white"), lwd = 1, add = TRUE)
+#' plot(st_geometry(apotheke.sf), pch = 21, bg = "red", cex = 1, add = TRUE)
 #' }
-#' 
-#' # Get a trip with a SpatialPointsDataFrame
-#' trips <- osrmTrip(loc = apotheke.sp[1:10,])
-#' 
-#' # Map
-#' if(require("cartography")){
-#'   osm <- getTiles(x = trips[[1]]$trip, crop = TRUE,
-#'                   type = "cartolight", zoom = 11)
-#'   tilesLayer(x = osm)
-#'   plot(trips[[1]]$trip, col = "black", lwd = 4, add=T)
-#'   plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
-#'   plot(apotheke.sp[1:10,], pch = 21, bg = "red", cex = 1, add=T)
-#' }
-#' }
-osrmTrip <- function(loc, exclude = NULL, overview = "simplified"){
+osrmTrip <- function(loc, exclude = NULL, overview = "simplified", returnclass="sp"){
   tryCatch({
     # check if inpout is sp, transform and name columns
     oprj <- NA
-    if (testSp(loc)) {
-      oprj <- sp::proj4string(loc)
-      loc <- spToDf(x = loc)
+    if(testSp(loc)){
+      loc <- sf::st_as_sf(x = loc)
+    }
+    if(testSf(loc)){
+      oprj <- st_crs(loc)
+      loc <- sfToDf(x = loc)
     }else{
       names(loc) <- c("id", "lon", "lat")
     }
-    
+
     exclude_str <- ""
     if (!is.null(exclude)) { exclude_str <- paste("&exclude=", exclude, sep = "") }
     
@@ -114,6 +84,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified"){
     trips <- vector("list", ntour)
 
     for (nt in 1:ntour) {
+      nt=1
       # Coordinates of the line
       geodf <- data.frame(res$trips[nt,]$geometry$coordinates)
       # In case of unfinnish trip
@@ -129,17 +100,13 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified"){
                      by.x = c("X1", "X2"), by.y = c("X1","X2"), 
                      all.x = T)
       geodf <- geodf[order(geodf$ind, decreasing = F),]
-      
-
       indexes2 <- geodf[!is.na(geodf$waypoint_index),"ind"]
       xx <- geodf[!is.na(geodf$waypoint_index),]
-
       indexes <- c(stats::aggregate(xx$ind, by  = list(xx$waypoint_index),
                                     min)[,2], 
                    nrow(geodf))
       # Build the polylines
       wktl <- rep(NA,nrow(waypoints))
-      
       for (i in 1:(length(indexes) - 1)) {
         ind0 <- indexes[i]
         ind1 <- indexes[i+1]
@@ -154,28 +121,23 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified"){
                                sep = "", collapse = ",")
                          ,")",sep = "")
       }
-      
-      wkt <- paste("GEOMETRYCOLLECTION(", paste(wktl, collapse = ","),")", sep = "")
-      
-      
-      sl <- rgeos::readWKT(wkt)
-      sl@proj4string <- sp::CRS("+init=epsg:4326")
       start <- (waypoints[order(waypoints$waypoint_index, decreasing = F),"id"])
       end <- start[c(2:length(start),1)]
-      df <- data.frame(start, end, 
+      sldf <- st_sf(start = start, end = end, 
                        duration = res$trips[nt,]$legs[[1]][,"duration"] / 60, 
-                       distance = res$trips[nt,]$legs[[1]][,"distance"] / 1000)
-      sldf <- sp::SpatialLinesDataFrame(sl = sl, data = df, match.ID = F)
-      
+                       distance = res$trips[nt,]$legs[[1]][,"distance"] / 1000, 
+                       geometry = st_as_sfc(wktl, crs = 4326))
       # Reproj
       if (!is.na(oprj)) {
-        sldf <- sp::spTransform(sldf, oprj)
+        sldf <- sf::st_transform(sldf, oprj)
       }
-      
+      # ouptut mgmt
+      if(returnclass=="sp"){
+        sldf <- methods::as(sldf, "Spatial")
+      }
       # Build tripSummary
       tripSummary <- list(duration = res$trips[nt,]$duration/60,
                           distance = res$trips[nt,]$distance/1000)   
-      
       trips[[nt]] <- list(trip = sldf, summary = tripSummary)
     }
     return(trips)

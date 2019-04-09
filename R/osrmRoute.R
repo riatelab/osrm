@@ -3,90 +3,85 @@
 #' @description Build and send an OSRM API query to get the travel geometry between two points.
 #' This function interfaces the \emph{route} OSRM service. 
 #' @param src a numeric vector of identifier, longitude and latitude (WGS84), a 
-#' SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine 
+#' SpatialPointsDataFrame, a SpatialPolygonsDataFrame or an sf object of the origine 
 #' point.
 #' @param dst a numeric vector of identifier, longitude and latitude (WGS84), a 
-#' SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the destination 
+#' SpatialPointsDataFrame, a SpatialPolygonsDataFrame or an sf object of the destination 
 #' point.
 #' @param overview "full", "simplified" or FALSE. Add geometry either full (detailed), simplified 
 #' according to highest zoom level it could be display on, or not at all. 
 #' @param exclude pass an optional "exclude" request option to the OSRM API. 
-#' @param sp if sp is TRUE the function returns a SpatialLinesDataFrame.
-#' @return If sp is FALSE, a data frame is returned. It contains the longitudes and latitudes of 
+#' @param sp deprecated, if sp is TRUE the function returns a SpatialLinesDataFrame.
+#' @param returnclass if returnclass="sf" an sf LINESTRING is returned. 
+#' If returnclass="sp" a SpatialLineDataFrame is returned.
+#' @return If returnclass is not set, a data frame is returned. It contains the longitudes and latitudes of 
 #' the travel path between the two points.\cr
-#' If sp is TRUE a SpatialLinesDataFrame is returned. It contains 4 fields : 
+#' If returnclass is set to "sp", a SpatialLinesDataFrame is returned. If returnclass is set to "sf", 
+#' an sf LINESTRING is returned. It contains 4 fields : 
 #' identifiers of origine and destination, travel time in minutes and travel distance in 
 #' kilometers.\cr
 #' If overview is FALSE, a named numeric vector is returned. It contains travel time (in minutes) 
 #' and travel distance (in kilometers).
+#' @importFrom sf st_as_sfc st_crs st_geometry st_sf st_as_sf st_transform
 #' @examples
 #' \dontrun{
 #' # Load data
 #' data("berlin")
-#' 
+#' library(sf)
 #' # Travel path between points
-#' route <- osrmRoute(src = apotheke.df[1, c("id", "lon","lat")],
-#'                    dst = apotheke.df[16, c("id", "lon","lat")])
+#' route1 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
+#'                     returnclass="sf")
 #' # Travel path between points excluding motorways
-#' route2 <- osrmRoute(src = apotheke.df[1, c("id", "lon","lat")],
-#'                     dst = apotheke.df[16, c("id", "lon","lat")], 
-#'                     exclude = "motorway")
+#' route2 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
+#'                     returnclass="sf", exclude = "motorway")
 #' # Display paths
-#' plot(route[,1:2], type = "l", lty = 2, asp =1)
-#' points(route2[,1:2], type = "l", lty = 2, asp = 1, col = "red")
-#' points(apotheke.df[c(1,16),2:3], col = "red", pch = 20, cex = 1.5)
-#' text(apotheke.df[c(1,16),2:3], labels = c("A","B"), pos = c(1, 2))
+#' plot(st_geometry(route1))
+#' plot(st_geometry(route2), col = "red", add = TRUE)
+#' plot(st_geometry(apotheke.sf[c(1,16),]), col = "red", pch = 20, add = TRUE)
 #' 
-#' 
-#' # Travel path between points between points - output a SpatialLinesDataFrame
-#' route3 <- osrmRoute(src = c("A", 13.43853, 52.47728),
-#'                     dst = c("B", 13.32247, 52.48882),
-#'                     sp = TRUE, overview = "full")
-#' # Travel path between points between points - output a SpatialLinesDataFrame 
-#' # excluding motorways
-#' route4 <- osrmRoute(src = c("A", 13.43853, 52.47728),
-#'                     dst = c("B", 13.32247, 52.48882),
-#'                     sp = TRUE, overview = "full", exclude = "motorway")
-#' # Display the path
-#' library(sp)
-#' plot(route3, lty = 2, asp = 1)
-#' plot(route4, lty = 2, asp = 1, col = "red", add = T)
-#' points(x = c(13.43853,13.32247 ), y = c(52.47728, 52.48882), 
-#'        col = "red", pch = 20, cex = 1.5)
-#' text(x = c(13.43853,13.32247 ), y = c(52.47728, 52.48882), 
-#'      labels = c("A","B"), pos = c(1, 2))
-#' 
-#' 
-#' # Input is SpatialPointsDataFrames
-#' route5 <- osrmRoute(src = apotheke.sp[1,], dst = apotheke.sp[2,], sp = TRUE)
-#' route5@data
+#' # Return only duration and distance
+#' route3 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
+#'                     overview = FALSE)
+#' route3
 #' }
 #' @export
-osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL, sp = FALSE){
+osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL,
+                      sp, returnclass){
   tryCatch({
+    if(!missing(sp)){
+      warning("sp is deprecated; use returnclass instead.", call. = FALSE)
+      if(sp){
+        returnclass <- "sp"
+      }
+    }
+    
+    # input mgmt
     oprj <- NA
     if(testSp(src)){
-      oprj <- sp::proj4string(src)
-      src <- src[1,]
-      x <- spToDf(x = src)
+      src <- st_as_sf(src[1,])
+    }    
+    if(testSf(src)){
+      oprj <- st_crs(src)
+      x <- sfToDf(x = src)
       src <- c(x[1,1],x[1,2], x[1,3])
     }
     if(testSp(dst)){
-      dst <- dst[1,]
-      x <- spToDf(x = dst)
+      dst <- st_as_sf(dst[1,])
+    }
+    if(testSf(dst)){
+      oprj <- st_crs(dst)
+      x <- sfToDf(x = dst)
       dst <- c(x[1,1],x[1,2], x[1,3])
     }
-    
     exclude_str <- ""
-    if (!is.null(exclude)) { exclude_str <- paste("&exclude=", exclude, sep = "") }
-    
+    if (!is.null(exclude)) {exclude_str <- paste("&exclude=", exclude, sep = "") }
     # build the query
     req <- paste(getOption("osrm.server"),
                  "route/v1/", getOption("osrm.profile"), "/", 
                  src[2], ",", src[3], ";", dst[2],",",dst[3], 
                  "?alternatives=false&geometries=polyline&steps=false&overview=",
                  tolower(overview), exclude_str, sep="")
-
+    
     # Sending the query
     resRaw <- RCurl::getURL(utils::URLencode(req),
                             useragent = "'osrm' R package")
@@ -111,28 +106,33 @@ osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL, sp = FA
       return(round(c(duration = res$routes$duration/60,
                      distance = res$routes$distance/1000), 2))
     }
+    
     if(!vres){
+      # Deal with \\u stuff
       res$routes$geometry <- gsub(pattern = "zorglub", replacement = "\\\\",
                                   x = res$routes$geometry)
     }
     # Coordinates of the line
     geodf <- gepaf::decodePolyline(res$routes$geometry)[,c(2,1)]
     
-    # Convert to SpatialLinesDataFrame
-    if (sp == TRUE){
-      routeLines <- sp::Lines(slinelist = sp::Line(geodf[,1:2]),
-                              ID = "x")
-      routeSL <- sp::SpatialLines(LinesList = list(routeLines),
-                                  proj4string = sp::CRS("+init=epsg:4326"))
-      df <- data.frame(src = src[1], dst = dst[1],
-                       duration = res$routes$legs[[1]]$duration/60,
-                       distance = res$routes$legs[[1]]$distance/1000)
-      geodf <- sp::SpatialLinesDataFrame(routeSL, data = df, match.ID = FALSE)
-      row.names(geodf) <- paste(src[1], dst[1],sep="_")
+    # Convert to LINESTRING
+    if (!missing(returnclass)){
+      rcoords <- paste0(geodf$lon, ' ', geodf$lat, collapse = ", ")
+      rgeom <- (st_as_sfc(paste0("LINESTRING(",rcoords,")")))
+      rosf <- st_sf(src = src[1], dst = dst[1],
+                    duration = res$routes$legs[[1]]$duration/60,
+                    distance = res$routes$legs[[1]]$distance/1000,
+                    geometry = rgeom, crs = 4326)
+      row.names(rosf) <- paste(src[1], dst[1],sep="_")
       if (!is.na(oprj)){
-        geodf <- sp::spTransform(geodf, oprj)
+        rosf <- st_transform(rosf, oprj)
       }
-      names(geodf)[1:2] <- c("src", "dst")
+      names(rosf)[1:2] <- c("src", "dst")
+      # output mgmnt
+      if(returnclass=="sp"){
+        rosf <- methods::as(rosf, "Spatial")
+      }
+      return(rosf)
     }
     return(geodf)
   }, error=function(e) {message("The OSRM server returned an error:\n", e)})

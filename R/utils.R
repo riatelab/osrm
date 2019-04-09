@@ -1,7 +1,14 @@
 ## All Functions Utils
 testSp <- function(x){
-  if (class(x) %in% c("SpatialPolygonsDataFrame", "SpatialPointsDataFrame")){
-    if (is.na(sp::proj4string(x))){
+  if (methods::is(x,"Spatial")){
+    return(TRUE)
+  }
+  return(FALSE)
+}
+
+testSf <- function(x){
+  if (methods::is(x,"sf")){
+    if (is.na(sf::st_crs(x))){
       stop(
         paste(
           "Your input (", quote(x),
@@ -9,191 +16,81 @@ testSp <- function(x){
         call. = F)
     }
     return(TRUE)
-  }else{
-    return(FALSE)
   }
+  return(FALSE)
 }
 
-spToDf <- function(x){
-  # transform to WGS84
-  x <- sp::spTransform(x = x, CRSobj = "+init=epsg:4326")
-  # this function takes a SpatialDataFrame and transforms it into a dataframe
+
+sfToDf <- function(x){
+  # transform to centroid and to wgs84
+  if (methods::is(st_geometry(x), c("sfc_POLYGON", "sfc_MULTIPOLYGON"))){
+    sf::st_geometry(x) <- sf::st_centroid(x = sf::st_geometry(x),
+                                          of_largest_polygon = T)
+  }
+  x <- sf::st_transform(x = x, crs = 4326)
+  coords <- sf::st_coordinates(x)
+  # this function takes an sf and transforms it into a dataframe
   x <- data.frame(id = row.names(x), 
-                  lon = round(sp::coordinates(x)[,1],6), 
-                  lat = round(sp::coordinates(x)[,2],6), 
+                  lon = round(coords[,1],6), 
+                  lat = round(coords[,2],6), 
                   stringsAsFactors = FALSE)
   return(x)
 }
 
-
-
 ## osrmIsochrone Utils
-rasterToContourPoly <- function(r, nclass = 8, breaks = NULL, mask = NULL){
-
-  rmin <- raster::cellStats(r, min, na.rm = TRUE)
-  rmax <- raster::cellStats(r, max, na.rm = TRUE)
+#' @import sf
+isopoly <- function(x, breaks, 
+                    xcoords = "COORDX", ycoords = "COORDY", var = "OUTPUT"){
   
-  # default breaks and nclass
-  if(is.null(breaks)){
-    breaks <- seq(from = rmin,
-                  to = rmax,
-                  length.out = (nclass+1))
-  }else{
-    breaks <- c(rmin, breaks[breaks > rmin & breaks < rmax], rmax)
-    breaks <- unique(breaks)
-    breaks <- sort(breaks)
-    # nclass <- length(breaks)-1
+  # get initial min and max values
+  vmin <- min(x[[var]], na.rm = TRUE)
+  vmax <- max(x[[var]], na.rm = TRUE)
+  breaks <- sort(unique(c(vmin, breaks[breaks > vmin & breaks < vmax], vmax)))
+  # data points to matrix
+  m <- matrix(data = x[[var]], nrow = length(unique(x[[xcoords]])), 
+              dimnames = list(unique(x[[xcoords]]), unique(x[[ycoords]])))
+  # compute isobands
+  lev_low = breaks[1:(length(breaks)-1)]
+  lev_high = breaks[2:length(breaks)]
+  raw <- isoband::isobands(x = as.numeric(rownames(m)), 
+                           y = as.numeric(colnames(m)), z = t(m), 
+                           levels_low = lev_low,
+                           levels_high = c(lev_high[-length(lev_high)], 
+                                           vmax + 1e-10))
+  bands <- isoband::iso_to_sfg(raw)
+  iso <- st_sf(id = 1:length(bands), 
+               min = lev_low, 
+               max = lev_high,
+               geometry = sf::st_sfc(bands), 
+               crs = st_crs(x))
+  iso[1,"min"] <- 0
+  iso$center = iso$min + (iso$max - iso$min) / 2
+  
+  # invalid polygons mgmnt
+  st_geometry(iso) <- lwgeom::st_make_valid(st_geometry(iso))
+  if(methods::is(st_geometry(iso),"sfc_GEOMETRY")){
+    st_geometry(iso) <-   sf::st_collection_extract(st_geometry(iso), "POLYGON")
   }
-  
-  myres <- raster::res(r)[1]
-  myproj <- sp::CRS(sp::proj4string(r))
-  
-  if (is.null(mask)){
-    mask <- masker(r)
-    maskbuff <- rgeos::gBuffer(mask, byid = FALSE, width = 5 * myres )
-    r <- raster::extend(r, maskbuff, value=-1)
-  }else{
-    mask <- rgeos::gUnaryUnion(mask)
-    maskbuff <- rgeos::gBuffer(mask, byid = FALSE, width = 5 * myres )
-    r <- raster::mask(r, maskbuff, updatevalue = -1)
-    if(rgeos::gWithin(masker(r), mask)){stop("mask should be smaller than r",
-                                             call. = FALSE)}
-  }
-  
-  rmin <- min(r[r!=-1])
-  rmax <- max(r[r!=-1])
-  breaks <- c(rmin, breaks[breaks > rmin & breaks < rmax], rmax)
-  breaks <- unique(breaks)
-  breaks <- sort(breaks)
-  finalBreaks <- breaks
-  # zero level problem
-  if(breaks[1] <= 0){
-    zv <- TRUE
-    breaks <- breaks + 1
-    r <- r + 1
-  }else{
-    zv <- FALSE
-  }
-  
-  nclass <- length(breaks)-1
-  breaks <- breaks[-(nclass+1)]
-  
-  r[is.na(r)] <- 0
-  
-  # test breaks
-  if(length(breaks)<2){stop("breaks values do not fit the raster values",
-                            call. = FALSE)}
-  # build the contour lines
-  cl <- raster::rasterToContour(r, levels = breaks)
-  cl$level <- as.numeric(as.character(cl$level))
-  SPlist <- list()
-  SPlevels <- character()
-  for (i in cl$level){
-    linex <- cl[cl@data$level == i,]
-    linex <- linex@lines
-    linex <- linex[[1]]
-    linex <- linex@Lines
-    Plist <- NULL
-    Plist <- list()
-    for (j in 1:length(linex)){
-      x <- linex[[j]]@coords
-      x <- sp::Polygon(coords =  x, hole = F)
-      x <- sp::Polygons(srl = list(x), ID = j)
-      Plist[[j]] <- x
-    }
-    x <- sp::SpatialPolygons(Srl = Plist)
-    x <- raster::union(x = x)
-
-    if (class(x) != "SpatialPolygonsDataFrame"){
-      x <- sp::SpatialPolygonsDataFrame(Sr = x,
-                                        data = data.frame(
-                                          level = rep(i, length(x))))
-    } else {
-      x <- x[x@data$count < 2,]
-      x@data <- data.frame(level = rep(i, dim(x)[1]))
-    }
-    SPlist <- c(SPlist , x@polygons  )
-    SPlevels <- c(SPlevels,x@data$level)
-  }
-  for (i in 1:length(SPlist)){
-    SPlist[[i]]@ID <- as.character(i)
-  }
-  x <- sp::SpatialPolygons(Srl = SPlist, proj4string = myproj)
-  x <- sp::SpatialPolygonsDataFrame(Sr = x,
-                                    data = data.frame(levels = SPlevels))
-  
-  bks <- data.frame(b =c(breaks, rmax), t = finalBreaks)
-  
-  # # manage attributes data of the contour spdf
-  # breaks <- c(breaks, rmax)
-  x@data <- data.frame(id = paste("id_",row.names(x),sep=""),
-                       min = bks[match(x$levels, bks[,1]),2],
-                       max = bks[match(x$levels, bks[,1])+1,2],
-                       center = NA,
-                       stringsAsFactors = FALSE)
-  x$center <- (x$min+x$max) / 2
-  row.names(x) <- x$id
-  
-  # clip the contour spdf with the mask
-  final <- rgeos::gIntersection(spgeom1 = x, spgeom2 = mask, byid = TRUE,
-                                id = row.names(x))
-  
-  df <- data.frame(id = sapply(methods::slot(final, "polygons"),
-                               methods::slot, "ID"))
-  row.names(df) <- df$id
-  final <- sp::SpatialPolygonsDataFrame(Sr = final, data = df)
-  final@data <- data.frame(id = final$id, x[match(final$id, x$id),2:4])
-  final@plotOrder <- 1:nrow(final)
-  
-  # ring correction
-  df <- unique(final@data[,2:4])
-  df$id <- 1:nrow(df)
-  df <- df[order(df$center, decreasing = T),]
-  
-  z <- rgeos::gIntersection(final[final$center==df[1,3],],
-                            final[final$center==df[1,3],], byid = F,
-                            id = as.character(df[1,4]))
-  for(i in 2:nrow(df)){
-    y <- rgeos::gDifference(final[final$center==df[i,3],],
-                            final[final$center==df[i-1,3],], byid = F, 
-                            id = as.character(df[i,4]))
-    z <- rbind(z, y)
-  }
-  dfx <- data.frame(id = sapply(methods::slot(z, "polygons"), 
-                                methods::slot, "ID"))
-  row.names(dfx) <- dfx$id
-  z <- sp::SpatialPolygonsDataFrame(z, dfx)
-  z@data <- df[match(x=z@data$id, table = df$id),c(4,1:3)]
-  return(z)
+  # get rid of out of breaks polys
+  iso <- iso[-nrow(iso),]
+  return(iso)
 }
 
-
-masker <- function(r){
-  xy <- sp::coordinates(r)[which(!is.na(raster::values(r))),]
-  i <- grDevices::chull(xy)
-  b <- xy[c(i,i[1]),]
-  mask <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(b,
-                                                                 hole = FALSE)),
-                                                ID = "1")),
-                              proj4string = sp::CRS(sp::proj4string(r)))
-  return(mask)
-}
 
 rgrid <- function(loc, dmax, res){
-  boxCoordX <- seq(from = loc[1] - dmax,
-                   to = loc[1] + dmax,
+  # create a regular grid centerd on loc
+  boxCoordX <- seq(from = sf::st_coordinates(loc)[1,1] - dmax,
+                   to = sf::st_coordinates(loc)[1,1] + dmax,
                    length.out = res)
-  boxCoordY <- seq(from = loc[2] - dmax,
-                   to = loc[2] + dmax,
+  boxCoordY <- seq(from = sf::st_coordinates(loc)[1,2] - dmax,
+                   to = sf::st_coordinates(loc)[1,2] + dmax,
                    length.out = res)
   sgrid <- expand.grid(boxCoordX, boxCoordY)
-  idSeq <- seq(1, nrow(sgrid), 1)
-  sgrid <- data.frame(ID = idSeq,
+  sgrid <- data.frame(ID = seq(1, nrow(sgrid), 1),
                       COORDX = sgrid[, 1],
                       COORDY = sgrid[, 2])
-  sgrid <- sp::SpatialPointsDataFrame(coords = sgrid[ , c(2, 3)],
-                                      data = sgrid,
-                                      proj4string = sp::CRS("+init=epsg:3857"))
+  sgrid <- sf::st_as_sf(sgrid,  coords = c("COORDX", "COORDY"),
+                        crs = st_crs(loc), remove = FALSE)
   return(sgrid)
 }
 
