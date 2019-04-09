@@ -34,7 +34,7 @@ To set the profile ("driving" is set by default and it is the only profile avail
 
 * `osrmTrip` Get the travel geometry between multiple unordered points.
 
-* `osrmIsochrone` Get a SpatialPolygonsDataFrame of isochrones.
+* `osrmIsochrone` Get polygons of isochrones.
 
 
 ## Demo
@@ -43,44 +43,34 @@ To set the profile ("driving" is set by default and it is the only profile avail
 
 ```r
 library(osrm)
-# Load data
 data("berlin")
-# Inputs are data frames
 # Travel time matrix
-distA <- osrmTable(loc = apotheke.df[1:50, c("id","lon","lat")])
-# First 5 rows and columns
-distA$durations[1:5,1:5]
-
+distA <- osrmTable(loc = apotheke.sf[1:5,])
+distA$durations
 ```
 |           | 440338666| 538057637| 977657079| 3770254015| 364363337|
 |:----------|---------:|---------:|---------:|----------:|---------:|
-|440338666  |       0.0|      26.2|      45.4|       25.0|      13.8|
-|538057637  |      26.8|       0.0|      44.4|       17.1|      20.8|
-|977657079  |      45.4|      43.1|       0.0|       37.4|      35.9|
-|3770254015 |      28.8|      17.8|      35.0|        0.0|      14.5|
-|364363337  |      17.7|      24.7|      34.7|       13.8|       0.0|
+|440338666  |       0.0|      24.2|      48.0|       26.9|      15.0|
+|538057637  |      27.1|       0.0|      44.2|       16.4|      22.6|
+|977657079  |      47.6|      41.7|       0.0|       35.0|      36.2|
+|3770254015 |      28.7|      16.9|      34.6|        0.0|      17.0|
+|364363337  |      15.4|      20.7|      34.4|       15.9|       0.0|
 
 ### `osrmRoute`
 
 ```r
 library(osrm)
-library(sp)
+library(sf)
 library(cartography)
-# Load data
 data("berlin")
-route <- osrmRoute(src = c("A", 13.23889, 52.54250),
-                   dst = c("B", 13.45363, 52.42926),
-                   sp = TRUE, overview = "full")
+route <- osrmRoute(src = apotheke.sf[74,], dst = apotheke.sf[55,],
+                   overview = "full", returnclass = "sf")
 # Display the path
-osm <- getTiles(x = route, crop = TRUE, type = "osm")
+osm <- getTiles(x = route, crop = TRUE, type = "osm", zoom = 13)
 tilesLayer(osm)
-plot(route, lty = 1,lwd = 4, asp = 1, add=TRUE)
-plot(route, lty = 1, lwd = 1, col = "white", add=TRUE)
-points(x = c(13.23889, 13.45363), y = c(52.54250,52.42926), 
-       col = "red", pch = 20, cex = 1.5)
-text(x = c(13.23889, 13.45363), y = c(52.54250,52.42926), 
-     labels = c("A","B"), pos = c(1,2))
-
+plot(st_geometry(route), lwd = 4, add = TRUE)
+plot(st_geometry(route), lwd = 1, col = "white", add = TRUE)
+plot(st_geometry(apotheke.sf[c(74,55),]), pch = 20, col = "red", add = TRUE)
 ```
 ![](https://raw.githubusercontent.com/rCarto/osrm/master/img/route.png)
 
@@ -89,20 +79,17 @@ text(x = c(13.23889, 13.45363), y = c(52.54250,52.42926),
 
 ```r
 library(osrm)
-library(sp)
+library(sf)
 library(cartography)
-# Load data
 data("berlin")
 # Get a trip with a SpatialPointsDataFrame
-trips <- osrmTrip(loc = apotheke.sp[10:20,])
-# Map
-osm <- getTiles(x = trips[[1]]$trip, crop = TRUE,
-                type = "cartolight", zoom = 11)
-tilesLayer(x = osm)
-plot(trips[[1]]$trip, col = "black", lwd = 4, add=T)
-plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
-plot(apotheke.sp[10:20,], pch = 21, bg = "red", cex = 1.5, add=T)
-
+trips <- osrmTrip(loc = apotheke.sf[10:20,], returnclass="sf")
+trip <- trips[[1]]$trip
+osm2 <- getTiles(x = trip, crop = TRUE, type = "cartolight", zoom = 11)
+tilesLayer(x = osm2)
+plot(st_geometry(trip), col = "black", lwd = 4, add = TRUE )
+plot(st_geometry(trip), col = c("red", "white"), lwd = 1, add=TRUE)
+plot(st_geometry(apotheke.sf[10:20,]), pch = 21, bg = "red", cex = 1.5, add=TRUE)
 ```
 
 ![](https://raw.githubusercontent.com/rCarto/osrm/master/img/trip.png)
@@ -111,25 +98,22 @@ plot(apotheke.sp[10:20,], pch = 21, bg = "red", cex = 1.5, add=T)
 
 ```r
 library(osrm)
-library(sp)
+library(sf)
 library(cartography)
-# Load data
 data("berlin")
-# Get isochones with a SpatialPointsDataFrame, custom breaks
-iso <- osrmIsochrone(loc = apotheke.sp[10,],
+iso <- osrmIsochrone(loc = apotheke.sf[87,], returnclass="sf",
                      breaks = seq(from = 0, to = 14, by = 2), res = 50)
-# Map
-osm <- getTiles(x = iso, crop = FALSE, type = "osm", zoom = 13)
-tilesLayer(x = osm)
+osm3 <- getTiles(x = iso, crop = FALSE, type = "osm", zoom = 12)
+tilesLayer(x = osm3)
 bks <- sort(c(unique(iso$min), max(iso$max)))
 cols <- paste0(carto.pal("turquoise.pal", n1 = length(bks)-1), 80)
-choroLayer(spdf = iso,
-           var = "center", breaks = bks,
+choroLayer(x = iso, var = "center", breaks = bks,
            border = NA, col = cols,
            legend.pos = "topleft",legend.frame = TRUE,
            legend.title.txt = "Isochrones\n(min)",
            add = TRUE)
-plot(apotheke.sp[10,], add=TRUE, col ="red", pch = 20)
+plot(st_geometry(apotheke.sf[87,]), pch = 21, bg = "red", 
+     cex = 1.5, add=TRUE)
 
 ```
 ![](https://raw.githubusercontent.com/rCarto/osrm/master/img/iso.png)

@@ -1,6 +1,9 @@
 library(osrm)
 library(sp)
 library(cartography)
+
+options(osrm.server = "http://router.project-osrm.org/", osrm.profile = "driving")
+
 data("berlin")
 options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "driving")
 
@@ -84,7 +87,7 @@ min(A$durations==B$durations)
 
 
 #### osrmIsochrone
-iso <- osrmIsochrone(loc = c(13.43853,52.47728), breaks = seq(0,15,2), res = 100)
+iso <- osrmIsochrone(loc = c(13.43853,52.47728), breaks = seq(0,15,2), res = 30)
 plot(iso, col = colorRampPalette(colors = c('grey80', 'grey20'))(14))
 osm <- getTiles(x = iso, crop = TRUE, type = "osmgrayscale")
 tilesLayer(x = osm)
