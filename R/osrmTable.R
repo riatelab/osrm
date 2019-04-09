@@ -4,15 +4,15 @@
 #' between points. This function interfaces the \emph{table} OSRM service. 
 #' @param loc a data frame containing 3 fields: points identifiers, longitudes 
 #' and latitudes (WGS84). It can also be a SpatialPointsDataFrame, a 
-#' SpatialPolygonsDataFrame or an sf object, then row names are used as identifiers.
+#' SpatialPolygonsDataFrame or an sf object. If so, row names are used as identifiers.
 #' If loc parameter is used, all pair-wise distances are computed.
 #' @param src a data frame containing origin points identifiers, longitudes 
 #' and latitudes (WGS84). It can also be a SpatialPointsDataFrame, a 
-#' SpatialPolygonsDataFrame or an sf object, then row names are used as identifiers. 
+#' SpatialPolygonsDataFrame or an sf object. If so, row names are used as identifiers. 
 #' If dst and src parameters are used, only pairs between scr/dst are computed.
 #' @param dst a data frame containing destination points identifiers, longitudes 
-#' and latitudes (WGS84). It can also be a SpatialPointsDataFrame or a 
-#' SpatialPolygonsDataFrame, then row names are used as identifiers. 
+#' and latitudes (WGS84). It can also be a SpatialPointsDataFrame a 
+#' SpatialPolygonsDataFrame or an sf object. If so, row names are used as identifiers. 
 #' @param measure a character indicating what measures are calculated. It can 
 #' be "duration" (in minutes), "distance" (meters), or both c('duration',
 #' 'distance'). The demo server only allows "duration". 
@@ -26,7 +26,7 @@
 #' the origin and destination points actually used to compute the travel 
 #' times (WGS84).
 #' @details If loc, src or dst are data frames we assume that the 3 first 
-#' columns of the data.frame are: identifiers, longitudes and latitudes. 
+#' columns of the data frame are: identifiers, longitudes and latitudes. 
 #' @note 
 #' If you want to get a large number of distances make sure to set the 
 #' "max-table-size" argument (Max. locations supported in table) of the OSRM 
@@ -50,13 +50,13 @@
 #' # First 5 rows and columns
 #' distA2$durations[1:5,1:5]
 #' 
-#' # Inputs are SpatialPointsDataFrames
-#' distA3 <- osrmTable(loc = apotheke.sp[1:10,])
+#' # Inputs are sf points
+#' distA3 <- osrmTable(loc = apotheke.sf[1:10,])
 #' # First 5 rows and columns
 #' distA3$durations[1:5,1:5]
 #' 
 #' # Travel time matrix with different sets of origins and destinations
-#' distA4 <- osrmTable(src = apotheke.sp[1:10,], dst = apotheke.sp[11:20,])
+#' distA4 <- osrmTable(src = apotheke.sf[1:10,], dst = apotheke.sf[11:20,])
 #' # First 5 rows and columns
 #' distA4$durations[1:5,1:5]
 #' }

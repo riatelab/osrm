@@ -2,7 +2,7 @@
 #' @title Get the Travel Geometry Between Multiple Unordered Points
 #' @description Build and send an OSRM API query to get the shortest travel geometry between multiple points.
 #' This function interfaces the \emph{trip} OSRM service. 
-#' @param loc a SpatialPointsDataFrame of the waypoints, or a data.frame with points as rows
+#' @param loc a SpatialPointsDataFrame or an sf object of the waypoints, or a data.frame with points as rows
 #' and 3 columns: identifier, longitudes and latitudes (WGS84 decimal degrees).
 #' @param exclude pass an optional "exclude" request option to the OSRM API. 
 #' @param overview "full", "simplified". Add geometry either full (detailed) or simplified 
@@ -14,7 +14,7 @@
 #' each connected component are returned.
 #' @return A list of connected components. Each component contains:
 #' @return \describe{
-#' \item{trip}{A SpatialLinesDataFrame (loc's CRS if there is one, WGS84 if not)
+#' \item{trip}{A SpatialLinesDataFrame or sf LINESTRING (loc's CRS if there is one, WGS84 if not)
 #' containing a line for each step of the trip.}
 #' \item{summary}{A list with 2 components: duration (in minutes)
 #' and distance (in kilometers).}
@@ -25,49 +25,14 @@
 #' \dontrun{
 #' # Load data
 #' data("berlin")
-#' 
-#' # Get a trip with a id lat lon data.frame
-#' trips <- osrmTrip(loc = apotheke.df)
-#' 
+#' library(sf)
+#' # Get a trip with a set of points (sf POINT)
+#' trips <- osrmTrip(loc = apotheke.sf, returnclass = "sf")
+#' mytrip <- trips[[1]]$trip
 #' # Display the trip
-#' library(sp)
-#' plot(trips[[1]]$trip, col = "black", lwd = 4)
-#' plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
-#' points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
-#' 
-#' # Do not route through motorways
-#' trips_no_motorway <- osrmTrip(loc = apotheke.df, exclude = "motorway")
-#' 
-#' # Looks like it may be convenient to avoid motorways...
-#' mapply(`/`, trips_no_motorway[[1]]$summary, trips[[1]]$summary)
-#' 
-#' # Display the trips
-#' plot(trips[[1]]$trip, col = "black", lwd = 3)
-#' plot(trips_no_motorway[[1]]$trip, col = "green", lwd = 3, add = T)
-#' points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
-#' 
-#' # Map
-#' if(require("cartography")){
-#'   osm <- getTiles(x = trips[[1]]$trip, crop = TRUE,
-#'                   type = "cartolight", zoom = 11)
-#'   tilesLayer(x = osm)
-#'   plot(trips[[1]]$trip, col = "black", lwd = 4, add=T)
-#'   plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
-#'   points(apotheke.df[, 2:3], pch = 21, bg = "red", cex = 1)
-#' }
-#' 
-#' # Get a trip with a SpatialPointsDataFrame
-#' trips <- osrmTrip(loc = apotheke.sp[1:10,])
-#' 
-#' # Map
-#' if(require("cartography")){
-#'   osm <- getTiles(x = trips[[1]]$trip, crop = TRUE,
-#'                   type = "cartolight", zoom = 11)
-#'   tilesLayer(x = osm)
-#'   plot(trips[[1]]$trip, col = "black", lwd = 4, add=T)
-#'   plot(trips[[1]]$trip, col = c("red", "white"), lwd = 1, add=T)
-#'   plot(apotheke.sp[1:10,], pch = 21, bg = "red", cex = 1, add=T)
-#' }
+#' plot(st_geometry(mytrip), col = "black", lwd = 4)
+#' plot(st_geometry(mytrip), col = c("red", "white"), lwd = 1, add = TRUE)
+#' plot(st_geometry(apotheke.sf), pch = 21, bg = "red", cex = 1, add = TRUE)
 #' }
 osrmTrip <- function(loc, exclude = NULL, overview = "simplified", returnclass="sp"){
   tryCatch({
@@ -75,9 +40,9 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified", returnclass="
     oprj <- NA
     if(testSp(loc)){
       loc <- sf::st_as_sf(x = loc)
-      oprj <- st_crs(loc)
     }
     if(testSf(loc)){
+      oprj <- st_crs(loc)
       loc <- sfToDf(x = loc)
     }else{
       names(loc) <- c("id", "lon", "lat")

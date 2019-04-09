@@ -15,10 +15,13 @@ before_install:
   - sudo apt-get install --yes libudunits2-dev libproj-dev libgeos-dev libgdal-dev
   - sudo ldconfig 
 
+
 warnings_are_errors: true
 
 r_packages:
+  - devtools
   - sp
+  - sf
   - rgdal
   - roxygen2
   - rmarkdown

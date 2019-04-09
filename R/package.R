@@ -26,7 +26,14 @@
 NULL
 
 
-
+#' @title sf POINT of 100 Random Pharmacies in Berlin
+#' @name apotheke.sf
+#' @description 100 random pharmacies in Berlin. 
+#' The projection is WGS 84 / UTM zone 34N.
+#' @import sf
+#' @source © OpenStreetMap contributors - \url{https://www.openstreetmap.org/copyright/en}.
+#' @docType data
+NULL
 
 
 #' @title SpatialPointsDataFrame of 100 Random Pharmacies in Berlin

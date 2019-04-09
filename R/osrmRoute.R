@@ -14,9 +14,10 @@
 #' @param sp deprecated, if sp is TRUE the function returns a SpatialLinesDataFrame.
 #' @param returnclass if returnclass="sf" an sf LINESTRING is returned. 
 #' If returnclass="sp" a SpatialLineDataFrame is returned.
-#' @return If returnclass, a data frame is returned. It contains the longitudes and latitudes of 
+#' @return If returnclass is not set, a data frame is returned. It contains the longitudes and latitudes of 
 #' the travel path between the two points.\cr
-#' If returnclass is TRUE a SpatialLinesDataFrame or an sf LINESTRING is returned. It contains 4 fields : 
+#' If returnclass is set to "sp", a SpatialLinesDataFrame is returned. If returnclass is set to "sf", 
+#' an sf LINESTRING is returned. It contains 4 fields : 
 #' identifiers of origine and destination, travel time in minutes and travel distance in 
 #' kilometers.\cr
 #' If overview is FALSE, a named numeric vector is returned. It contains travel time (in minutes) 
@@ -26,43 +27,22 @@
 #' \dontrun{
 #' # Load data
 #' data("berlin")
-#' 
+#' library(sf)
 #' # Travel path between points
-#' route <- osrmRoute(src = apotheke.df[1, c("id", "lon","lat")],
-#'                    dst = apotheke.df[16, c("id", "lon","lat")])
+#' route1 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
+#'                     returnclass="sf")
 #' # Travel path between points excluding motorways
-#' route2 <- osrmRoute(src = apotheke.df[1, c("id", "lon","lat")],
-#'                     dst = apotheke.df[16, c("id", "lon","lat")], 
-#'                     exclude = "motorway")
+#' route2 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
+#'                     returnclass="sf", exclude = "motorway")
 #' # Display paths
-#' plot(route[,1:2], type = "l", lty = 2, asp =1)
-#' points(route2[,1:2], type = "l", lty = 2, asp = 1, col = "red")
-#' points(apotheke.df[c(1,16),2:3], col = "red", pch = 20, cex = 1.5)
-#' text(apotheke.df[c(1,16),2:3], labels = c("A","B"), pos = c(1, 2))
+#' plot(st_geometry(route1))
+#' plot(st_geometry(route2), col = "red", add = TRUE)
+#' plot(st_geometry(apotheke.sf[c(1,16),]), col = "red", pch = 20, add = TRUE)
 #' 
-#' 
-#' # Travel path between points between points - output a SpatialLinesDataFrame
-#' route3 <- osrmRoute(src = c("A", 13.43853, 52.47728),
-#'                     dst = c("B", 13.32247, 52.48882),
-#'                     sp = TRUE, overview = "full")
-#' # Travel path between points between points - output a SpatialLinesDataFrame 
-#' # excluding motorways
-#' route4 <- osrmRoute(src = c("A", 13.43853, 52.47728),
-#'                     dst = c("B", 13.32247, 52.48882),
-#'                     sp = TRUE, overview = "full", exclude = "motorway")
-#' # Display the path
-#' library(sp)
-#' plot(route3, lty = 2, asp = 1)
-#' plot(route4, lty = 2, asp = 1, col = "red", add = T)
-#' points(x = c(13.43853,13.32247 ), y = c(52.47728, 52.48882), 
-#'        col = "red", pch = 20, cex = 1.5)
-#' text(x = c(13.43853,13.32247 ), y = c(52.47728, 52.48882), 
-#'      labels = c("A","B"), pos = c(1, 2))
-#' 
-#' 
-#' # Input is SpatialPointsDataFrames
-#' route5 <- osrmRoute(src = apotheke.sp[1,], dst = apotheke.sp[2,], sp = TRUE)
-#' route5@data
+#' # Return only duration and distance
+#' route3 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
+#'                     overview = FALSE)
+#' route3
 #' }
 #' @export
 osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL,

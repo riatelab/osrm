@@ -1,7 +1,7 @@
 #' @name osrmIsochrone
-#' @title Get a SpatialPolygonsDataFrame of Isochrones
-#' @description Based on \code{\link{osrmTable}}, this function buids a 
-#' SpatialPolygonsDataFrame of isochrones. 
+#' @title Get Polygons of Isochrones
+#' @description Based on \code{\link{osrmTable}}, this function buids polygons 
+#'  of isochrones. 
 #' @param loc a numeric vector of longitude and latitude (WGS84), an sf object, 
 #' a SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.
 #' @param breaks a numeric vector of isochrone values (in minutes).
@@ -9,7 +9,7 @@
 #' @param res number of points used to compute isochrones, one side of the square 
 #' grid, the total number of points will be res*res.  
 #' @param returnclass class of the returned polygons. Either "sp" of "sf".
-#' @return A SpatialPolygonsDateFrame or sf MULTIPOLYGON of isochrones is returned. 
+#' @return A SpatialPolygonsDateFrame or an sf MULTIPOLYGON of isochrones is returned. 
 #' The data frame of the output contains four fields: 
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
 #' center (central values of classes).
@@ -19,44 +19,34 @@
 #' @examples
 #' \dontrun{
 #' # Load data
+#' library(sf)
 #' data("berlin")
-#' 
-#' # Get isochones with lon/lat coordinates, default breaks
-#' iso <- osrmIsochrone(loc = c(13.43853,52.47728), breaks = seq(0,15,1), res = 70)
-#' library(sp)
-#' plot(iso, col = colorRampPalette(colors = c('grey80', 'grey20'))(14))
-#' 
+#' # Get isochones with lon/lat coordinates
+#' iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2), 
+#'                      returnclass="sf")
+#' plot(st_geometry(iso), col = c('grey80','grey60','grey50',
+#'                                'grey40','grey30','grey20'))
 #' # Map
 #' if(require("cartography")){
-#'   osm <- getTiles(x = iso, crop = TRUE, type = "osmgrayscale")
-#'   tilesLayer(x = osm)
 #'   breaks <- sort(c(unique(iso$min), max(iso$max)))
-#'   cartography::choroLayer(spdf = iso,
+#'   cartography::choroLayer(x = iso,
 #'                           var = "center", breaks = breaks,
-#'                           col = paste0(rev(carto.pal("green.pal",
-#'                                                      length(breaks)+1)),99),
+#'                           col = rev(carto.pal("green.pal",6)),
 #'                           border = NA,
 #'                           legend.pos = "topleft",legend.frame = TRUE,
-#'                           legend.title.txt = "Isochrones\n(min)",
-#'                           add = TRUE)
+#'                           legend.title.txt = "Isochrones\n(min)")
 #' }
 #' 
-#' 
-#' # Get isochones with a SpatialPointsDataFrame, custom breaks
-#' iso2 <- osrmIsochrone(loc = apotheke.sp[10,],
+#' # Get isochones with an sf POINT
+#' iso2 <- osrmIsochrone(loc = apotheke.sf[10,], returnclass="sf",
 #'                       breaks = seq(from = 0, to = 16, by = 2))
-#' 
 #' # Map
 #' if(require("cartography")){
-#'   osm2 <- getTiles(x = iso2, crop = FALSE, type = "osmgrayscale")
-#'   tilesLayer(x = osm2)
 #'   breaks2 <- sort(c(unique(iso2$min), max(iso2$max)))
-#'   cartography::choroLayer(spdf = iso2,
-#'                           var = "center", breaks = breaks2,
-#'                           border = NA,
+#'   cartography::choroLayer(x = iso2, var = "center", 
+#'                           breaks = breaks2, border = NA,
 #'                           legend.pos = "topleft",legend.frame = TRUE,
-#'                           legend.title.txt = "Isochrones\n(min)",
-#'                           add = TRUE)
+#'                           legend.title.txt = "Isochrones\n(min)")
 #' }
 #' }
 osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7), 

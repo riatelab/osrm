@@ -39,7 +39,7 @@ sfToDf <- function(x){
 
 ## osrmIsochrone Utils
 #' @import sf
-isopoly <- function(x, nclass = 8, breaks, 
+isopoly <- function(x, breaks, 
                     xcoords = "COORDX", ycoords = "COORDY", var = "OUTPUT"){
   
   # get initial min and max values
