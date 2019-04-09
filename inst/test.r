@@ -84,7 +84,7 @@ min(A$durations==B$durations)
 
 
 #### osrmIsochrone
-iso <- osrmIsochrone(loc = c(13.43853,52.47728), breaks = seq(0,15,1), res = 70)
+iso <- osrmIsochrone(loc = c(13.43853,52.47728), breaks = seq(0,15,2), res = 100)
 plot(iso, col = colorRampPalette(colors = c('grey80', 'grey20'))(14))
 osm <- getTiles(x = iso, crop = TRUE, type = "osmgrayscale")
 tilesLayer(x = osm)
@@ -92,11 +92,11 @@ breaks <- sort(c(unique(iso$min), max(iso$max)))
 choroLayer(spdf = iso,
            var = "center", breaks = breaks,
            col = paste0(rev(carto.pal("green.pal",
-                                      length(breaks)+1)),99),
+                                      length(breaks)+1)),"ff"),
            border = NA,
            legend.pos = "topleft",legend.frame = TRUE,
            legend.title.txt = "Isochrones\n(min)",
-           add = TRUE)
+           add = F)
 
 
 

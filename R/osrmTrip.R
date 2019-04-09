@@ -135,17 +135,13 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified", returnclass="
                      by.x = c("X1", "X2"), by.y = c("X1","X2"), 
                      all.x = T)
       geodf <- geodf[order(geodf$ind, decreasing = F),]
-      
-
       indexes2 <- geodf[!is.na(geodf$waypoint_index),"ind"]
       xx <- geodf[!is.na(geodf$waypoint_index),]
-
       indexes <- c(stats::aggregate(xx$ind, by  = list(xx$waypoint_index),
                                     min)[,2], 
                    nrow(geodf))
       # Build the polylines
       wktl <- rep(NA,nrow(waypoints))
-      
       for (i in 1:(length(indexes) - 1)) {
         ind0 <- indexes[i]
         ind1 <- indexes[i+1]
@@ -160,7 +156,6 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified", returnclass="
                                sep = "", collapse = ",")
                          ,")",sep = "")
       }
-
       start <- (waypoints[order(waypoints$waypoint_index, decreasing = F),"id"])
       end <- start[c(2:length(start),1)]
       sldf <- st_sf(start = start, end = end, 
@@ -171,14 +166,13 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified", returnclass="
       if (!is.na(oprj)) {
         sldf <- sf::st_transform(sldf, oprj)
       }
+      # ouptut mgmt
       if(returnclass=="sp"){
         sldf <- methods::as(sldf, "Spatial")
       }
-      
       # Build tripSummary
       tripSummary <- list(duration = res$trips[nt,]$duration/60,
                           distance = res$trips[nt,]$distance/1000)   
-      
       trips[[nt]] <- list(trip = sldf, summary = tripSummary)
     }
     return(trips)

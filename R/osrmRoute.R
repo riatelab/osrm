@@ -21,7 +21,7 @@
 #' kilometers.\cr
 #' If overview is FALSE, a named numeric vector is returned. It contains travel time (in minutes) 
 #' and travel distance (in kilometers).
-#' @importFrom sf st_as_sfc st_crs st_geometry st_sf
+#' @importFrom sf st_as_sfc st_crs st_geometry st_sf st_as_sf st_transform
 #' @examples
 #' \dontrun{
 #' # Load data
@@ -75,24 +75,25 @@ osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL,
       }
     }
     
+    # input mgmt
     oprj <- NA
     if(testSp(src)){
-      src <- sf::st_as_sf(src[1,])
+      src <- st_as_sf(src[1,])
     }    
     if(testSf(src)){
-      oprj <- sf::st_crs(src)
+      oprj <- st_crs(src)
       x <- sfToDf(x = src)
       src <- c(x[1,1],x[1,2], x[1,3])
     }
     if(testSp(dst)){
-      dst <- sf::st_as_sf(dst[1,])
+      dst <- st_as_sf(dst[1,])
     }
     if(testSf(dst)){
-      oprj <- sf::st_crs(dst)
+      oprj <- st_crs(dst)
       x <- sfToDf(x = dst)
       dst <- c(x[1,1],x[1,2], x[1,3])
     }
-    
+    exclude_str <- ""
     if (!is.null(exclude)) {exclude_str <- paste("&exclude=", exclude, sep = "") }
     # build the query
     req <- paste(getOption("osrm.server"),
@@ -127,13 +128,14 @@ osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL,
     }
     
     if(!vres){
+      # Deal with \\u stuff
       res$routes$geometry <- gsub(pattern = "zorglub", replacement = "\\\\",
                                   x = res$routes$geometry)
     }
     # Coordinates of the line
     geodf <- gepaf::decodePolyline(res$routes$geometry)[,c(2,1)]
     
-    # Convert to SpatialLinesDataFrame
+    # Convert to LINESTRING
     if (!missing(returnclass)){
       rcoords <- paste0(geodf$lon, ' ', geodf$lat, collapse = ", ")
       rgeom <- (st_as_sfc(paste0("LINESTRING(",rcoords,")")))
@@ -143,14 +145,16 @@ osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL,
                     geometry = rgeom, crs = 4326)
       row.names(rosf) <- paste(src[1], dst[1],sep="_")
       if (!is.na(oprj)){
-        rosf <- sf::st_transform(rosf, oprj)
+        rosf <- st_transform(rosf, oprj)
       }
       names(rosf)[1:2] <- c("src", "dst")
+      # output mgmnt
       if(returnclass=="sp"){
         rosf <- methods::as(rosf, "Spatial")
       }
+      return(rosf)
     }
-    return(rosf)
+    return(geodf)
   }, error=function(e) {message("The OSRM server returned an error:\n", e)})
   return(NULL)
 }

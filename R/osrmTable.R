@@ -32,6 +32,7 @@
 #' "max-table-size" argument (Max. locations supported in table) of the OSRM 
 #' server accordingly.
 #' @seealso \link{osrmIsochrone}
+#' @importFrom sf st_as_sf
 #' @examples
 #' \dontrun{
 #' # Load data
@@ -63,9 +64,10 @@
 osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL, 
                       gepaf = FALSE, measure="duration"){
   tryCatch({
+    # input mgmt
     if (is.null(src)){
       if(testSp(loc)){
-        loc <- sf::st_as_sf(x = loc)
+        loc <- st_as_sf(x = loc)
       }
       if(testSf(loc)){
         loc <- sfToDf(x = loc)
@@ -77,13 +79,13 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
       req <- tableLoc(loc = loc, gepaf = gepaf)
     }else{
       if(testSp(src)){
-        src <- sf::st_as_sf(x = src)
+        src <- st_as_sf(x = src)
       }
       if(testSf(src)){
         src <- sfToDf(x = src)
       }
       if(testSp(dst)){
-        dst <- sf::st_as_sf(x = dst)
+        dst <- st_as_sf(x = dst)
       }
       if(testSf(dst)){
         dst <- sfToDf(x = dst)
@@ -96,7 +98,6 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
       # Build the query
       loc <- rbind(src, dst)
       sep = "&"
-      
       req <- paste(tableLoc(loc = loc, gepaf = gepaf),
                    "?sources=", 
                    paste(0:(nrow(src)-1), collapse = ";"), 
