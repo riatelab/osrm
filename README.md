@@ -18,11 +18,12 @@ The simplest solution is probably the one based on [docker containers](https://g
 
 To set the OSRM server, use the `osrm.server` option: `options(osrm.server = "http://address.of.the.server/")`.     
 To set the profile ("driving" is set by default and it is the only profile available on the demo server), use the `osrm.profile` option: `options(osrm.profile = "name.of.the.profile")`.    
+A typical setup, corresponding to the Docker example, would be:  
+`options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "driving")`
 
 
-
-:warning: **You should be careful using the OSRM demo server, it is not always very stable** :bangbang: 
-
+:warning: **You should be careful using the OSRM demo server, it is not always very stable** :bangbang:  
+>["The demo server usage is restricted to reasonable, non-commercial use-cases. We provide no guarantees wrt. uptime, latency, or data updates."](https://github.com/Project-OSRM/osrm-backend/wiki/Demo-server)
 
 
 

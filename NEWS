@@ -1,9 +1,11 @@
 # osrm version 3.3.0 (Release date: 2019-04-xx)
 
+This version should not break previous code.
 ## Major changes
-* sf support in all function
-* change the algorithm for isochrone creation, results may differ...
-
+* sf support in all functions for input (src, dst, loc) and output (returnclass="sf")
+* The algorithm for isochrone has been changed to a more robust one that use isoband package, results may differ...
+* add apotheke.sf sf POINT in the package dataset "berlin". 
+* examples have been simplified and mainly cover sf use. 
 
 
 
