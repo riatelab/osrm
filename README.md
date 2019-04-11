@@ -22,8 +22,8 @@ A typical setup, corresponding to the Docker example, would be:
 `options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "driving")`
 
 
-:warning: **You should be careful using the OSRM demo server, it is not always very stable** :bangbang:  
->["The demo server usage is restricted to reasonable, non-commercial use-cases. We provide no guarantees wrt. uptime, latency, or data updates."](https://github.com/Project-OSRM/osrm-backend/wiki/Demo-server)
+:warning: **You must be careful using the OSRM demo server**:    
+> ["The demo server usage is restricted to reasonable, non-commercial use-cases. We provide no guarantees wrt. uptime, latency, or data updates."](https://github.com/Project-OSRM/osrm-backend/wiki/Demo-server)
 
 
 
