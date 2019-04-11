@@ -23,6 +23,9 @@ testSf <- function(x){
 
 sfToDf <- function(x){
   # transform to centroid and to wgs84
+  if (methods::is(st_geometry(x), c("sfc_GEOMETRY", 'sfc_GEOMETRYCOLLECTION'))){
+    x <- sf::st_collection_extract(x, "POLYGON", warn = FALSE)
+  }
   if (methods::is(st_geometry(x), c("sfc_POLYGON", "sfc_MULTIPOLYGON"))){
     sf::st_geometry(x) <- sf::st_centroid(x = sf::st_geometry(x),
                                           of_largest_polygon = T)
