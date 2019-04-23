@@ -2,8 +2,10 @@ Package: osrm
 Type: Package
 Title: Interface Between R and the OpenStreetMap-Based Routing Service OSRM
 Version: 3.3.0
-Authors@R: c(person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", role = c("cre","aut")),
-    person("Robin", "Cura", role = c("ctb")), person("Matthieu", "Viry", role = c("ctb")))
+Authors@R: c(person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", 
+    role = c("cre","aut"),  comment = c(ORCID = "0000-0002-1932-3323")),
+    person("Robin", "Cura", role = c("ctb")), 
+    person("Matthieu", "Viry", role = c("ctb")))
 Description: An interface between R and the OSRM API. OSRM is a routing
     service based on OpenStreetMap data. See <http://project-osrm.org/> for more
     information. This package allows to compute distances (travel time and 
