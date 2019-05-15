@@ -76,7 +76,7 @@ isopoly <- function(x, breaks,
   
   # invalid polygons mgmnt
   st_geometry(iso) <- lwgeom::st_make_valid(st_geometry(iso))
-  if(methods::is(st_geometry(iso),"sfc_GEOMETRY")){
+  if(methods::is(st_geometry(iso),c("sfc_GEOMETRYCOLLECTION", "sfc_GEOMETRY"))){
     st_geometry(iso) <-   sf::st_collection_extract(st_geometry(iso), "POLYGON")
   }
   # get rid of out of breaks polys
