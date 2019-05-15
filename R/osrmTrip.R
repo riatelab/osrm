@@ -47,21 +47,24 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified", returnclass="
     }else{
       names(loc) <- c("id", "lon", "lat")
     }
-
+    
     exclude_str <- ""
     if (!is.null(exclude)) { exclude_str <- paste("&exclude=", exclude, sep = "") }
     
     req <- paste(getOption("osrm.server"),
                  "trip/v1/", getOption("osrm.profile"), "/", 
-                 paste(loc$lon, loc$lat, sep=",",collapse = ";"),
+                 paste(
+                   format(loc$lon,scientific = FALSE, trim = TRUE), 
+                   format(loc$lat,scientific = FALSE, trim = TRUE), 
+                   sep=",",collapse = ";"),
                  "?steps=false&geometries=geojson&overview=",
                  tolower(overview), exclude_str, sep = "")
-
+    
     osrmLimit(nSrc = nrow(loc), nDst = 0, nreq=1)
     # Send the query
     ua <- "'osrm' R package"
     resRaw <- RCurl::getURL(utils::URLencode(req), useragent = ua)
-
+    
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
     
@@ -82,7 +85,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified", returnclass="
     # In case of island, multiple trips
     ntour <- dim(res$trips)[1]
     trips <- vector("list", ntour)
-
+    
     for (nt in 1:ntour) {
       nt=1
       # Coordinates of the line
@@ -124,9 +127,9 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified", returnclass="
       start <- (waypoints[order(waypoints$waypoint_index, decreasing = F),"id"])
       end <- start[c(2:length(start),1)]
       sldf <- st_sf(start = start, end = end, 
-                       duration = res$trips[nt,]$legs[[1]][,"duration"] / 60, 
-                       distance = res$trips[nt,]$legs[[1]][,"distance"] / 1000, 
-                       geometry = st_as_sfc(wktl, crs = 4326))
+                    duration = res$trips[nt,]$legs[[1]][,"duration"] / 60, 
+                    distance = res$trips[nt,]$legs[[1]][,"distance"] / 1000, 
+                    geometry = st_as_sfc(wktl, crs = 4326))
       # Reproj
       if (!is.na(oprj)) {
         sldf <- sf::st_transform(sldf, oprj)

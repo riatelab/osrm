@@ -78,7 +78,10 @@ osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL,
     # build the query
     req <- paste(getOption("osrm.server"),
                  "route/v1/", getOption("osrm.profile"), "/", 
-                 src[2], ",", src[3], ";", dst[2],",",dst[3], 
+                 format(src[2],scientific = FALSE, trim = TRUE), ",", 
+                 format(src[3],scientific = FALSE, trim = TRUE), ";", 
+                 format(dst[2],scientific = FALSE, trim = TRUE),",",
+                 format(dst[3],scientific = FALSE, trim = TRUE), 
                  "?alternatives=false&geometries=polyline&steps=false&overview=",
                  tolower(overview), exclude_str, sep="")
     
