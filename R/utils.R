@@ -34,14 +34,13 @@ sfToDf <- function(x){
   coords <- sf::st_coordinates(x)
   # this function takes an sf and transforms it into a dataframe
   x <- data.frame(id = row.names(x), 
-                  lon = format(round(coords[,1],5), 
-                               scientific = FALSE, trim = TRUE), 
-                  lat = format(round(coords[,2],5), 
-                               scientific = FALSE, trim = TRUE), 
+                  lon = format(coords[,1], scientific = FALSE, justify = "none",
+                               trim = TRUE, nsmall = 5, digits = 5), 
+                  lat = format(coords[,2], scientific = FALSE, justify = "none",
+                               trim = TRUE, nsmall = 5, digits = 5), 
                   stringsAsFactors = FALSE)
   return(x)
 }
-
 
 
 
@@ -139,6 +138,7 @@ coordFormat <- function(res, src, dst){
   return(list(sources = sources, destinations = destinations)
   )
 }
+
 tableLoc <- function(loc, gepaf = FALSE){
   # Query build
   if (gepaf == TRUE){
@@ -146,8 +146,10 @@ tableLoc <- function(loc, gepaf = FALSE){
     tab <- paste0(tab, gepaf::encodePolyline(loc[,c("lat","lon")]),")")
   }else{
     tab <- paste0(getOption("osrm.server"), "table/v1/", getOption("osrm.profile"), "/")
-    tab <- paste0(tab, paste(format(loc$lon, scientific = FALSE, trim = TRUE), 
-                             format(loc$lat, scientific = FALSE, trim = TRUE), 
+    tab <- paste0(tab, paste(format(loc$lon, scientific = FALSE, justify = "none",
+                                    trim = TRUE, nsmall = 5, digits = 5), 
+                             format(loc$lat, scientific = FALSE, justify = "none",
+                                    trim = TRUE, nsmall = 5, digits = 5), 
                              sep=",",collapse = ";"))
   }
   return(tab)
