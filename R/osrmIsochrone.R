@@ -51,7 +51,13 @@
 #' }
 osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7), 
                           exclude = NULL, res = 30, returnclass = "sp"){
-  
+  # library(osrm)
+  # library(sf)
+  # loc = c(-149.8919,61.21981)
+  # breaks = seq(from = 0,to = 60, by = 60) 
+  # exclude = NULL
+  # res = 30
+  # returnclass = "sf"
   # imput mngmnt
   oprj <- NA
   if(testSp(loc)){
@@ -118,17 +124,23 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
     listDest[[1]] <- dmat$destinations
   }
   durations <- do.call(c, listDur)
-  sgrid$OUTPUT <- durations
   
   # mgmnt of edge cases of points out of reach
+  ########### QUICK FIX ######################
   destinations <- do.call(rbind, listDest)
   rpt <- st_as_sf(destinations, coords = c('lon', 'lat'), crs = 4326)
   rpt <- st_transform(rpt, st_crs(loc))
-  cvx <- st_convex_hull(st_union(rpt))
-  sgrid[!st_intersects(sgrid, cvx,sparse = F),"OUTPUT"] <- tmax + 1
+  rpt$durations <- durations
+  b <- as.numeric(st_distance(sgrid[1,], sgrid[2,])/2)
+  xx <- st_make_grid(x = st_buffer(st_union(sgrid), b), n = c(res, res))
+  inter <- st_intersects(xx, rpt)
+  sgrid$durations <- unlist(lapply(inter, function(x)mean(rpt[["durations"]][x], na.rm=TRUE)))
+  sgrid[is.nan(sgrid$durations), "durations"] <- tmax+1
+  sgrid[sgrid$durations>tmax, "durations"] <- tmax+1
+  ########### END OF QUICK FIX ################
   
   # computes isopolygones
-  iso <- isopoly(x = sgrid, breaks = breaks)
+  iso <- isopoly(x = sgrid, breaks = breaks, var = "durations")
   
   # proj mgmnt
   if (!is.na(oprj)){
@@ -144,9 +156,4 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   
   return(iso)
 }
-
-
-
-
-
 
