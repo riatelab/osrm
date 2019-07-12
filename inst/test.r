@@ -157,3 +157,4 @@ choroLayer(spdf = iso,
            legend.title.txt = "Isochrones\n(min)",
            add = TRUE)
 plot(apotheke.sp[10,], add=TRUE, col ="red", pch = 20)
+
