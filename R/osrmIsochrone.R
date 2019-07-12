@@ -137,9 +137,12 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   sgrid$durations <- unlist(lapply(inter, function(x)mean(rpt[["durations"]][x], na.rm=TRUE)))
   sgrid[is.nan(sgrid$durations), "durations"] <- tmax+1
   sgrid[sgrid$durations>tmax, "durations"] <- tmax+1
+  if(min(sgrid$durations)>tmax){
+    e <- "Use lower values for 'breaks' or increase 'res'"
+    stop(e, call. = FALSE)
+  }
   ########### END OF QUICK FIX ################
-  
-  # computes isopolygones
+    # computes isopolygones
   iso <- isopoly(x = sgrid, breaks = breaks, var = "durations")
   
   # proj mgmnt
