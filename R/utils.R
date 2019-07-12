@@ -143,6 +143,8 @@ tableLoc <- function(loc, gepaf = FALSE){
   # Query build
   if (gepaf == TRUE){
     tab <- paste0(getOption("osrm.server"), "table/v1/", getOption("osrm.profile"), "/polyline(")
+    loc$lat <- as.numeric(as.character(loc$lat))
+    loc$lon <- as.numeric(as.character(loc$lon))
     tab <- paste0(tab, gepaf::encodePolyline(loc[,c("lat","lon")]),")")
   }else{
     tab <- paste0(getOption("osrm.server"), "table/v1/", getOption("osrm.profile"), "/")
