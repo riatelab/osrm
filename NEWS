@@ -1,3 +1,12 @@
+# osrm version 3.3.1 (Release date: 2019-07-12)
+
+## Minor changes
+* correct edge cases of coordinates precision (suppress scientific notation)  (#44)
+* fix isochrone computation (#49 and #45)
+* add message for too large breaks or too lower resolution (#48)
+
+
+
 # osrm version 3.3.0 (Release date: 2019-04-29)
 
 This version should not break previous code.
