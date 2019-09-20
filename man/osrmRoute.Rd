@@ -60,5 +60,11 @@ plot(st_geometry(apotheke.sf[c(1,16),]), col = "red", pch = 20, add = TRUE)
 route3 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
                     overview = FALSE)
 route3
+
+# Using only coordinates
+route4 <-  osrmRoute(src = c( 13.412, 52.502), 
+                     dst = c( 13.454, 52.592),
+                     returnclass = "sf")
+plot(st_geometry(route4))
 }
 }

@@ -43,6 +43,12 @@
 #' route3 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
 #'                     overview = FALSE)
 #' route3
+#' 
+#' # Using only coordinates
+#' route4 <-  osrmRoute(src = c( 13.412, 52.502), 
+#'                      dst = c( 13.454, 52.592),
+#'                      returnclass = "sf")
+#' plot(st_geometry(route4))
 #' }
 #' @export
 osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL,
@@ -73,6 +79,10 @@ osrmRoute <- function(src, dst, overview = "simplified", exclude = NULL,
       x <- sfToDf(x = dst)
       dst <- c(x[1,1],x[1,2], x[1,3])
     }
+    
+    if(length(src)==2){src <- c("src", src)}
+    if(length(dst)==2){dst <- c("dst", dst)}    
+    
     exclude_str <- ""
     if (!is.null(exclude)) {exclude_str <- paste("&exclude=", exclude, sep = "") }
     # build the query
