@@ -1,3 +1,11 @@
+# osrm version 3.3.2 (Release date: 2019-09-24)
+
+## Minor changes
+* allow via points in osrmRoute with the "loc"" argument. (see #41)
+* allow lon/lat vectors as src and dst arguments without identifier ("src"" and "dst"" as default names). (see #51)
+
+
+
 # osrm version 3.3.1 (Release date: 2019-07-12)
 
 ## Minor changes
