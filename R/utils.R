@@ -1,11 +1,4 @@
 ## All Functions Utils
-testSp <- function(x){
-  if (methods::is(x,"Spatial")){
-    return(TRUE)
-  }
-  return(FALSE)
-}
-
 testSf <- function(x){
   if (methods::is(x,"sf")){
     if (is.na(sf::st_crs(x))){
@@ -20,8 +13,21 @@ testSf <- function(x){
   return(FALSE)
 }
 
+clean_coord <- function(x){
+  format(round(as.numeric(x),5), scientific = FALSE, justify = "none", 
+         trim = TRUE, nsmall = 5, digits = 5)
+}
 
-sfToDf <- function(x){
+
+
+sfToDf <- function(x){    
+  if (is.na(sf::st_crs(x))){
+    stop(
+      paste(
+        "Your input (", quote(x),
+        ") does not have a valid coordinate reference system.", sep=""),
+      call. = F)
+  }
   # transform to centroid and to wgs84
   if (methods::is(st_geometry(x), c("sfc_GEOMETRY", 'sfc_GEOMETRYCOLLECTION'))){
     x <- sf::st_collection_extract(x, "POLYGON", warn = FALSE)
@@ -34,10 +40,8 @@ sfToDf <- function(x){
   coords <- sf::st_coordinates(x)
   # this function takes an sf and transforms it into a dataframe
   x <- data.frame(id = row.names(x), 
-                  lon = format(coords[,1], scientific = FALSE, justify = "none",
-                               trim = TRUE, nsmall = 5, digits = 5), 
-                  lat = format(coords[,2], scientific = FALSE, justify = "none",
-                               trim = TRUE, nsmall = 5, digits = 5), 
+                  lon = clean_coord(coords[,1]), 
+                  lat = clean_coord(coords[,2]), 
                   stringsAsFactors = FALSE)
   return(x)
 }
@@ -148,10 +152,8 @@ tableLoc <- function(loc, gepaf = FALSE){
     tab <- paste0(tab, gepaf::encodePolyline(loc[,c("lat","lon")]),")")
   }else{
     tab <- paste0(getOption("osrm.server"), "table/v1/", getOption("osrm.profile"), "/")
-    tab <- paste0(tab, paste(format(loc$lon, scientific = FALSE, justify = "none",
-                                    trim = TRUE, nsmall = 5, digits = 5), 
-                             format(loc$lat, scientific = FALSE, justify = "none",
-                                    trim = TRUE, nsmall = 5, digits = 5), 
+    tab <- paste0(tab, paste(clean_coord(loc$lon), 
+                             clean_coord(loc$lat), 
                              sep=",",collapse = ";"))
   }
   return(tab)
@@ -174,5 +176,73 @@ fewer locations or use your own server and set its --max-trip-size option.")
   if(getOption("osrm.server") == "http://router.project-osrm.org/" & nSrc > 100 & nDst==0){
     stop(e3)
   }
-  
 }
+
+
+
+input_route <- function(x, id, single = TRUE){
+  # test various cases (vector, data.frame, with or without id, sf, sp)
+  oprj <- NA
+  if(single){
+    if(is.vector(x)){
+      if(length(x) == 2){
+        id <- id
+        i <- 0
+      }else{
+        i <- 1
+        id <- x[i]
+      }
+      lon <- clean_coord(x[i+1])
+      lat <- clean_coord(x[i+2])       
+    }
+    if(methods::is(x,"Spatial")){
+      x <- st_as_sf(x[1,])
+    }
+    if(is.data.frame(x)){
+      if(methods::is(x,"sf")){
+        oprj <- sf::st_crs(x)
+        x <- sfToDf(x)
+        i <- 1
+        id <- x[1, i]
+      }else{
+        if(length(x) == 2){
+          i <- 0
+          id <- id
+        }else{
+          i <- 1
+          id <- x[1, i]
+        }
+      }
+      lon <- clean_coord(x[1, i+1])
+      lat <- clean_coord(x[1, i+2])       
+    }
+    return(list(id = id, lon = lon, lat = lat, oprj = oprj))
+  }else{
+    if(methods::is(x,"Spatial")){
+      x <- st_as_sf(x)
+    }
+    if(is.data.frame(x)){
+      if(methods::is(x,"sf")){
+        oprj <- sf::st_crs(x)
+        x <- sfToDf(x)
+        i <- 1
+        id1 <- x[1,1]
+        id2 <- x[nrow(x),1]
+      }else{
+        if(length(x) == 2){
+          i <- 0
+          id1 <- "src"
+          id2 <- "dst"
+        }else{
+          i <- 1
+          id1 <- x[1,1]
+          id2 <- x[nrow(x),1]
+        }
+      }
+      lon <- clean_coord(x[, i+1])
+      lat <- clean_coord(x[, i+2])       
+    }
+    return(list(id1 = id1, id2 = id2, lon = lon, lat = lat, oprj = oprj))
+  }
+} 
+
