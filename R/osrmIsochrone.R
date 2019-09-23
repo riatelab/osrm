@@ -51,16 +51,9 @@
 #' }
 osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7), 
                           exclude = NULL, res = 30, returnclass = "sp"){
-  # library(osrm)
-  # library(sf)
-  # loc = c(-149.8919,61.21981)
-  # breaks = seq(from = 0,to = 60, by = 60) 
-  # exclude = NULL
-  # res = 30
-  # returnclass = "sf"
   # imput mngmnt
   oprj <- NA
-  if(testSp(loc)){
+  if (methods::is(loc,"Spatial")){
     loc <- st_as_sf(loc[1,])
   }    
   if(testSf(loc)){

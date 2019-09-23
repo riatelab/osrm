@@ -66,7 +66,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
   tryCatch({
     # input mgmt
     if (is.null(src)){
-      if(testSp(loc)){
+      if(methods::is(loc,"Spatial")){
         loc <- st_as_sf(x = loc)
       }
       if(testSf(loc)){
@@ -78,13 +78,13 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
       sep <- "?"
       req <- tableLoc(loc = loc, gepaf = gepaf)
     }else{
-      if(testSp(src)){
+      if(methods::is(src,"Spatial")){
         src <- st_as_sf(x = src)
       }
       if(testSf(src)){
         src <- sfToDf(x = src)
       }
-      if(testSp(dst)){
+      if(methods::is(dst,"Spatial")){
         dst <- st_as_sf(x = dst)
       }
       if(testSf(dst)){
@@ -122,7 +122,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
     }
     
     # final req
-    req <- paste0(req,exclude_str,annotations)
+    req <- paste0(req, exclude_str, annotations)
     
     # print(req)
     req <- utils::URLencode(req)

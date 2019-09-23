@@ -38,10 +38,11 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified", returnclass="
   tryCatch({
     # check if inpout is sp, transform and name columns
     oprj <- NA
-    if(testSp(loc)){
+    if (methods::is(loc,"Spatial")){
       loc <- sf::st_as_sf(x = loc)
     }
-    if(testSf(loc)){
+    
+    if(methods::is(loc,"sf")){
       oprj <- st_crs(loc)
       loc <- sfToDf(x = loc)
     }else{
@@ -53,9 +54,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified", returnclass="
     
     req <- paste(getOption("osrm.server"),
                  "trip/v1/", getOption("osrm.profile"), "/", 
-                 paste(
-                   format(loc$lon,scientific = FALSE, trim = TRUE), 
-                   format(loc$lat,scientific = FALSE, trim = TRUE), 
+                 paste(clean_coord(loc$lon) , clean_coord(loc$lat), 
                    sep=",",collapse = ";"),
                  "?steps=false&geometries=geojson&overview=",
                  tolower(overview), exclude_str, sep = "")
