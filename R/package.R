@@ -16,12 +16,19 @@
 #' @note
 #' This package relies on the usage of a running OSRM service (tested with 
 #' version 5.22.0 of the OSRM API).\cr
-#' To change the OSRM server, change the \code{osrm.server} option:\cr 
-#' \code{options(osrm.server = "http://address.of.the.server/")}. \cr\cr
-#' To change the profile ("driving" is set by default and it is the only profile 
-#' available on the demo server), use the \code{osrm.profile} 
-#' option:\cr
-#' \code{options(osrm.profile = "name.of.the.profile")}
+#' 
+#' 
+#' To set the OSRM server, change the \code{osrm.server} option:\cr 
+#' \code{options(osrm.server = "http://address.of.the.server/")} \cr\cr
+#' To set the profile, use the \code{osrm.profile} option:\cr
+#' \code{options(osrm.profile = "name.of.the.profile")}\cr
+#' The "driving" profile is set by default and it is the only profile 
+#' available on the demo server. Other possible profiles are "walk" and "bike".\cr\cr
+#' 
+#' A typical setup, corresponding to the Docker example, would be:\cr  
+#' \code{options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "driving")}
+#' 
+#' 
 #' @docType package
 NULL
 
