@@ -4,8 +4,14 @@
 \alias{osrmTable}
 \title{Get Travel Time Matrices Between Points}
 \usage{
-osrmTable(loc, src = NULL, dst = NULL, exclude = NULL,
-  gepaf = FALSE, measure = "duration")
+osrmTable(
+  loc,
+  src = NULL,
+  dst = NULL,
+  exclude = NULL,
+  gepaf = FALSE,
+  measure = "duration"
+)
 }
 \arguments{
 \item{loc}{a data frame containing 3 fields: points identifiers, longitudes 

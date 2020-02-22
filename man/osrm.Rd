@@ -3,7 +3,6 @@
 \docType{package}
 \name{osrm}
 \alias{osrm}
-\alias{osrm-package}
 \title{Shortest Paths and Travel Time from OpenStreetMap via an OSRM API}
 \description{
 An interface between R and the OSRM API.\cr
