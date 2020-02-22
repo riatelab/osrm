@@ -154,6 +154,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   return(iso)
 }
 
+#' @export
 osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4), 
                           exclude = NULL, res = 30, returnclass = "sp"){
   # imput mngmnt
