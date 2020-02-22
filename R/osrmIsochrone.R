@@ -184,7 +184,7 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
   if(options('osrm.profile')=="driving"){
     speed =  100 * 1000/60
   }
-  dmax <- tmax * speed * 2.5
+  dmax <- tmax * speed * 3
   
   # create a grid to obtain measures
   sgrid <- rgrid(loc = loc, dmax = dmax, res = res)
