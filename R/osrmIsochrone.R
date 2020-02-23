@@ -156,7 +156,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
 
 #' @export
 osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4), 
-                          exclude = NULL, res = 30, returnclass = "sp", dmax_multiplier){
+                          exclude = NULL, res = 30, returnclass = "sp"){
   # imput mngmnt
   oprj <- NA
   if (methods::is(loc,"Spatial")){
@@ -184,7 +184,8 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
   if(options('osrm.profile')=="driving"){
     speed =  100 * 1000/60
   }
-  dmax <- dmax_multiplier * max(breaks)
+  # 2.2 seems to be a reasonable multiplier to max distance given
+  dmax <- 2.2 * max(breaks)
   
   # create a grid to obtain measures
   sgrid <- rgrid(loc = loc, dmax = dmax, res = res)
