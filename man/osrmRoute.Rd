@@ -4,8 +4,15 @@
 \alias{osrmRoute}
 \title{Get the Shortest Path Between Two Points}
 \usage{
-osrmRoute(src, dst, loc, overview = "simplified", exclude = NULL, sp,
-  returnclass)
+osrmRoute(
+  src,
+  dst,
+  loc,
+  overview = "simplified",
+  exclude = NULL,
+  sp,
+  returnclass
+)
 }
 \arguments{
 \item{src}{a vector of identifier, longitude and latitude (WGS84), a vector 

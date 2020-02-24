@@ -4,8 +4,7 @@
 \alias{osrmTrip}
 \title{Get the Travel Geometry Between Multiple Unordered Points}
 \usage{
-osrmTrip(loc, exclude = NULL, overview = "simplified",
-  returnclass = "sp")
+osrmTrip(loc, exclude = NULL, overview = "simplified", returnclass = "sp")
 }
 \arguments{
 \item{loc}{a SpatialPointsDataFrame or an sf object of the waypoints, or a data.frame with points as rows

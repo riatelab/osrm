@@ -4,8 +4,13 @@
 \alias{osrmIsochrone}
 \title{Get Polygons of Isochrones}
 \usage{
-osrmIsochrone(loc, breaks = seq(from = 0, to = 60, length.out = 7),
-  exclude = NULL, res = 30, returnclass = "sp")
+osrmIsochrone(
+  loc,
+  breaks = seq(from = 0, to = 60, length.out = 7),
+  exclude = NULL,
+  res = 30,
+  returnclass = "sp"
+)
 }
 \arguments{
 \item{loc}{a numeric vector of longitude and latitude (WGS84), an sf object, 
@@ -48,7 +53,7 @@ if(require("cartography")){
                           col = rev(carto.pal("green.pal",6)),
                           border = NA,
                           legend.pos = "topleft",legend.frame = TRUE,
-                          legend.title.txt = "Isochrones\\n(min)")
+                          legend.title.txt = "Isochrones\n(min)")
 }
 
 # Get isochones with an sf POINT
@@ -60,7 +65,7 @@ if(require("cartography")){
   cartography::choroLayer(x = iso2, var = "center", 
                           breaks = breaks2, border = NA,
                           legend.pos = "topleft",legend.frame = TRUE,
-                          legend.title.txt = "Isochrones\\n(min)")
+                          legend.title.txt = "Isochrones\n(min)")
 }
 }
 }
