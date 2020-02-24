@@ -76,7 +76,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
     speed =  20 * 1000/60
   }
   if(options('osrm.profile')=="driving"){
-    speed =  100 * 1000/60
+    speed =  130 * 1000/60
   }
   dmax <- tmax * speed
   
@@ -154,7 +154,26 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   return(iso)
 }
 
+#' @name osrmIsometric
+#' @title Get Polygons of Isodistances
+#' @description Based on \code{\link{osrmTable}}, this function buids polygons 
+#'  of isochrones. 
+#' @param loc a numeric vector of longitude and latitude (WGS84), an sf object, 
+#' a SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.
+#' @param breaks a numeric vector of isometric values (in meters).
+#' @param exclude pass an optional "exclude" request option to the OSRM API. 
+#' @param res number of points used to compute isochrones, one side of the square 
+#' grid, the total number of points will be res*res.  
+#' @param returnclass class of the returned polygons. Either "sp" of "sf".
+#' @return A SpatialPolygonsDateFrame or an sf MULTIPOLYGON of isochrones is returned. 
+#' The data frame of the output contains four fields: 
+#' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
+#' center (central values of classes).
+#' @seealso \link{osrmTable}
+#' @importFrom sf st_as_sf st_crs st_transform st_convex_hull st_union st_intersects
 #' @export
+#' @examples
+#' library(sf)
 osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4), 
                           exclude = NULL, res = 30, returnclass = "sp"){
   # imput mngmnt
