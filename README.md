@@ -27,6 +27,17 @@ A typical setup, corresponding to the Docker example, would be:
 > ["The demo server usage is restricted to reasonable, non-commercial use-cases. We provide no guarantees wrt. uptime, latency, or data updates."](https://github.com/Project-OSRM/osrm-backend/wiki/Demo-server)
 
 
+:heavy_exclamation_mark: **OSRM Demoserver - call for hosting volunteers**:  
+> ["This is a call to the community to see if someone else is willing to take 
+up the mantle for running the demo server.  If nobody steps up, then the service 
+will stop working on Mar 09, 2020.""](https://lists.openstreetmap.org/pipermail/osrm-talk/2020-January/001834.html)
+
+
+:heavy_exclamation_mark: **To consider when using OSRM**:    
+> ["Most of the previously active core devs have either moved on to new roles, or are simply busy on different projects (...)"](https://github.com/Project-OSRM/osrm-backend/issues/5463)
+
+
+
 
 ## Features
 
