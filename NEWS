@@ -1,3 +1,14 @@
+# osrm version 3.3.3 (Release date: 2020-04)
+
+## Minor changes
+* Changes to accomodate sf >= 0.9 and st_make_valid no longer in lwgeom
+* iso isometric zones in osrmIsochrone()
+* increase dmax in osrmIsochrone()
+
+
+
+
+
 # osrm version 3.3.2 (Release date: 2019-09-24)
 
 ## Minor changes
