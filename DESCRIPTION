@@ -17,7 +17,6 @@ Imports:
     RCurl,
     utils, 
     stats,
-    lwgeom,
     isoband,
     methods,
     gepaf,
@@ -25,8 +24,8 @@ Imports:
     sf
 Depends:
     R (>= 3.3.0)
-Suggests: cartography
+Suggests: cartography, lwgeom
 URL: https://github.com/rCarto/osrm
 BugReports: https://github.com/rCarto/osrm/issues
 Encoding: UTF-8
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
