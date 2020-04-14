@@ -78,7 +78,7 @@ isopoly <- function(x, breaks,
   iso$center = iso$min + (iso$max - iso$min) / 2
   
   # invalid polygons mgmnt
-  st_geometry(iso) <- sf::st_make_valid(st_geometry(iso))  
+  st_geometry(iso) <- st_make_valid(st_geometry(iso))  
 
   
   if(methods::is(st_geometry(iso),c("sfc_GEOMETRYCOLLECTION", "sfc_GEOMETRY"))){

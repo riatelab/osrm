@@ -33,10 +33,17 @@ center (central values of classes).
 }
 \description{
 Based on \code{\link{osrmTable}}, this function buids polygons 
- of isochrones.
+ of isometric road distances.
 }
 \examples{
+\dontrun{
 library(sf)
+data("berlin")
+# Get isochones with lon/lat coordinates
+iso <- osrmIsometric(loc = c(13.43,52.47), breaks = c(0,100,200, 500, 1000),
+                     returnclass="sf")
+plot(st_geometry(iso))
+}
 }
 \seealso{
 \link{osrmTable}

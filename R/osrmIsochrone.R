@@ -157,7 +157,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
 #' @name osrmIsometric
 #' @title Get Polygons of Isodistances
 #' @description Based on \code{\link{osrmTable}}, this function buids polygons 
-#'  of isochrones. 
+#'  of isometric road distances. 
 #' @param loc a numeric vector of longitude and latitude (WGS84), an sf object, 
 #' a SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.
 #' @param breaks a numeric vector of isometric values (in meters).
@@ -173,7 +173,14 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
 #' @importFrom sf st_as_sf st_crs st_transform st_convex_hull st_union st_intersects
 #' @export
 #' @examples
+#' \dontrun{
 #' library(sf)
+#' data("berlin")
+#' # Get isochones with lon/lat coordinates
+#' iso <- osrmIsometric(loc = c(13.43,52.47), breaks = c(0,100,200, 500, 1000),
+#'                      returnclass="sf")
+#' plot(st_geometry(iso))
+#' }
 osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4), 
                           exclude = NULL, res = 30, returnclass = "sp"){
   # imput mngmnt
@@ -243,7 +250,7 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
     listDest[[1]] <- dmat$destinations
   }
   distances <- do.call(c, listDur)
-  
+
   # mgmnt of edge cases of points out of reach
   ########### QUICK FIX ######################
   destinations <- do.call(rbind, listDest)
@@ -254,6 +261,7 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
   xx <- st_make_grid(x = st_buffer(st_union(sgrid), b), n = c(res, res))
   inter <- st_intersects(xx, rpt)
   sgrid$distances <- unlist(lapply(inter, function(x)mean(rpt[["distances"]][x], na.rm=TRUE)))
+  sgrid[is.na(sgrid$distances), "distances"] <- tmax + 1
   sgrid[is.nan(sgrid$distances), "distances"] <- tmax + 1
   sgrid[sgrid$distances > tmax, "distances"] <- tmax + 1
   if(min(sgrid$distances) > tmax){
