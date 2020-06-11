@@ -14,7 +14,7 @@
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
 #' center (central values of classes).
 #' @seealso \link{osrmTable}
-#' @importFrom sf st_as_sf st_crs st_transform st_convex_hull st_union st_intersects
+#' @importFrom sf st_as_sf st_crs st_transform st_convex_hull st_union st_intersects st_bbox
 #' @export
 #' @examples
 #' \dontrun{
@@ -125,7 +125,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   rpt <- st_transform(rpt, st_crs(loc))
   rpt$durations <- durations
   b <- as.numeric(st_distance(sgrid[1,], sgrid[2,]) / 2)
-  xx <- st_make_grid(x = st_buffer(st_union(sgrid), b), n = c(res, res))
+  xx <- st_make_grid(x = st_buffer(st_as_sfc(st_bbox(sgrid)), b), n = c(res, res))
   inter <- st_intersects(xx, rpt)
   sgrid$durations <- unlist(lapply(inter, function(x)mean(rpt[["durations"]][x], na.rm=TRUE)))
   sgrid[is.nan(sgrid$durations), "durations"] <- tmax + 1
@@ -135,10 +135,8 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
     stop(e, call. = FALSE)
   }
   ########### END OF QUICK FIX ################
-  
   # computes isopolygones
   iso <- isopoly(x = sgrid, breaks = breaks, var = "durations")
-  
   # proj mgmnt
   if (!is.na(oprj)){
     iso <- st_transform(x = iso, oprj)
@@ -258,7 +256,7 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
   rpt <- st_transform(rpt, st_crs(loc))
   rpt$distances <- distances
   b <- as.numeric(st_distance(sgrid[1,], sgrid[2,]) / 2)
-  xx <- st_make_grid(x = st_buffer(st_union(sgrid), b), n = c(res, res))
+  xx <- st_make_grid(x = st_buffer(st_as_sfc(st_bbox(sgrid)), b), n = c(res, res))
   inter <- st_intersects(xx, rpt)
   sgrid$distances <- unlist(lapply(inter, function(x)mean(rpt[["distances"]][x], na.rm=TRUE)))
   sgrid[is.na(sgrid$distances), "distances"] <- tmax + 1
