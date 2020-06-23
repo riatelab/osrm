@@ -129,10 +129,19 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
     osrmLimit(nSrc = nrow(src), nDst = nrow(dst), nreq = nchar(req))
     
     # Get the result
-    resRaw <- RCurl::getURL(req, useragent = "'osrm' R package")
-    
-    # Parse the results
-    res <- jsonlite::fromJSON(resRaw)
+    bo=0
+    while(bo!=10){
+      x = try({
+        resRaw <- RCurl::getURL(req, useragent = "'osrm' R package")
+        res <- jsonlite::fromJSON(resRaw)
+        print("try")
+      }, silent = T)
+      if (class(x)=="try-error") {
+        Sys.sleep(1)
+        bo <- bo+1
+      } else
+        break 
+    }
     
     # Check results
     if(is.null(res$code)){
