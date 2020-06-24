@@ -134,7 +134,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
       x = try({
         resRaw <- RCurl::getURL(req, useragent = "'osrm' R package")
         res <- jsonlite::fromJSON(resRaw)
-        print("try")
+        # print("try")
       }, silent = T)
       if (class(x)=="try-error") {
         Sys.sleep(1)
