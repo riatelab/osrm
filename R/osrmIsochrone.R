@@ -83,22 +83,25 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   # create a grid to obtain measures
   sgrid <- rgrid(loc = loc, dmax = dmax, res = res)
   
-  # slice the grid to make several API calls  
-  lsgr <- nrow(sgrid)
-  f500 <- lsgr %/% 100
-  r500 <- lsgr %% 100
-  listDur <- list()
-  listDest <- list()
-  # gentle sleeptime for demo server
+  # gentle sleeptime & param for demo server
   if(getOption("osrm.server") != "http://router.project-osrm.org/"){
     sleeptime <- 0
+    deco <- 300
   }else{
     sleeptime <- 1
+    deco <- 100
   }
+  # slice the grid to make several API calls  
+  lsgr <- nrow(sgrid)
+  f500 <- lsgr %/% deco
+  r500 <- lsgr %% deco
+  listDur <- list()
+  listDest <- list()
+
   if(f500>0){
     for (i in 1:f500){
-      st <- (i-1) * 100 + 1
-      en <- i * 100
+      st <- (i-1) * deco + 1
+      en <- i * deco
       dmat <- osrmTable(src = loc, dst = sgrid[st:en,], exclude = exclude)
       durations <- dmat$durations
       listDur[[i]] <- dmat$durations
