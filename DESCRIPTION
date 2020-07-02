@@ -28,4 +28,4 @@ Suggests: cartography, lwgeom
 URL: https://github.com/rCarto/osrm
 BugReports: https://github.com/rCarto/osrm/issues
 Encoding: UTF-8
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1

@@ -120,7 +120,6 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
     listDest[[1]] <- dmat$destinations
   }
   durations <- do.call(c, listDur)
-  
   # mgmnt of edge cases of points out of reach
   ########### QUICK FIX ######################
   destinations <- do.call(rbind, listDest)
