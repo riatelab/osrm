@@ -19,6 +19,10 @@
 #' @param returnclass if returnclass="sf" an sf LINESTRING is returned. 
 #' If returnclass="sp" a SpatialLineDataFrame is returned. If returnclass is not 
 #' set a data.frame of coordinates is returned. 
+#' @param osrm.server The base URL of the routing server.
+#' getOption("osrm.server") by default.
+#' @param osrm.profile The routing profile to use, e.g. "car", "bike" or "foot".
+#' getOption("osrm.profile") by default.
 #' @return
 #' If returnclass is not set, a data frame is returned. It contains the 
 #' longitudes and latitudes of the travel path between the two points.\cr
@@ -67,10 +71,26 @@
 #' route5 <- osrmRoute(loc = pts, returnclass = "sf")
 #' plot(st_geometry(route5), col = "red", lwd = 2)
 #' points(pts, pch = 20, cex = 2)
+#' 
+#' # Using a different routing server
+#' u <- "https://routing.openstreetmap.de/routed-foot/"
+#' route5 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], returnclass="sf", 
+#'                     osrm.server = u)
+#' 
+#' # Using an open routing service with support for multiple modes
+#' # see https://github.com/rCarto/osrm/issues/67
+#' u <- "https://routing.openstreetmap.de/"
+#' options(osrm.server = u)
+#' route6 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], returnclass="sf", 
+#'                     osrm.profile = "bike")
+#' plot(st_geometry(route5), col = "green")
+#' plot(st_geometry(route6), add = TRUE) # note the cycle route has fewer turns
 #' }
 #' @export
 osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
-                       sp, returnclass){
+                       sp, returnclass,
+                      osrm.server = getOption("osrm.server"),
+                      osrm.profile = getOption("osrm.profile")){
   if(!missing(sp)){
     warning("sp is deprecated; use returnclass instead.", call. = FALSE)
     if(sp){
@@ -80,6 +100,11 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
   
   exclude_str <- ""
   
+  if(osrm.server == "https://routing.openstreetmap.de/") {
+    osrm.server = paste0(osrm.server, "routed-", osrm.profile, "/")
+    osrm.profile = "driving"
+  }
+  
   if(missing(loc)){
     # From src to dst
     src <- input_route(x = src, id = "src", single = TRUE)
@@ -88,8 +113,8 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
     id2 <- dst$id
     oprj <- src$oprj
     if (!is.null(exclude)) {exclude_str <- paste("&exclude=", exclude, sep = "")}
-    req <- paste(getOption("osrm.server"),
-                 "route/v1/", getOption("osrm.profile"), "/", 
+    req <- paste(osrm.server,
+                 "route/v1/", osrm.profile, "/", 
                  src$lon, ",", src$lat, ";", dst$lon, ",", dst$lat, 
                  "?alternatives=false&geometries=polyline&steps=false&overview=",
                  tolower(overview), exclude_str, sep="")
@@ -100,8 +125,8 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
     id1 <- loc$id1
     id2 <- loc$id2
     if (!is.null(exclude)) {exclude_str <- paste("&exclude=", exclude, sep = "")}
-    req <- paste(getOption("osrm.server"),
-                 "route/v1/", getOption("osrm.profile"), "/", 
+    req <- paste(osrm.server,
+                 "route/v1/", osrm.server, "/", 
                  paste0(apply(data.frame(loc$lon, loc$lat), 
                               MARGIN = 1, FUN = paste0, collapse=","),
                         collapse=";"),
