@@ -1,8 +1,11 @@
 # osrm R package
 
+<!-- badges: start -->
 [![Version](http://www.r-pkg.org/badges/version/osrm)](https://CRAN.R-project.org/package=osrm/)
 ![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen)
 [![Travis-CI Build Status](https://travis-ci.org/rCarto/osrm.svg?branch=master)](https://travis-ci.org/rCarto/osrm)
+[![R-CMD-check](https://github.com/rCarto/osrm/workflows/R-CMD-check/badge.svg)](https://github.com/rCarto/osrm/actions)
+<!-- badges: end -->
 
 ***Interface Between R and the OpenStreetMap-Based Routing Service [OSRM](http://project-osrm.org/)***
 
