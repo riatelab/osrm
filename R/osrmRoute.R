@@ -130,7 +130,7 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
     id2 <- loc$id2
     if (!is.null(exclude)) {exclude_str <- paste("&exclude=", exclude, sep = "")}
     req <- paste(osrm.server,
-                 "route/v1/", osrm.server, "/", 
+                 "route/v1/", osrm.profile, "/", 
                  paste0(apply(data.frame(loc$lon, loc$lat), 
                               MARGIN = 1, FUN = paste0, collapse=","),
                         collapse=";"),
