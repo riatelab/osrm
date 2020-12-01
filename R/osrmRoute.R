@@ -21,7 +21,8 @@
 #' set a data.frame of coordinates is returned. 
 #' @param osrm.server The base URL of the routing server.
 #' getOption("osrm.server") by default.
-#' @param osrm.profile The routing profile to use, e.g. "car", "bike" or "foot".
+#' @param osrm.profile The routing profile to use, e.g. "car", "bike" or "foot"
+#' (when using the routing.openstreetmap.de test server).
 #' getOption("osrm.profile") by default.
 #' @return
 #' If returnclass is not set, a data frame is returned. It contains the 
@@ -83,8 +84,11 @@
 #' options(osrm.server = u)
 #' route6 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], returnclass="sf", 
 #'                     osrm.profile = "bike")
+#' route7 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], returnclass="sf", 
+#'                     osrm.profile = "car")
 #' plot(st_geometry(route5), col = "green")
 #' plot(st_geometry(route6), add = TRUE) # note the cycle route has fewer turns
+#' plot(st_geometry(route7), col = "red", add = TRUE) # car route, indirect = good!
 #' }
 #' @export
 osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
