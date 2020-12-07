@@ -10,7 +10,9 @@ osrmTable(
   dst = NULL,
   exclude = NULL,
   gepaf = FALSE,
-  measure = "duration"
+  measure = "duration",
+  osrm.server = getOption("osrm.server"),
+  osrm.profile = getOption("osrm.profile")
 )
 }
 \arguments{
@@ -37,6 +39,13 @@ the public OSRM API.}
 \item{measure}{a character indicating what measures are calculated. It can 
 be "duration" (in minutes), "distance" (meters), or both c('duration',
 'distance'). The demo server only allows "duration".}
+
+\item{osrm.server}{the base URL of the routing server.
+getOption("osrm.server") by default.}
+
+\item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot"
+(when using the routing.openstreetmap.de test server).
+getOption("osrm.profile") by default.}
 }
 \value{
 A list containing 3 data frames is returned. 

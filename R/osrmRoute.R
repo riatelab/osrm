@@ -19,9 +19,9 @@
 #' @param returnclass if returnclass="sf" an sf LINESTRING is returned. 
 #' If returnclass="sp" a SpatialLineDataFrame is returned. If returnclass is not 
 #' set a data.frame of coordinates is returned. 
-#' @param osrm.server The base URL of the routing server.
+#' @param osrm.server the base URL of the routing server.
 #' getOption("osrm.server") by default.
-#' @param osrm.profile The routing profile to use, e.g. "car", "bike" or "foot"
+#' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot"
 #' (when using the routing.openstreetmap.de test server).
 #' getOption("osrm.profile") by default.
 #' @return
@@ -92,7 +92,7 @@
 #' }
 #' @export
 osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
-                       sp, returnclass,
+                      sp, returnclass,
                       osrm.server = getOption("osrm.server"),
                       osrm.profile = getOption("osrm.profile")){
   if(!missing(sp)){
@@ -118,7 +118,8 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
     oprj <- src$oprj
     if (!is.null(exclude)) {exclude_str <- paste("&exclude=", exclude, sep = "")}
     req <- paste(osrm.server,
-                 "route/v1/", osrm.profile, "/", 
+                 "route/v1/", 
+                 osrm.profile, "/", 
                  src$lon, ",", src$lat, ";", dst$lon, ",", dst$lat, 
                  "?alternatives=false&geometries=polyline&steps=false&overview=",
                  tolower(overview), exclude_str, sep="")
@@ -130,13 +131,16 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
     id2 <- loc$id2
     if (!is.null(exclude)) {exclude_str <- paste("&exclude=", exclude, sep = "")}
     req <- paste(osrm.server,
-                 "route/v1/", osrm.profile, "/", 
+                 "route/v1/", 
+                 osrm.profile, "/", 
                  paste0(apply(data.frame(loc$lon, loc$lat), 
                               MARGIN = 1, FUN = paste0, collapse=","),
                         collapse=";"),
                  "?alternatives=false&geometries=polyline&steps=false&overview=",
                  tolower(overview), exclude_str, sep="")
   }  
+  print(req)
+  
   tryCatch({
     # Sending the query
     resRaw <- RCurl::getURL(url = utils::URLencode(req), 
@@ -185,7 +189,7 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
       if (!is.na(oprj)){
         rosf <- st_transform(rosf, oprj)
       }
-
+      
       # output mgmnt
       if(returnclass=="sp"){
         rosf <- methods::as(rosf, "Spatial")

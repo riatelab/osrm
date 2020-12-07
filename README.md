@@ -2,7 +2,7 @@
 
 [![Version](http://www.r-pkg.org/badges/version/osrm)](https://CRAN.R-project.org/package=osrm/)
 ![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen)
-[![Travis-CI Build Status](https://travis-ci.org/rCarto/osrm.svg?branch=master)](https://travis-ci.org/rCarto/osrm)
+
 
 ***Interface Between R and the OpenStreetMap-Based Routing Service [OSRM](http://project-osrm.org/)***
 
@@ -17,14 +17,15 @@ You can run your own instance of OSRM following guidelines provided here:    [ht
 The simplest solution is probably the one based on [docker containers](https://github.com/Project-OSRM/osrm-backend#using-docker).    
 
 To set the OSRM server, use the `osrm.server` option: `options(osrm.server = "http://address.of.the.server/")`.     
-To set the profile ("driving" is set by default and it is the only profile available on the demo server), use the `osrm.profile` option: `options(osrm.profile = "name.of.the.profile")`.  
-The "driving" profile is set by default and it is the only profile available on the demo server. Other possible profiles are "walk" and "bike".  
-A typical setup, corresponding to the Docker example, would be:  
-`options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "driving")`
+To set the profile, use the `osrm.profile` option: `options(osrm.profile = "name.of.the.profile")`.  
+The "car" profile is set by default. Other possible profiles are "bike" and "foot".  
+A typical local setup, corresponding to the Docker example, would be:  
+`options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "car")`
 
 
 :warning: **You must be careful using the OSRM demo server**:    
-> ["The demo server usage is restricted to reasonable, non-commercial use-cases. We provide no guarantees wrt. uptime, latency, or data updates."](https://github.com/Project-OSRM/osrm-backend/wiki/Demo-server)
+> [One request per second max. No scraping, no heavy usage.](https://routing.openstreetmap.de/about.html)
+
 
 
 :heavy_exclamation_mark: **OSRM Demoserver - call for hosting volunteers**:  

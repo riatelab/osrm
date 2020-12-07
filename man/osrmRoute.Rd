@@ -41,10 +41,10 @@ FALSE to return only time and distance.}
 If returnclass="sp" a SpatialLineDataFrame is returned. If returnclass is not 
 set a data.frame of coordinates is returned.}
 
-\item{osrm.server}{The base URL of the routing server.
+\item{osrm.server}{the base URL of the routing server.
 getOption("osrm.server") by default.}
 
-\item{osrm.profile}{The routing profile to use, e.g. "car", "bike" or "foot"
+\item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot"
 (when using the routing.openstreetmap.de test server).
 getOption("osrm.profile") by default.}
 }

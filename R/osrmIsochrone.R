@@ -9,6 +9,11 @@
 #' @param res number of points used to compute isochrones, one side of the square 
 #' grid, the total number of points will be res*res.  
 #' @param returnclass class of the returned polygons. Either "sp" of "sf".
+#' @param osrm.server the base URL of the routing server.
+#' getOption("osrm.server") by default.
+#' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot"
+#' (when using the routing.openstreetmap.de test server).
+#' getOption("osrm.profile") by default.
 #' @return A SpatialPolygonsDateFrame or an sf MULTIPOLYGON of isochrones is returned. 
 #' The data frame of the output contains four fields: 
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
@@ -50,7 +55,9 @@
 #' }
 #' }
 osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7), 
-                          exclude = NULL, res = 30, returnclass = "sp"){
+                          exclude = NULL, res = 30, returnclass = "sp",  
+                          osrm.server = getOption("osrm.server"),
+                          osrm.profile = getOption("osrm.profile")){
   # imput mngmnt
   oprj <- NA
   if (methods::is(loc,"Spatial")){
@@ -69,13 +76,13 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   # max distance mngmnt to see how far to extend the grid to get measures
   breaks <- unique(sort(breaks))
   tmax <- max(breaks)
-  if(options('osrm.profile')=="walk"){
+  if(options('osrm.profile')=="foot"){
     speed =  10 * 1000/60
   }
   if(options('osrm.profile')=="bike"){
     speed =  20 * 1000/60
   }
-  if(options('osrm.profile')=="driving"){
+  if(options('osrm.profile')=="car"){
     speed =  130 * 1000/60
   }
   dmax <- tmax * speed
@@ -84,7 +91,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   sgrid <- rgrid(loc = loc, dmax = dmax, res = res)
   
   # gentle sleeptime & param for demo server
-  if(getOption("osrm.server") != "http://router.project-osrm.org/"){
+  if(getOption("osrm.server") != "https://routing.openstreetmap.de/"){
     sleeptime <- 0
     deco <- 300
   }else{

@@ -10,7 +10,7 @@
 #' \item{\code{\link{osrmTable}} Get travel time matrices between points.}
 #' \item{\code{\link{osrmRoute}} Get the shortest path between two points.}
 #' \item{\code{\link{osrmTrip}} Get the travel geometry between multiple unordered points.}
-#' \item{\code{\link{osrmIsochrone}} Get a SpatialPolygonsDataFrame of isochrones.}
+#' \item{\code{\link{osrmIsochrone}} Get polygons of isochrones.}
 #' }
 #' 
 #' @note
@@ -22,11 +22,10 @@
 #' \code{options(osrm.server = "http://address.of.the.server/")} \cr\cr
 #' To set the profile, use the \code{osrm.profile} option:\cr
 #' \code{options(osrm.profile = "name.of.the.profile")}\cr
-#' The "driving" profile is set by default and it is the only profile 
-#' available on the demo server. Other possible profiles are "walk" and "bike".\cr\cr
+#' The "car" profile is set by default. Other possible profiles are "foot" and "bike".\cr\cr
 #' 
 #' A typical setup, corresponding to the Docker example, would be:\cr  
-#' \code{options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "driving")}
+#' \code{options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "car")}
 #' 
 #' 
 #' @docType package
