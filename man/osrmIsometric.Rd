@@ -9,7 +9,9 @@ osrmIsometric(
   breaks = seq(from = 0, to = 10000, length.out = 4),
   exclude = NULL,
   res = 30,
-  returnclass = "sp"
+  returnclass = "sp",
+  osrm.server = getOption("osrm.server"),
+  osrm.profile = getOption("osrm.profile")
 )
 }
 \arguments{
@@ -24,6 +26,13 @@ a SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.}
 grid, the total number of points will be res*res.}
 
 \item{returnclass}{class of the returned polygons. Either "sp" of "sf".}
+
+\item{osrm.server}{the base URL of the routing server.
+getOption("osrm.server") by default.}
+
+\item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot"
+(when using the routing.openstreetmap.de test server).
+getOption("osrm.profile") by default.}
 }
 \value{
 A SpatialPolygonsDateFrame or an sf MULTIPOLYGON of isochrones is returned. 

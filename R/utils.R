@@ -145,15 +145,16 @@ coordFormat <- function(res, src, dst){
   )
 }
 
-tableLoc <- function(loc, gepaf = FALSE){
+tableLoc <- function(loc, gepaf = FALSE,  osrm.server, 
+                     osrm.profile){
   # Query build
   if (gepaf == TRUE){
-    tab <- paste0(getOption("osrm.server"), "table/v1/", getOption("osrm.profile"), "/polyline(")
+    tab <- paste0(osrm.server, "table/v1/", osrm.profile, "/polyline(")
     loc$lat <- as.numeric(as.character(loc$lat))
     loc$lon <- as.numeric(as.character(loc$lon))
     tab <- paste0(tab, gepaf::encodePolyline(loc[,c("lat","lon")]),")")
   }else{
-    tab <- paste0(getOption("osrm.server"), "table/v1/", getOption("osrm.profile"), "/")
+    tab <- paste0(osrm.server, "table/v1/", osrm.profile, "/")
     tab <- paste0(tab, paste(clean_coord(loc$lon), 
                              clean_coord(loc$lat), 
                              sep=",",collapse = ";"))
@@ -169,13 +170,13 @@ higher than 10000. Ask for fewer durations or use your own server and set its
 fewer durations or use your own server and set its --max-table-size option.")
   e3 <- simpleError("This request is to large for the public OSRM API. Ask for 
 fewer locations or use your own server and set its --max-trip-size option.")
-  if(getOption("osrm.server") == "http://router.project-osrm.org/" & (nSrc*nDst) > 10000){
+  if(getOption("osrm.server") == "https://routing.openstreetmap.de/" & (nSrc*nDst) > 10000){
     stop(e)
   }
-  if(getOption("osrm.server") == "http://router.project-osrm.org/" & nreq >= 8000){
+  if(getOption("osrm.server") == "https://routing.openstreetmap.de/" & nreq >= 8000){
     stop(e2)
   }
-  if(getOption("osrm.server") == "http://router.project-osrm.org/" & nSrc > 100 & nDst==0){
+  if(getOption("osrm.server") == "https://routing.openstreetmap.de/" & nSrc > 100 & nDst==0){
     stop(e3)
   }
 }

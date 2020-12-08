@@ -20,6 +20,11 @@
 #' @param gepaf a boolean indicating if coordinates are sent encoded with the
 #' google encoded algorithm format (TRUE) or not (FALSE). Must be FALSE if using
 #' the public OSRM API.
+#' @param osrm.server the base URL of the routing server.
+#' getOption("osrm.server") by default.
+#' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot"
+#' (when using the routing.openstreetmap.de test server).
+#' getOption("osrm.profile") by default.
 #' @return A list containing 3 data frames is returned. 
 #' durations is the matrix of travel times (in minutes), 
 #' sources and destinations are the coordinates of 
@@ -62,7 +67,13 @@
 #' }
 #' @export
 osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL, 
-                      gepaf = FALSE, measure="duration"){
+                      gepaf = FALSE, measure="duration", 
+                      osrm.server = getOption("osrm.server"),
+                      osrm.profile = getOption("osrm.profile")){
+  if(osrm.server == "https://routing.openstreetmap.de/") {
+    osrm.server = paste0(osrm.server, "routed-", osrm.profile, "/")
+    osrm.profile = "driving"
+  }
   tryCatch({
     # input mgmt
     if (is.null(src)){
@@ -76,7 +87,8 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
       src <- loc
       dst <- loc
       sep <- "?"
-      req <- tableLoc(loc = loc, gepaf = gepaf)
+      req <- tableLoc(loc = loc, gepaf = gepaf, osrm.server = osrm.server, 
+                      osrm.profile = osrm.profile)
     }else{
       if(methods::is(src,"Spatial")){
         src <- st_as_sf(x = src)
@@ -98,7 +110,8 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
       # Build the query
       loc <- rbind(src, dst)
       sep = "&"
-      req <- paste(tableLoc(loc = loc, gepaf = gepaf),
+      req <- paste(tableLoc(loc = loc, gepaf = gepaf, osrm.server = osrm.server, 
+                            osrm.profile = osrm.profile),
                    "?sources=", 
                    paste(0:(nrow(src)-1), collapse = ";"), 
                    "&destinations=", 
@@ -117,14 +130,14 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
     # annotation mngmnt
     annotations <- paste0(sep, "annotations=", paste0(measure, collapse=','))
     
-    if(getOption("osrm.server") == "http://router.project-osrm.org/"){
-      annotations <- ""
-    }
+    # if(getOption("osrm.server") == "http://router.project-osrm.org/"){
+    #   annotations <- ""
+    # }
     
     # final req
     req <- paste0(req, exclude_str, annotations)
     
-    # print(req)
+    print(req)
     req <- utils::URLencode(req)
     osrmLimit(nSrc = nrow(src), nDst = nrow(dst), nreq = nchar(req))
     

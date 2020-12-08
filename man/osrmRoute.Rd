@@ -11,7 +11,9 @@ osrmRoute(
   overview = "simplified",
   exclude = NULL,
   sp,
-  returnclass
+  returnclass,
+  osrm.server = getOption("osrm.server"),
+  osrm.profile = getOption("osrm.profile")
 )
 }
 \arguments{
@@ -38,6 +40,13 @@ FALSE to return only time and distance.}
 \item{returnclass}{if returnclass="sf" an sf LINESTRING is returned. 
 If returnclass="sp" a SpatialLineDataFrame is returned. If returnclass is not 
 set a data.frame of coordinates is returned.}
+
+\item{osrm.server}{the base URL of the routing server.
+getOption("osrm.server") by default.}
+
+\item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot"
+(when using the routing.openstreetmap.de test server).
+getOption("osrm.profile") by default.}
 }
 \value{
 If returnclass is not set, a data frame is returned. It contains the 
@@ -91,5 +100,22 @@ pts <- structure(
 route5 <- osrmRoute(loc = pts, returnclass = "sf")
 plot(st_geometry(route5), col = "red", lwd = 2)
 points(pts, pch = 20, cex = 2)
+
+# Using a different routing server
+u <- "https://routing.openstreetmap.de/routed-foot/"
+route5 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], returnclass="sf", 
+                    osrm.server = u)
+
+# Using an open routing service with support for multiple modes
+# see https://github.com/rCarto/osrm/issues/67
+u <- "https://routing.openstreetmap.de/"
+options(osrm.server = u)
+route6 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], returnclass="sf", 
+                    osrm.profile = "bike")
+route7 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], returnclass="sf", 
+                    osrm.profile = "car")
+plot(st_geometry(route5), col = "green")
+plot(st_geometry(route6), add = TRUE) # note the cycle route has fewer turns
+plot(st_geometry(route7), col = "red", add = TRUE) # car route, indirect = good!
 }
 }
