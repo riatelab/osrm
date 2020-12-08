@@ -1,4 +1,4 @@
-options(osrm.server = "http://router.project-osrm.org/", osrm.profile = "driving")
+options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "car")
 
 
 library(osrm)
@@ -20,14 +20,13 @@ knitr::kable(distA$durations)
   
 library(osrm)
 library(sf)
-library(cartography)
+library(maptiles)
 # Load data
 data("berlin")
 route <- osrmRoute(src = apotheke.sf[74,], dst = apotheke.sf[55,],
                    overview = "full", returnclass = "sf")
 # Display the path
 osm <- getTiles(x = route, crop = TRUE, type = "osm", zoom = 13)
-
 png("img/route.png", width = 500, height = 225, res = 100)
 par(mar= c(0,0,0,0))
 tilesLayer(osm)

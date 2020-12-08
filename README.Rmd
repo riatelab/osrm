@@ -1,83 +1,81 @@
-
+---
+output: github_document
+---
 # osrm R package
 
 [![Version](http://www.r-pkg.org/badges/version/osrm)](https://CRAN.R-project.org/package=osrm/)
-![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen) [![R build
-status](https://github.com/rCarto/osrm/workflows/R-CMD-check/badge.svg)](https://github.com/rCarto/osrm/actions)
+![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen)
+[![R build status](https://github.com/rCarto/osrm/workflows/R-CMD-check/badge.svg)](https://github.com/rCarto/osrm/actions)
 [![codecov](https://codecov.io/gh/rCarto/osrm/branch/master/graph/badge.svg?token=JOJNuBCH9M)](https://codecov.io/gh/rCarto/osrm)
 
-***Interface Between R and the OpenStreetMap-Based Routing Service
-[OSRM](http://project-osrm.org/)***
+
+
+
+***Interface Between R and the OpenStreetMap-Based Routing Service [OSRM](http://project-osrm.org/)***
 
 ![](https://raw.githubusercontent.com/rCarto/osrm/master/img/cover.png)
 
 ## Description
+OSRM is a routing service based on OpenStreetMap data. See <http://project-osrm.org/> for more information. This package allows to compute routes, trips, isochrones and travel distances matrices (travel time and kilometric distance).
 
-OSRM is a routing service based on OpenStreetMap data. See
-<http://project-osrm.org/> for more information. This package allows to
-compute routes, trips, isochrones and travel distances matrices (travel
-time and kilometric distance).
+This package relies on the usage of a running OSRM service (tested with v5.23.0 of OSRM).    
 
-This package relies on the usage of a running OSRM service (tested with
-v5.23.0 of OSRM).
+You can run your own instance of OSRM following guidelines provided [here](https://github.com/Project-OSRM/osrm-backend). The simplest solution is probably the one based on [docker containers](https://github.com/Project-OSRM/osrm-backend#using-docker).    
 
-You can run your own instance of OSRM following guidelines provided
-[here](https://github.com/Project-OSRM/osrm-backend). The simplest
-solution is probably the one based on [docker
-containers](https://github.com/Project-OSRM/osrm-backend#using-docker).
 
-:warning: **You must be careful using the OSRM demo server and read the
-[*about* page](https://routing.openstreetmap.de/about.html) of the
-service**:  
-&gt; [One request per second max. No scraping, no heavy
-usage.](https://routing.openstreetmap.de/about.html)
 
-:heavy\_exclamation\_mark: **To consider when using OSRM**:  
-&gt; [“Most of the previously active core devs have either moved on to
-new roles, or are simply busy on different projects
-(…)”](https://github.com/Project-OSRM/osrm-backend/issues/5463)
+:warning: **You must be careful using the OSRM demo server and read the [*about* page](https://routing.openstreetmap.de/about.html) of the service**:    
+> [One request per second max. No scraping, no heavy usage.](https://routing.openstreetmap.de/about.html)
+
+
+:heavy_exclamation_mark: **To consider when using OSRM**:    
+> ["Most of the previously active core devs have either moved on to new roles, or are simply busy on different projects (...)"](https://github.com/Project-OSRM/osrm-backend/issues/5463)
+
+
+
 
 ## Features
 
--   `osrmTable` Get travel time matrices between points.
+* `osrmTable` Get travel time matrices between points.
 
--   `osrmRoute` Get the shortest path between two points.
+* `osrmRoute` Get the shortest path between two points.
 
--   `osrmTrip` Get the travel geometry between multiple unordered
-    points.
+* `osrmTrip` Get the travel geometry between multiple unordered points.
 
--   `osrmIsochrone` Get polygons of isochrones.
+* `osrmIsochrone` Get polygons of isochrones.
+
 
 ## Demo
 
 ### `osrmTable`
 
-``` r
+
+```{r pkg, results='hide', message=FALSE}
 library(osrm)
 ```
 
-``` r
+```{r init, echo = FALSE}
+options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "car")
+```
+
+
+```{r table, results='hide', message=FALSE}
 data("berlin")
 # Travel time matrix
 distA <- osrmTable(loc = apotheke.sf[1:5,])
 distA$durations
+
 ```
 
 <small>
-
-|            | 440338666 | 538057637 | 977657079 | 3770254015 | 364363337 |
-|:-----------|----------:|----------:|----------:|-----------:|----------:|
-| 440338666  |       0.0 |      21.5 |      34.1 |       19.7 |      11.8 |
-| 538057637  |      22.9 |       0.0 |      42.0 |       16.1 |      20.7 |
-| 977657079  |      34.0 |      42.6 |       0.0 |       30.5 |      27.3 |
-| 3770254015 |      22.4 |      15.3 |      29.7 |        0.0 |      12.7 |
-| 364363337  |      12.1 |      20.2 |      26.7 |       12.0 |       0.0 |
-
+```{r table_display, echo=FALSE}
+knitr::kable(distA$durations)
+```
 </small>
 
 ### `osrmRoute`
 
-``` r
+```{r route, results='hide', message=FALSE}
 library(sf)
 library(maptiles)
 # Route
@@ -97,9 +95,10 @@ dev.off()
 
 ![](https://raw.githubusercontent.com/rCarto/osrm/master/img/route.png)
 
+
 ### `osrmTrip`
 
-``` r
+```{r trip, results='hide', message=FALSE}
 # Trip 
 trips <- osrmTrip(loc = apotheke.sf[10:20,], returnclass="sf")
 trip <- trips[[1]]$trip
@@ -119,7 +118,7 @@ dev.off()
 
 ### `osrmIsochrone`
 
-``` r
+```{r iso, results='hide', message=FALSE}
 iso <- osrmIsochrone(loc = apotheke.sf[87,], returnclass="sf",
                      breaks = seq(from = 0, to = 14, by = 2), res = 70)
 osm3 <- get_tiles(x = iso, crop = TRUE, zoom = 12)
@@ -140,25 +139,21 @@ plot(st_geometry(apotheke.sf[87,]), pch = 21, bg = "red",
 mtext(get_credit("OpenStreetMap"), side = 1, line = -1, cex = .9, adj = .99)
 dev.off()
 ```
-
 ![](https://raw.githubusercontent.com/rCarto/osrm/master/img/iso.png)
+
 
 ## Installation
 
--   Development version on GitHub
-
-``` r
+* Development version on GitHub
+```{r, eval = FALSE}
 remotes::install_github("rCarto/osrm")
 ```
 
--   Stable version on [CRAN](https://CRAN.R-project.org/package=osrm/)
-
-``` r
+* Stable version on [CRAN](https://CRAN.R-project.org/package=osrm/)
+```{r, eval=FALSE}
 install.packages("osrm")
 ```
 
 ## Community Guidelines
 
-One can contribute to the package through [pull
-requests](https://github.com/rCarto/osrm/pulls) and report issues or ask
-questions [here](https://github.com/rCarto/osrm/issues).
+One can contribute to the package through [pull requests](https://github.com/rCarto/osrm/pulls) and report issues or ask questions [here](https://github.com/rCarto/osrm/issues).

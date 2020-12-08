@@ -5,11 +5,14 @@ Version: 3.4.0.0
 Authors@R: c(person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", 
     role = c("cre","aut"),  comment = c(ORCID = "0000-0002-1932-3323")),
     person("Robin", "Cura", role = c("ctb")), 
-    person("Matthieu", "Viry", role = c("ctb")))
-Description: An interface between R and the OSRM API. OSRM is a routing
-    service based on OpenStreetMap data. See <http://project-osrm.org/> for more
-    information. This package allows to compute distances (travel time and 
-    kilometric distance) between points and travel time matrices.
+    person("Matthieu", "Viry", role = c("ctb")), 
+    person("Robin", "Lovelace", role = c("ctb"),
+    comment = c(ORCID = "0000-0001-5679-6536"))
+    )
+Description: An interface between R and the 'OSRM' API. 'OSRM' is a routing
+    service based on 'OpenStreetMap' data. See <http://project-osrm.org/> for more
+    information. This package allows to compute routes, trips, isochrones and
+    travel distances matrices (travel time and kilometric distance).
 License: GPL-3
 LazyData: TRUE
 Imports:

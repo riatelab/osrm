@@ -137,7 +137,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
     # final req
     req <- paste0(req, exclude_str, annotations)
     
-    print(req)
+    # print(req)
     req <- utils::URLencode(req)
     osrmLimit(nSrc = nrow(src), nDst = nrow(dst), nreq = nchar(req))
     

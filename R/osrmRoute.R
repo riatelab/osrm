@@ -139,7 +139,7 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
                  "?alternatives=false&geometries=polyline&steps=false&overview=",
                  tolower(overview), exclude_str, sep="")
   }  
-  print(req)
+  # print(req)
   
   tryCatch({
     # Sending the query
