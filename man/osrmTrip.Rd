@@ -4,7 +4,14 @@
 \alias{osrmTrip}
 \title{Get the Travel Geometry Between Multiple Unordered Points}
 \usage{
-osrmTrip(loc, exclude = NULL, overview = "simplified", returnclass = "sp")
+osrmTrip(
+  loc,
+  exclude = NULL,
+  overview = "simplified",
+  returnclass = "sp",
+  osrm.server = getOption("osrm.server"),
+  osrm.profile = getOption("osrm.profile")
+)
 }
 \arguments{
 \item{loc}{a SpatialPointsDataFrame or an sf object of the waypoints, or a data.frame with points as rows
@@ -17,6 +24,13 @@ according to highest zoom level it could be display on.}
 
 \item{returnclass}{if returnclass="sf" an sf LINESTRING is returned. 
 If returnclass="sp" a SpatialLineDataFrame is returned.}
+
+\item{osrm.server}{the base URL of the routing server.
+getOption("osrm.server") by default.}
+
+\item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot"
+(when using the routing.openstreetmap.de test server).
+getOption("osrm.profile") by default.}
 }
 \value{
 A list of connected components. Each component contains:

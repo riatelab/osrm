@@ -9,6 +9,11 @@
 #' according to highest zoom level it could be display on. 
 #' @param returnclass if returnclass="sf" an sf LINESTRING is returned. 
 #' If returnclass="sp" a SpatialLineDataFrame is returned.
+#' @param osrm.server the base URL of the routing server.
+#' getOption("osrm.server") by default.
+#' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot"
+#' (when using the routing.openstreetmap.de test server).
+#' getOption("osrm.profile") by default.
 #' @details As stated in the OSRM API, if input coordinates can not be joined by a single trip 
 #' (e.g. the coordinates are on several disconnecte islands) multiple trips for 
 #' each connected component are returned.
@@ -34,7 +39,13 @@
 #' plot(st_geometry(mytrip), col = c("red", "white"), lwd = 1, add = TRUE)
 #' plot(st_geometry(apotheke.sf), pch = 21, bg = "red", cex = 1, add = TRUE)
 #' }
-osrmTrip <- function(loc, exclude = NULL, overview = "simplified", returnclass="sp"){
+osrmTrip <- function(loc, exclude = NULL, overview = "simplified", 
+                     returnclass="sp", osrm.server = getOption("osrm.server"),
+                     osrm.profile = getOption("osrm.profile")){
+  if(osrm.server == "https://routing.openstreetmap.de/") {
+    osrm.server = paste0(osrm.server, "routed-", osrm.profile, "/")
+    osrm.profile = "driving"
+  }
   tryCatch({
     # check if inpout is sp, transform and name columns
     oprj <- NA
@@ -52,8 +63,8 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified", returnclass="
     exclude_str <- ""
     if (!is.null(exclude)) { exclude_str <- paste("&exclude=", exclude, sep = "") }
     
-    req <- paste(getOption("osrm.server"),
-                 "trip/v1/", getOption("osrm.profile"), "/", 
+    req <- paste(osrm.server,
+                 "trip/v1/", osrm.profile, "/", 
                  paste(clean_coord(loc$lon) , clean_coord(loc$lat), 
                    sep=",",collapse = ";"),
                  "?steps=false&geometries=geojson&overview=",
