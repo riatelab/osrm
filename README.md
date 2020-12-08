@@ -2,6 +2,10 @@
 
 [![Version](http://www.r-pkg.org/badges/version/osrm)](https://CRAN.R-project.org/package=osrm/)
 ![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen)
+[![R build status](https://github.com/rCarto/osrm/workflows/R-CMD-check/badge.svg)](https://github.com/rCarto/osrm/actions)
+[![codecov](https://codecov.io/gh/rCarto/osrm/branch/master/graph/badge.svg?token=JOJNuBCH9M)](https://codecov.io/gh/rCarto/osrm)
+
+
 
 
 ***Interface Between R and the OpenStreetMap-Based Routing Service [OSRM](http://project-osrm.org/)***

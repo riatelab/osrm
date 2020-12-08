@@ -1,4 +1,6 @@
 home <- length(unclass(packageVersion("osrm"))[[1]]) == 4
+localtest <- F
+
 if(home){
   suppressPackageStartupMessages(library(sf))
   data("berlin")
@@ -102,7 +104,7 @@ if(home){
   expect_true(methods::is(r, "sf"))
   ss()
   
-    
+  
   ############# fun param ##################""
   ss()
   # Travel path between points
@@ -111,34 +113,36 @@ if(home){
                  osrm.profile = "driving")
   expect_true(methods::is(r, "sf"))
   
-
+  
   # 
   # ############## ONLY LOCAL ############################################
-  # options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "test")
-  # # Travel path between points
-  # r <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
-  #                returnclass="sf")
-  # expect_true(methods::is(r, "sf"))
-  # # Travel path between points excluding motorways
-  # r <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
-  #                returnclass="sf", exclude = "motorway")
-  # expect_true(methods::is(r, "sf"))
-  # # Return only duration and distance
-  # r <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
-  #                overview = FALSE)
-  # expect_equal(length(r), 2)
-  # # Using only coordinates
-  # r <-  osrmRoute(src = c(13.412, 52.502), 
-  #                 dst = c(13.454, 52.592),
-  #                 returnclass = "sf")
-  # expect_true(methods::is(r, "sf"))
-  # # Using via points
-  # pts <- structure(
-  #   list(x = c(13.32500, 13.30688, 13.30519, 13.31025, 
-  #              13.4721, 13.56651, 13.55303, 13.37263, 13.50919, 13.5682), 
-  #        y = c(52.40566, 52.44491, 52.52084, 52.59318, 52.61063, 52.55317, 
-  #              52.50186, 52.49468, 52.46441, 52.39669)), 
-  #   class = "data.frame", row.names = c(NA, -10L))
-  # r <- osrmRoute(loc = pts, returnclass = "sf")
-  # expect_true(methods::is(r, "sf"))
+  if(localtest){
+    options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "test")
+    # Travel path between points
+    r <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ],
+                   returnclass="sf")
+    expect_true(methods::is(r, "sf"))
+    # Travel path between points excluding motorways
+    r <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ],
+                   returnclass="sf", exclude = "motorway")
+    expect_true(methods::is(r, "sf"))
+    # Return only duration and distance
+    r <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ],
+                   overview = FALSE)
+    expect_equal(length(r), 2)
+    # Using only coordinates
+    r <-  osrmRoute(src = c(13.412, 52.502),
+                    dst = c(13.454, 52.592),
+                    returnclass = "sf")
+    expect_true(methods::is(r, "sf"))
+    # Using via points
+    pts <- structure(
+      list(x = c(13.32500, 13.30688, 13.30519, 13.31025,
+                 13.4721, 13.56651, 13.55303, 13.37263, 13.50919, 13.5682),
+           y = c(52.40566, 52.44491, 52.52084, 52.59318, 52.61063, 52.55317,
+                 52.50186, 52.49468, 52.46441, 52.39669)),
+      class = "data.frame", row.names = c(NA, -10L))
+    r <- osrmRoute(loc = pts, returnclass = "sf")
+    expect_true(methods::is(r, "sf"))
+  }
 }
