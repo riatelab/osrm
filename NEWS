@@ -1,4 +1,11 @@
-# osrm version 3.3.3 (Release date: 2020-04)
+# osrm version 3.4.0 (Release date: 2020-12)
+
+## Minor changes
+* change demo server from http://router.project-osrm.org/ to https://routing.openstreetmap.de/
+* add osrm.server and osrm.profile in function to change the server directly in functions. 
+* 
+
+# osrm version 3.3.3 (Release date: 2020-04-14)
 
 ## Minor changes
 * Changes to accomodate sf >= 0.9 and st_make_valid no longer in lwgeom

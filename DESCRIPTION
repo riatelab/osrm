@@ -1,7 +1,7 @@
 Package: osrm
 Type: Package
 Title: Interface Between R and the OpenStreetMap-Based Routing Service OSRM
-Version: 3.4.0.0
+Version: 3.4.0
 Authors@R: c(person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", 
     role = c("cre","aut"),  comment = c(ORCID = "0000-0002-1932-3323")),
     person("Robin", "Cura", role = c("ctb")), 
