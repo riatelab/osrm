@@ -174,7 +174,7 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
                                   x = res$routes$geometry)
     }
     # Coordinates of the line
-    geodf <- gepaf::decodePolyline(res$routes$geometry)[,c(2,1)]
+    geodf <- googlePolylines::decode(res$routes$geometry)[[1]][,c(2,1)]
     
     # Convert to LINESTRING
     if (!missing(returnclass)){
