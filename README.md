@@ -3,13 +3,13 @@
 
 [![Version](http://www.r-pkg.org/badges/version/osrm)](https://CRAN.R-project.org/package=osrm/)
 ![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen) [![R build
-status](https://github.com/rCarto/osrm/workflows/R-CMD-check/badge.svg)](https://github.com/rCarto/osrm/actions)
-[![codecov](https://codecov.io/gh/rCarto/osrm/branch/master/graph/badge.svg?token=JOJNuBCH9M)](https://codecov.io/gh/rCarto/osrm)
+status](https://github.com/riatelab/osrm/workflows/R-CMD-check/badge.svg)](https://github.com/riatelab/osrm/actions)
+[![codecov](https://codecov.io/gh/riatelab/osrm/branch/master/graph/badge.svg?token=JOJNuBCH9M)](https://codecov.io/gh/riatelab/osrm)
 
 ***Interface Between R and the OpenStreetMap-Based Routing Service
 [OSRM](http://project-osrm.org/)***
 
-![](https://raw.githubusercontent.com/rCarto/osrm/master/img/cover.png)
+![](https://raw.githubusercontent.com/riatelab/osrm/master/img/cover.png)
 
 ## Description
 
@@ -95,7 +95,7 @@ mtext(get_credit("OpenStreetMap"), side = 1, line = -1, cex = .9, adj = .99)
 dev.off()
 ```
 
-![](https://raw.githubusercontent.com/rCarto/osrm/master/img/route.png)
+![](https://raw.githubusercontent.com/riatelab/osrm/master/img/route.png)
 
 ### `osrmTrip`
 
@@ -115,7 +115,7 @@ mtext(get_credit("OpenStreetMap"), side = 1, line = -1, cex = .9, adj = .99)
 dev.off()
 ```
 
-![](https://raw.githubusercontent.com/rCarto/osrm/master/img/trip.png)
+![](https://raw.githubusercontent.com/riatelab/osrm/master/img/trip.png)
 
 ### `osrmIsochrone`
 
@@ -141,14 +141,14 @@ mtext(get_credit("OpenStreetMap"), side = 1, line = -1, cex = .9, adj = .99)
 dev.off()
 ```
 
-![](https://raw.githubusercontent.com/rCarto/osrm/master/img/iso.png)
+![](https://raw.githubusercontent.com/riatelab/osrm/master/img/iso.png)
 
 ## Installation
 
 -   Development version on GitHub
 
 ``` r
-remotes::install_github("rCarto/osrm")
+remotes::install_github("riatelab/osrm")
 ```
 
 -   Stable version on [CRAN](https://CRAN.R-project.org/package=osrm/)
@@ -160,5 +160,5 @@ install.packages("osrm")
 ## Community Guidelines
 
 One can contribute to the package through [pull
-requests](https://github.com/rCarto/osrm/pulls) and report issues or ask
-questions [here](https://github.com/rCarto/osrm/issues).
+requests](https://github.com/riatelab/osrm/pulls) and report issues or
+ask questions [here](https://github.com/riatelab/osrm/issues).
