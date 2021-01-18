@@ -28,7 +28,7 @@ Imports:
 Depends:
     R (>= 3.3.0)
 Suggests: cartography, lwgeom, tinytest, covr
-URL: https://github.com/rCarto/osrm
-BugReports: https://github.com/rCarto/osrm/issues
+URL: https://github.com/riatelab/osrm
+BugReports: https://github.com/riatelab/osrm/issues
 Encoding: UTF-8
 RoxygenNote: 7.1.1

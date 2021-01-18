@@ -79,7 +79,7 @@
 #'                     osrm.server = u)
 #' 
 #' # Using an open routing service with support for multiple modes
-#' # see https://github.com/rCarto/osrm/issues/67
+#' # see https://github.com/riatelab/osrm/issues/67
 #' u <- "https://routing.openstreetmap.de/"
 #' options(osrm.server = u)
 #' route6 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], returnclass="sf", 
