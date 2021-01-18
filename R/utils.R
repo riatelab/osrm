@@ -152,7 +152,7 @@ tableLoc <- function(loc, gepaf = FALSE,  osrm.server,
     tab <- paste0(osrm.server, "table/v1/", osrm.profile, "/polyline(")
     loc$lat <- as.numeric(as.character(loc$lat))
     loc$lon <- as.numeric(as.character(loc$lon))
-    tab <- paste0(tab, gepaf::encodePolyline(loc[,c("lat","lon")]),")")
+    tab <- paste0(tab, googlePolylines::encode(loc[,c("lon","lat")]),")")
   }else{
     tab <- paste0(osrm.server, "table/v1/", osrm.profile, "/")
     tab <- paste0(tab, paste(clean_coord(loc$lon), 

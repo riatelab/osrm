@@ -22,7 +22,7 @@ Imports:
     stats,
     isoband,
     methods,
-    gepaf,
+    googlePolylines,
     sp, 
     sf
 Depends:
