@@ -54,8 +54,10 @@ You can run your own instance of OSRM following guidelines provided [here](https
 library(osrm)
 ```
 
-```{r init, echo = FALSE}
+```{r init, echo = FALSE, include=FALSE}
 options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "car")
+library(cartography)
+tc_legacy_mode('on')
 ```
 
 
