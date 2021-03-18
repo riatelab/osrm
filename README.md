@@ -67,11 +67,11 @@ distA$durations
 
 |            | 440338666 | 538057637 | 977657079 | 3770254015 | 364363337 |
 |:-----------|----------:|----------:|----------:|-----------:|----------:|
-| 440338666  |       0.0 |      21.5 |      34.1 |       19.7 |      11.8 |
-| 538057637  |      22.9 |       0.0 |      42.0 |       16.1 |      20.7 |
-| 977657079  |      34.0 |      42.6 |       0.0 |       30.5 |      27.3 |
-| 3770254015 |      22.4 |      15.3 |      29.7 |        0.0 |      12.7 |
-| 364363337  |      12.1 |      20.2 |      26.7 |       12.0 |       0.0 |
+| 440338666  |       0.0 |      21.4 |      34.1 |       19.5 |      11.7 |
+| 538057637  |      22.8 |       0.0 |      42.8 |       16.1 |      20.7 |
+| 977657079  |      34.1 |      43.3 |       0.0 |       31.2 |      27.4 |
+| 3770254015 |      22.3 |      15.3 |      30.7 |        0.0 |      12.7 |
+| 364363337  |      12.0 |      20.2 |      26.8 |       12.0 |       0.0 |
 
 </small>
 
@@ -80,6 +80,7 @@ distA$durations
 ``` r
 library(sf)
 library(maptiles)
+library(mapsf)
 # Route
 route <- osrmRoute(src = apotheke.sf[74,], dst = apotheke.sf[55,],
                    overview = "full", returnclass = "sf")
@@ -88,10 +89,10 @@ osm <- get_tiles(x = route, crop = TRUE, zoom = 13)
 png("img/route.png", width = 693, height = 263)
 par(mar = c(0,0,0,0))
 plot_tiles(osm)
-plot(st_geometry(route), lwd = 4, add = TRUE)
-plot(st_geometry(route), lwd = 1, col = "white", add = TRUE)
-plot(st_geometry(apotheke.sf[c(74,55),]), pch = 20, col = "red", add = TRUE)
-mtext(get_credit("OpenStreetMap"), side = 1, line = -1, cex = .9, adj = .99)
+mf_map(route, lwd = 4, add = TRUE, col = "black")
+mf_map(route, lwd = 1, col = "white", add = TRUE)
+mf_map(apotheke.sf[c(74,55),], pch = 20, col = "red", add = TRUE)
+mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .9)
 dev.off()
 ```
 
@@ -108,10 +109,10 @@ osm2 <- get_tiles(x = trip, crop = TRUE, zoom = 11)
 png("img/trip.png", width = 499, height = 420)
 par(mar = c(0,0,0,0))
 plot_tiles(osm2)
-plot(st_geometry(trip), col = "black", lwd = 4, add = TRUE )
-plot(st_geometry(trip), col = c("red", "white"), lwd = 1, add=TRUE)
-plot(st_geometry(apotheke.sf[10:20,]), pch = 21, bg = "red", cex = 1.5, add=TRUE)
-mtext(get_credit("OpenStreetMap"), side = 1, line = -1, cex = .9, adj = .99)
+mf_map(trip, col = "black", lwd = 4, add = TRUE )
+mf_map(trip, col = c("red", "white"), lwd = 1, add = TRUE)
+mf_map(apotheke.sf[10:20,], pch = 21, col = "red", cex = 1.5, add = TRUE)
+mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .9)
 dev.off()
 ```
 
@@ -120,24 +121,24 @@ dev.off()
 ### `osrmIsochrone`
 
 ``` r
+bks <- seq(from = 0, to = 14, by = 2)
 iso <- osrmIsochrone(loc = apotheke.sf[87,], returnclass="sf",
-                     breaks = seq(from = 0, to = 14, by = 2), res = 70)
+                     breaks = bks, res = 70)
 osm3 <- get_tiles(x = iso, crop = TRUE, zoom = 12)
-bks <- sort(c(unique(iso$min), max(iso$max)))
-library(cartography)
-cols <- paste0(carto.pal("turquoise.pal", n1 = length(bks)-1), 'BF')
+cols <- hcl.colors(n = 7, palette = "Emrld", alpha = 0.75, rev = F)
 png("img/iso.png", width = 604, height = 595)
 par(mar = c(0,0,0,0))
 plot_tiles(osm3)
-choroLayer(x = iso, var = "center", breaks = bks,
-           border = NA, col = cols,
-           legend.pos = "topleft",legend.frame = TRUE,
-           legend.title.txt = "Isochrones\n(min)",
-           legend.title.cex = 1, legend.values.cex = .8,
-           add = TRUE)
-plot(st_geometry(apotheke.sf[87,]), pch = 21, bg = "red", 
-     cex = 1.5, add=TRUE)
-mtext(get_credit("OpenStreetMap"), side = 1, line = -1, cex = .9, adj = .99)
+mf_theme(mar = c(0,0,0,0))
+mf_map(x = iso, var = "center", type = "choro", 
+       breaks = bks, border = NA, pal = cols,
+       leg_pos = "topleft", leg_frame = T,
+       leg_title = "Isochrones\n(min)",
+       leg_title_cex = 1, leg_val_cex = .8,
+       add = TRUE)
+mf_map(apotheke.sf[87,], pch = 21, col = "red", 
+       cex = 1.5, add=TRUE)
+mf_credits(get_credit("OpenStreetMap"), cex = .9)
 dev.off()
 ```
 

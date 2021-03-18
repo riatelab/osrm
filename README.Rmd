@@ -56,8 +56,6 @@ library(osrm)
 
 ```{r init, echo = FALSE, include=FALSE}
 options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "car")
-library(cartography)
-tc_legacy_mode('on')
 ```
 
 
@@ -80,6 +78,7 @@ knitr::kable(distA$durations)
 ```{r route, results='hide', message=FALSE}
 library(sf)
 library(maptiles)
+library(mapsf)
 # Route
 route <- osrmRoute(src = apotheke.sf[74,], dst = apotheke.sf[55,],
                    overview = "full", returnclass = "sf")
@@ -88,10 +87,10 @@ osm <- get_tiles(x = route, crop = TRUE, zoom = 13)
 png("img/route.png", width = 693, height = 263)
 par(mar = c(0,0,0,0))
 plot_tiles(osm)
-plot(st_geometry(route), lwd = 4, add = TRUE)
-plot(st_geometry(route), lwd = 1, col = "white", add = TRUE)
-plot(st_geometry(apotheke.sf[c(74,55),]), pch = 20, col = "red", add = TRUE)
-mtext(get_credit("OpenStreetMap"), side = 1, line = -1, cex = .9, adj = .99)
+mf_map(route, lwd = 4, add = TRUE, col = "black")
+mf_map(route, lwd = 1, col = "white", add = TRUE)
+mf_map(apotheke.sf[c(74,55),], pch = 20, col = "red", add = TRUE)
+mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .9)
 dev.off()
 ```
 
@@ -109,10 +108,10 @@ osm2 <- get_tiles(x = trip, crop = TRUE, zoom = 11)
 png("img/trip.png", width = 499, height = 420)
 par(mar = c(0,0,0,0))
 plot_tiles(osm2)
-plot(st_geometry(trip), col = "black", lwd = 4, add = TRUE )
-plot(st_geometry(trip), col = c("red", "white"), lwd = 1, add=TRUE)
-plot(st_geometry(apotheke.sf[10:20,]), pch = 21, bg = "red", cex = 1.5, add=TRUE)
-mtext(get_credit("OpenStreetMap"), side = 1, line = -1, cex = .9, adj = .99)
+mf_map(trip, col = "black", lwd = 4, add = TRUE )
+mf_map(trip, col = c("red", "white"), lwd = 1, add = TRUE)
+mf_map(apotheke.sf[10:20,], pch = 21, col = "red", cex = 1.5, add = TRUE)
+mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .9)
 dev.off()
 ```
 
@@ -121,24 +120,24 @@ dev.off()
 ### `osrmIsochrone`
 
 ```{r iso, results='hide', message=FALSE}
+bks <- seq(from = 0, to = 14, by = 2)
 iso <- osrmIsochrone(loc = apotheke.sf[87,], returnclass="sf",
-                     breaks = seq(from = 0, to = 14, by = 2), res = 70)
+                     breaks = bks, res = 70)
 osm3 <- get_tiles(x = iso, crop = TRUE, zoom = 12)
-bks <- sort(c(unique(iso$min), max(iso$max)))
-library(cartography)
-cols <- paste0(carto.pal("turquoise.pal", n1 = length(bks)-1), 'BF')
+cols <- hcl.colors(n = 7, palette = "Emrld", alpha = 0.75, rev = F)
 png("img/iso.png", width = 604, height = 595)
 par(mar = c(0,0,0,0))
 plot_tiles(osm3)
-choroLayer(x = iso, var = "center", breaks = bks,
-           border = NA, col = cols,
-           legend.pos = "topleft",legend.frame = TRUE,
-           legend.title.txt = "Isochrones\n(min)",
-           legend.title.cex = 1, legend.values.cex = .8,
-           add = TRUE)
-plot(st_geometry(apotheke.sf[87,]), pch = 21, bg = "red", 
-     cex = 1.5, add=TRUE)
-mtext(get_credit("OpenStreetMap"), side = 1, line = -1, cex = .9, adj = .99)
+mf_theme(mar = c(0,0,0,0))
+mf_map(x = iso, var = "center", type = "choro", 
+       breaks = bks, border = NA, pal = cols,
+       leg_pos = "topleft", leg_frame = T,
+       leg_title = "Isochrones\n(min)",
+       leg_title_cex = 1, leg_val_cex = .8,
+       add = TRUE)
+mf_map(apotheke.sf[87,], pch = 21, col = "red", 
+       cex = 1.5, add=TRUE)
+mf_credits(get_credit("OpenStreetMap"), cex = .9)
 dev.off()
 ```
 ![](https://raw.githubusercontent.com/riatelab/osrm/master/img/iso.png)
