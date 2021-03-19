@@ -17,7 +17,7 @@ License: GPL-3
 LazyData: TRUE
 Imports:
     jsonlite,
-    RCurl,
+    curl,
     utils, 
     stats,
     isoband,

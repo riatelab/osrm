@@ -143,13 +143,17 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
   
   tryCatch({
     # Sending the query
-    resRaw <- RCurl::getURL(url = utils::URLencode(req), 
-                            useragent = "'osrm' R package")
+    req_handle <- curl::new_handle(verbose = FALSE)
+    curl::handle_setopt(req_handle, useragent = "osrm_R_package")
+    resRaw <- curl::curl(utils::URLencode(req), handle = req_handle)
     # Deal with \\u stuff
-    vres <- jsonlite::validate(txt = resRaw)[1]
-    if(!vres){
-      resRaw <- gsub(pattern = "[\\]", replacement = "zorglub", x = resRaw)
-    }
+    # 
+    # 
+    # return(utils::URLencode(req))
+    # vres <- jsonlite::validate(txt = resRaw)[1]
+    # if(!vres){
+    #   resRaw <- gsub(pattern = "[\\]", replacement = "zorglub", x = resRaw)
+    # }
     
     # Parse the results
     res <- jsonlite::fromJSON(txt = resRaw)
@@ -168,11 +172,11 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
                      distance = res$routes$distance / 1000), 2))
     }
     
-    if(!vres){
-      # Deal with \\u stuff
-      res$routes$geometry <- gsub(pattern = "zorglub", replacement = "\\\\",
-                                  x = res$routes$geometry)
-    }
+    # if(!vres){
+    #   # Deal with \\u stuff
+    #   res$routes$geometry <- gsub(pattern = "zorglub", replacement = "\\\\",
+    #                               x = res$routes$geometry)
+    # }
     # Coordinates of the line
     geodf <- googlePolylines::decode(res$routes$geometry)[[1]][,c(2,1)]
     

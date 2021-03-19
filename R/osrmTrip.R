@@ -72,9 +72,9 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
     
     osrmLimit(nSrc = nrow(loc), nDst = 0, nreq=1)
     # Send the query
-    ua <- "'osrm' R package"
-    resRaw <- RCurl::getURL(utils::URLencode(req), useragent = ua)
-    
+    req_handle <- curl::new_handle(verbose = FALSE)
+    curl::handle_setopt(req_handle, useragent = "osrm_R_package")
+    resRaw <- curl::curl(utils::URLencode(req), handle = req_handle)
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
     

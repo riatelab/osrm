@@ -141,13 +141,17 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
     req <- utils::URLencode(req)
     osrmLimit(nSrc = nrow(src), nDst = nrow(dst), nreq = nchar(req))
     
+    # print(req)
+    
     # Get the result
     bo=0
     while(bo!=10){
       x = try({
-        resRaw <- RCurl::getURL(req, useragent = "'osrm' R package")
+        req_handle <- curl::new_handle(verbose = FALSE)
+        curl::handle_setopt(req_handle, useragent = "osrm_R_package")
+        resRaw <- curl::curl(req, handle = req_handle)
         res <- jsonlite::fromJSON(resRaw)
-      }, silent = T)
+      }, silent = TRUE)
       if (class(x)=="try-error") {
         Sys.sleep(1)
         bo <- bo+1
