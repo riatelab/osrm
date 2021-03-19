@@ -50,31 +50,29 @@ Based on \code{\link{osrmTable}}, this function buids polygons
 library(sf)
 data("berlin")
 # Get isochones with lon/lat coordinates
-iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2), 
+iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2),
                      returnclass="sf")
 plot(st_geometry(iso), col = c('grey80','grey60','grey50',
                                'grey40','grey30','grey20'))
 # Map
-if(require("cartography")){
+if(require("mapsf")){
   breaks <- sort(c(unique(iso$min), max(iso$max)))
-  cartography::choroLayer(x = iso,
-                          var = "center", breaks = breaks,
-                          col = rev(carto.pal("green.pal",6)),
-                          border = NA,
-                          legend.pos = "topleft",legend.frame = TRUE,
-                          legend.title.txt = "Isochrones\n(min)")
+  mapsf::mf_map(x = iso, var = "center", type = "choro", 
+                breaks = breaks, pal = "Greens",
+                border = NA, leg_pos = "topleft",
+                leg_frame = TRUE, leg_title = "Isochrones\n(min)")
 }
 
 # Get isochones with an sf POINT
 iso2 <- osrmIsochrone(loc = apotheke.sf[10,], returnclass="sf",
                       breaks = seq(from = 0, to = 16, by = 2))
 # Map
-if(require("cartography")){
+if(require("mapsf")){
   breaks2 <- sort(c(unique(iso2$min), max(iso2$max)))
-  cartography::choroLayer(x = iso2, var = "center", 
-                          breaks = breaks2, border = NA,
-                          legend.pos = "topleft",legend.frame = TRUE,
-                          legend.title.txt = "Isochrones\n(min)")
+  mapsf::mf_map(x = iso2, var = "center", type = "choro", 
+                breaks = breaks2, pal = "Blues",
+                border = NA, leg_pos = "topleft", leg_val_rnd = 0,
+                leg_frame = TRUE, leg_title = "Isochrones\n(min)")
 }
 }
 }
