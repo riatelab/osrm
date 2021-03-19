@@ -1,8 +1,8 @@
 # osrm version 3.4.1 (Release date 2020-03)
 
 ## Minor changes
-* switch from gepaf to googlePolylines, great speed improvement
-* use ?onLoad instead of .onAttach to set the demo server by default
+* switch from gepaf to googlePolylines, great speed improvement (thank to John Sheffield @sheffe)
+* use .onLoad instead of .onAttach to set the demo server by default
 * replace examples that use cartography by mapsf examples. 
 * curl instead of RCurl
 
