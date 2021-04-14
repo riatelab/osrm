@@ -170,13 +170,16 @@ higher than 10000. Ask for fewer durations or use your own server and set its
 fewer durations or use your own server and set its --max-table-size option.")
   e3 <- simpleError("This request is to large for the public OSRM API. Ask for 
 fewer locations or use your own server and set its --max-trip-size option.")
-  if(getOption("osrm.server") == "https://routing.openstreetmap.de/" & (nSrc*nDst) > 10000){
+  if(getOption("osrm.server") == "https://routing.openstreetmap.de/" & (nSrc*nDst) > 9998){
     stop(e)
   }
   if(getOption("osrm.server") == "https://routing.openstreetmap.de/" & nreq >= 8000){
     stop(e2)
   }
-  if(getOption("osrm.server") == "https://routing.openstreetmap.de/" & nSrc > 100 & nDst==0){
+  if(getOption("osrm.server") == "https://routing.openstreetmap.de/" & nSrc > 99 & nDst==0){
+    stop(e3)
+  }
+  if(getOption("osrm.server") == "https://routing.openstreetmap.de/" & nSrc > 99 & nDst==0){
     stop(e3)
   }
 }

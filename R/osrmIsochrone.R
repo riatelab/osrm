@@ -95,7 +95,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
     deco <- 300
   }else{
     sleeptime <- 1
-    deco <- 100
+    deco <- 75
     osrm.server = paste0(osrm.server, "routed-", osrm.profile, "/")
     osrm.profile = "driving"
   }

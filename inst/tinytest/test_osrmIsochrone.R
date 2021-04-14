@@ -16,7 +16,7 @@ if(home){
   iso2 <- osrmIsochrone(loc = apotheke.sf[10,], returnclass="sf",
                         breaks = seq(from = 0, to = 16, by = 2))
   expect_true(methods::is(iso2, "sf"))
-  iso3 <- osrmIsometric(loc = c(13.43,52.47), returnclass="sf")
+  iso3 <- osrmIsometric(loc = c(13.43,52.47), returnclass="sf", res = 4)
   expect_true(methods::is(iso3, "sf"))
   
   
