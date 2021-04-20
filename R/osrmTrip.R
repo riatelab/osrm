@@ -74,7 +74,6 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
     # Send the query
     req_handle <- curl::new_handle(verbose = FALSE)
     curl::handle_setopt(req_handle, useragent = "osrm_R_package")
-    print(utils::URLencode(req))
     resRaw <- curl::curl(utils::URLencode(req), handle = req_handle)
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)
