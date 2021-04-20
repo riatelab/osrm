@@ -19,7 +19,7 @@ travel distances matrices (travel time and kilometric distance).\cr
 }
 \note{
 This package relies on the usage of a running OSRM service (tested with 
-version 5.23.0 of the OSRM API).\cr
+version 5.24.0 of the OSRM API).\cr
 
 
 To set the OSRM server, change the \code{osrm.server} option:\cr 

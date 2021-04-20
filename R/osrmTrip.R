@@ -32,7 +32,7 @@
 #' data("berlin")
 #' library(sf)
 #' # Get a trip with a set of points (sf POINT)
-#' trips <- osrmTrip(loc = apotheke.sf, returnclass = "sf")
+#' trips <- osrmTrip(loc = apotheke.sf[1:5, ], returnclass = "sf")
 #' mytrip <- trips[[1]]$trip
 #' # Display the trip
 #' plot(st_geometry(mytrip), col = "black", lwd = 4)
@@ -74,6 +74,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
     # Send the query
     req_handle <- curl::new_handle(verbose = FALSE)
     curl::handle_setopt(req_handle, useragent = "osrm_R_package")
+    print(utils::URLencode(req))
     resRaw <- curl::curl(utils::URLencode(req), handle = req_handle)
     # Parse the results
     res <- jsonlite::fromJSON(resRaw)

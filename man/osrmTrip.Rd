@@ -57,7 +57,7 @@ each connected component are returned.
 data("berlin")
 library(sf)
 # Get a trip with a set of points (sf POINT)
-trips <- osrmTrip(loc = apotheke.sf, returnclass = "sf")
+trips <- osrmTrip(loc = apotheke.sf[1:5, ], returnclass = "sf")
 mytrip <- trips[[1]]$trip
 # Display the trip
 plot(st_geometry(mytrip), col = "black", lwd = 4)

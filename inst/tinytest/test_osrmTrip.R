@@ -9,27 +9,27 @@ if(home){
   ######################## DEMO car ###########################
   options(osrm.server = "https://routing.openstreetmap.de/", osrm.profile = "car")
   ss()
-  trips <- osrmTrip(loc = apotheke.sf, returnclass = "sf")
+  trips <- osrmTrip(loc = apotheke.sf[1:5,], returnclass = "sf")
   expect_true(methods::is(trips[[1]]$trip, "sf"))
   
   
   ################# DEMO BIKE #####################
   options(osrm.server = "https://routing.openstreetmap.de/", osrm.profile = "bike")
   ss()
-  trips <- osrmTrip(loc = apotheke.sf, returnclass = "sf")
+  trips <- osrmTrip(loc = apotheke.sf[1:5,], returnclass = "sf")
   expect_true(methods::is(trips[[1]]$trip, "sf"))
   
   
   ############## DEMO FOOT #################"""""
   options(osrm.server = "https://routing.openstreetmap.de/", osrm.profile = "foot")
   ss()
-  trips <- osrmTrip(loc = apotheke.sf, returnclass = "sf")
+  trips <- osrmTrip(loc = apotheke.sf[1:5,], returnclass = "sf")
   expect_true(methods::is(trips[[1]]$trip, "sf"))
   
   
   ############# fun param ##################""
   ss()
-  trips <- osrmTrip(loc = apotheke.sf, returnclass = "sf",
+  trips <- osrmTrip(loc = apotheke.sf[1:5,], returnclass = "sf",
                     osrm.server = "http://router.project-osrm.org/", 
                     osrm.profile = "driving")
   expect_true(methods::is(trips[[1]]$trip, "sf"))
