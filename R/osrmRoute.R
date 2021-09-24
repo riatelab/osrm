@@ -15,7 +15,6 @@
 #' detailed geometry, use "simplified" to return a simplified geometry, use 
 #' FALSE to return only time and distance.
 #' @param exclude pass an optional "exclude" request option to the OSRM API. 
-#' @param sp deprecated, if sp==TRUE the function returns a SpatialLinesDataFrame.
 #' @param returnclass if returnclass="sf" an sf LINESTRING is returned. 
 #' If returnclass="sp" a SpatialLineDataFrame is returned. If returnclass is not 
 #' set a data.frame of coordinates is returned. 
@@ -92,16 +91,10 @@
 #' }
 #' @export
 osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
-                      sp, returnclass,
+                      returnclass,
                       osrm.server = getOption("osrm.server"),
                       osrm.profile = getOption("osrm.profile")){
-  if(!missing(sp)){
-    warning("sp is deprecated; use returnclass instead.", call. = FALSE)
-    if(sp){
-      returnclass <- "sp"
-    }
-  }
-  
+
   exclude_str <- ""
   
   if(osrm.server == "https://routing.openstreetmap.de/") {
@@ -145,18 +138,9 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
     # Sending the query
     req_handle <- curl::new_handle(verbose = FALSE)
     curl::handle_setopt(req_handle, useragent = "osrm_R_package")
-    resRaw <- curl::curl(utils::URLencode(req), handle = req_handle)
-    # Deal with \\u stuff
-    # 
-    # 
-    # return(utils::URLencode(req))
-    # vres <- jsonlite::validate(txt = resRaw)[1]
-    # if(!vres){
-    #   resRaw <- gsub(pattern = "[\\]", replacement = "zorglub", x = resRaw)
-    # }
-    
-    # Parse the results
-    res <- jsonlite::fromJSON(txt = resRaw)
+    resraw <- curl::curl_fetch_memory(utils::URLencode(req), handle = req_handle)
+    resjson <- jsonlite::prettify(rawToChar(resraw$content))
+    res <- jsonlite::fromJSON(resjson)
     
     # Error handling
     if(is.null(res$code)){

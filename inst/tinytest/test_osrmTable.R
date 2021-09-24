@@ -18,24 +18,6 @@ if(home){
   expect_equal(A$distances,B$distances)
   expect_equal(dim(A$distances), c(10,10))
   ss()
-  A <- osrmTable(src = apotheke.df[1:10,c("id","lon","lat")],
-                 dst = apotheke.df[1:10,c("id","lon","lat")], 
-                 measure = c("distance"), exclude = "motorway")
-  ss()
-  B <- osrmTable(loc = apotheke.df[1:10, c("id","lon","lat")], 
-                 exclude = "motorway", measure = "distance")
-  expect_equal(A$distances,B$distances)
-  expect_equal(dim(A$distances), c(10,10))
-  ss()
-  A <- osrmTable(src = apotheke.df[1:10,c("id","lon","lat")],
-                 dst = apotheke.df[1:10,c("id","lon","lat")], 
-                 measure = c("duration"), exclude = "motorway")
-  ss()
-  B <- osrmTable(loc = apotheke.df[1:10, c("id","lon","lat")], 
-                 exclude = "motorway", measure = "duration")
-  expect_equal(A$durations,B$durations)
-  expect_equal(dim(A$durations), c(10,10))
-  ss()
   A <- osrmTable(src = apotheke.sf[1:10, ],
                  dst = apotheke.sf[1:10, ], 
                  measure = c("distance", "duration"))
@@ -148,5 +130,19 @@ if(home){
     expect_equal(A$durations,B$durations)
     expect_equal(dim(A$durations), c(10,10))
     expect_equal(dim(A$distances), c(10,10))
+    A <- osrmTable(src = apotheke.df[1:10,c("id","lon","lat")],
+                   dst = apotheke.df[1:10,c("id","lon","lat")], 
+                   measure = c("distance"), exclude = "motorway")
+    B <- osrmTable(loc = apotheke.df[1:10, c("id","lon","lat")], 
+                   measure = c("distance"), exclude = "motorway")
+    expect_equal(A$distances,B$distances)
+    expect_equal(dim(A$distances), c(10,10))
+    A <- osrmTable(src = apotheke.df[1:10,c("id","lon","lat")],
+                   dst = apotheke.df[1:10,c("id","lon","lat")], 
+                   measure = c("duration"), exclude = "motorway")
+    B <- osrmTable(loc = apotheke.df[1:10, c("id","lon","lat")], 
+                   exclude = "motorway", measure = "duration")
+    expect_equal(A$durations,B$durations)
+    expect_equal(dim(A$durations), c(10,10))
   }
 }

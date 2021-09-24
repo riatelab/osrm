@@ -149,8 +149,10 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
       x = try({
         req_handle <- curl::new_handle(verbose = FALSE)
         curl::handle_setopt(req_handle, useragent = "osrm_R_package")
-        resRaw <- curl::curl(req, handle = req_handle)
-        res <- jsonlite::fromJSON(resRaw)
+        resraw <- curl::curl_fetch_memory(utils::URLencode(req), handle = req_handle)
+        resjson <- jsonlite::prettify(rawToChar(resraw$content))
+        res <- jsonlite::fromJSON(resjson)
+        
       }, silent = TRUE)
       if (class(x)=="try-error") {
         Sys.sleep(1)

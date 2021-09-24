@@ -10,7 +10,6 @@ osrmRoute(
   loc,
   overview = "simplified",
   exclude = NULL,
-  sp,
   returnclass,
   osrm.server = getOption("osrm.server"),
   osrm.profile = getOption("osrm.profile")
@@ -34,8 +33,6 @@ detailed geometry, use "simplified" to return a simplified geometry, use
 FALSE to return only time and distance.}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API.}
-
-\item{sp}{deprecated, if sp==TRUE the function returns a SpatialLinesDataFrame.}
 
 \item{returnclass}{if returnclass="sf" an sf LINESTRING is returned. 
 If returnclass="sp" a SpatialLineDataFrame is returned. If returnclass is not 
