@@ -30,4 +30,12 @@ The "car" profile is set by default. Other possible profiles are "foot" and "bik
 
 A typical setup, corresponding to the Docker example, would be:\cr  
 \code{options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "car")}
+
+
+
+
+The package ships a sample dataset of 100 random pharmacies in Berlin 
+(© OpenStreetMap contributors - \url{https://www.openstreetmap.org/copyright/en}).\cr   
+The sf dataset uses the projection WGS 84 / UTM zone 34N (EPSG:32634).\cr
+The csv dataset uses WGS 84 (EPSG:4326).\cr
 }
