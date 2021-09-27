@@ -1,3 +1,18 @@
+# osrm version 3.5.0 (Release date 2020-03)
+
+## Major change
+* remove sp argument from osrmRoute()
+* returnClass default is now "sf" where it was previously "sp"
+* The next major version of osrm will drop support for sp objects
+
+## Minor changes
+* Better handling of request with curl_fetch_memory()
+* Better (lower) default value for demo server
+* Update demo in README with complete maptiles + mapsf + osrm example
+* Update sf dataset (update crs)
+* Replace old RData sample dataset by new dataset in raw files
+* 
+
 # osrm version 3.4.1 (Release date 2020-03)
 
 ## Minor changes
