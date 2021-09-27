@@ -202,6 +202,7 @@ input_route <- function(x, id, single = TRUE){
       lat <- clean_coord(x[i+2])       
     }
     if(methods::is(x,"Spatial")){
+      warn_sp()
       x <- st_as_sf(x[1,])
     }
     if(is.data.frame(x)){
@@ -225,6 +226,7 @@ input_route <- function(x, id, single = TRUE){
     return(list(id = id, lon = lon, lat = lat, oprj = oprj))
   }else{
     if(methods::is(x,"Spatial")){
+      warn_sp()
       x <- st_as_sf(x)
     }
     if(is.data.frame(x)){
@@ -252,3 +254,16 @@ input_route <- function(x, id, single = TRUE){
   }
 } 
 
+
+warn_sp <- function(){
+  .Deprecated(
+    msg = paste0("sp support will be dropped in the next release, ",
+                 "please use sf objects instead.")
+  )
+  if (!requireNamespace("sp", quietly = TRUE)) {
+    stop(
+      "'sp' is needed for this function to work. Please install it.",
+      call. = FALSE
+    )
+  }
+}

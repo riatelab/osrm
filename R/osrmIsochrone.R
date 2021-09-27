@@ -2,19 +2,19 @@
 #' @title Get Polygons of Isochrones
 #' @description Based on \code{\link{osrmTable}}, this function buids polygons 
 #'  of isochrones. 
-#' @param loc a numeric vector of longitude and latitude (WGS84), an sf object, 
-#' a SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.
+#' @param loc a numeric vector of longitude and latitude (WGS84), an sf object 
+#' of the origine point.
 #' @param breaks a numeric vector of isochrone values (in minutes).
 #' @param exclude pass an optional "exclude" request option to the OSRM API. 
 #' @param res number of points used to compute isochrones, one side of the square 
 #' grid, the total number of points will be res*res.  
-#' @param returnclass class of the returned polygons. Either "sp" of "sf".
+#' @param returnclass class of the returned polygons.
 #' @param osrm.server the base URL of the routing server.
 #' getOption("osrm.server") by default.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot"
 #' (when using the routing.openstreetmap.de test server).
 #' getOption("osrm.profile") by default.
-#' @return A SpatialPolygonsDateFrame or an sf MULTIPOLYGON of isochrones is returned. 
+#' @return An sf MULTIPOLYGON of isochrones is returned. 
 #' The data frame of the output contains four fields: 
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
 #' center (central values of classes).
@@ -25,7 +25,8 @@
 #' \dontrun{
 #' # Load data
 #' library(sf)
-#' data("berlin")
+#' apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
+#'                        quiet = TRUE)
 #' # Get isochones with lon/lat coordinates
 #' iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2),
 #'                      returnclass="sf")
@@ -53,13 +54,14 @@
 #' }
 #' }
 osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7), 
-                          exclude = NULL, res = 30, returnclass = "sp",  
+                          exclude = NULL, res = 30, returnclass = "sf",  
                           osrm.server = getOption("osrm.server"),
                           osrm.profile = getOption("osrm.profile")){
   
   # imput mngmnt
   oprj <- NA
   if (methods::is(loc,"Spatial")){
+    warn_sp()
     loc <- st_as_sf(loc[1,])
   }    
   if(testSf(loc)){
@@ -161,6 +163,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   
   # output mgmnt
   if(returnclass=="sp"){
+    warn_sp()
     iso <- methods::as(iso, "Spatial")
   }
   
@@ -171,19 +174,19 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
 #' @title Get Polygons of Isodistances
 #' @description Based on \code{\link{osrmTable}}, this function buids polygons 
 #'  of isometric road distances. 
-#' @param loc a numeric vector of longitude and latitude (WGS84), an sf object, 
-#' a SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.
+#' @param loc a numeric vector of longitude and latitude (WGS84), an sf object 
+#' of the origine point.
 #' @param breaks a numeric vector of isometric values (in meters).
 #' @param exclude pass an optional "exclude" request option to the OSRM API. 
 #' @param res number of points used to compute isochrones, one side of the square 
 #' grid, the total number of points will be res*res.  
-#' @param returnclass class of the returned polygons. Either "sp" of "sf".
+#' @param returnclass class of the returned polygons. 
 #' @param osrm.server the base URL of the routing server.
 #' getOption("osrm.server") by default.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot"
 #' (when using the routing.openstreetmap.de test server).
 #' getOption("osrm.profile") by default.
-#' @return A SpatialPolygonsDateFrame or an sf MULTIPOLYGON of isochrones is returned. 
+#' @return An sf MULTIPOLYGON of isochrones is returned. 
 #' The data frame of the output contains four fields: 
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
 #' center (central values of classes).
@@ -193,19 +196,19 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
 #' @examples
 #' \dontrun{
 #' library(sf)
-#' data("berlin")
 #' # Get isochones with lon/lat coordinates
 #' iso <- osrmIsometric(loc = c(13.43,52.47), breaks = c(0,100,200, 500, 1000),
 #'                      returnclass="sf")
 #' plot(st_geometry(iso))
 #' }
 osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4), 
-                          exclude = NULL, res = 30, returnclass = "sp", 
+                          exclude = NULL, res = 30, returnclass = "sf", 
                           osrm.server = getOption("osrm.server"),
                           osrm.profile = getOption("osrm.profile")){
   # imput mngmnt
   oprj <- NA
   if (methods::is(loc,"Spatial")){
+    warn_sp()
     loc <- st_as_sf(loc[1,])
   }    
   if(testSf(loc)){
@@ -309,6 +312,7 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
   
   # output mgmnt
   if(returnclass=="sp"){
+    warn_sp()
     iso <- methods::as(iso, "Spatial")
   }
   

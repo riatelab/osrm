@@ -3,20 +3,18 @@
 #' @description Build and send an OSRM API query to get the travel geometry 
 #' between two points. This function interfaces the \emph{route} OSRM service. 
 #' @param src a vector of identifier, longitude and latitude (WGS84), a vector 
-#' of longitude and latitude (WGS84), a SpatialPointsDataFrame, a 
-#' SpatialPolygonsDataFrame or an sf object of the origine point.
+#' of longitude and latitude (WGS84) or an sf object of the origine point.
 #' @param dst a vector of identifier, longitude and latitude (WGS84), a vector 
-#' of longitude and latitude (WGS84), a SpatialPointsDataFrame, a 
-#' SpatialPolygonsDataFrame or an sf object of the destination point.
-#' @param loc a data.frame of identifier, longitude and latitude (WGS84), a 
-#' SpatialPointsDataFrame, a SpatialPolygonsDataFrame or an sf object of via 
+#' of longitude and latitude (WGS84) or an sf object of the destination point.
+#' @param loc a data.frame of identifier, longitude and latitude (WGS84) 
+#' or an sf object of via 
 #' points. The first row is the origine, the last row is the destination.
 #' @param overview "full", "simplified" or FALSE. Use "full" to return the 
 #' detailed geometry, use "simplified" to return a simplified geometry, use 
 #' FALSE to return only time and distance.
 #' @param exclude pass an optional "exclude" request option to the OSRM API. 
 #' @param returnclass if returnclass="sf" an sf LINESTRING is returned. 
-#' If returnclass="sp" a SpatialLineDataFrame is returned. If returnclass is not 
+#' If returnclass is not 
 #' set a data.frame of coordinates is returned. 
 #' @param osrm.server the base URL of the routing server.
 #' getOption("osrm.server") by default.
@@ -26,9 +24,8 @@
 #' @return
 #' If returnclass is not set, a data frame is returned. It contains the 
 #' longitudes and latitudes of the travel path between the two points.\cr
-#' If returnclass is set to "sp", a SpatialLinesDataFrame is returned. \cr
 #' If returnclass is set to "sf", an sf LINESTRING is returned. \cr
-#' SpatialLinesDataFrame and sf LINESTRING contain 4 fields: identifiers of 
+#' The sf LINESTRING contains 4 fields: identifiers of 
 #' origine and destination, travel time in minutes and travel distance in 
 #' kilometers.\cr\cr
 #' If overview is FALSE, a named numeric vector is returned. It contains travel 
@@ -36,18 +33,15 @@
 #' @importFrom sf st_as_sfc st_crs st_geometry st_sf st_as_sf st_transform
 #' @examples
 #' \dontrun{
-#' # Load data
-#' data("berlin")
 #' library(sf)
+#' apotheke.df <- read.csv(system.file("csv/apotheke.csv", package = "osrm"))
+#' apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
+#'                        quiet = TRUE)
 #' # Travel path between points
 #' route1 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
 #'                     returnclass="sf")
-#' # Travel path between points excluding motorways
-#' route2 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
-#'                     returnclass="sf", exclude = "motorway")
 #' # Display paths
 #' plot(st_geometry(route1))
-#' plot(st_geometry(route2), col = "red", add = TRUE)
 #' plot(st_geometry(apotheke.sf[c(1,16),]), col = "red", pch = 20, add = TRUE)
 #' 
 #' # Return only duration and distance
@@ -180,6 +174,7 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude = NULL,
       
       # output mgmnt
       if(returnclass=="sp"){
+        warn_sp()
         rosf <- methods::as(rosf, "Spatial")
       }
       return(rosf)

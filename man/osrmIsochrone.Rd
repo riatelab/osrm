@@ -9,14 +9,14 @@ osrmIsochrone(
   breaks = seq(from = 0, to = 60, length.out = 7),
   exclude = NULL,
   res = 30,
-  returnclass = "sp",
+  returnclass = "sf",
   osrm.server = getOption("osrm.server"),
   osrm.profile = getOption("osrm.profile")
 )
 }
 \arguments{
-\item{loc}{a numeric vector of longitude and latitude (WGS84), an sf object, 
-a SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.}
+\item{loc}{a numeric vector of longitude and latitude (WGS84), an sf object 
+of the origine point.}
 
 \item{breaks}{a numeric vector of isochrone values (in minutes).}
 
@@ -25,7 +25,7 @@ a SpatialPointsDataFrame or a SpatialPolygonsDataFrame of the origine point.}
 \item{res}{number of points used to compute isochrones, one side of the square 
 grid, the total number of points will be res*res.}
 
-\item{returnclass}{class of the returned polygons. Either "sp" of "sf".}
+\item{returnclass}{class of the returned polygons.}
 
 \item{osrm.server}{the base URL of the routing server.
 getOption("osrm.server") by default.}
@@ -35,7 +35,7 @@ getOption("osrm.server") by default.}
 getOption("osrm.profile") by default.}
 }
 \value{
-A SpatialPolygonsDateFrame or an sf MULTIPOLYGON of isochrones is returned. 
+An sf MULTIPOLYGON of isochrones is returned. 
 The data frame of the output contains four fields: 
 id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
 center (central values of classes).
@@ -48,7 +48,8 @@ Based on \code{\link{osrmTable}}, this function buids polygons
 \dontrun{
 # Load data
 library(sf)
-data("berlin")
+apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
+                       quiet = TRUE)
 # Get isochones with lon/lat coordinates
 iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2),
                      returnclass="sf")

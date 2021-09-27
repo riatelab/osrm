@@ -30,9 +30,9 @@
 #' 
 #' 
 #' The package ships a sample dataset of 100 random pharmacies in Berlin 
-#' (© OpenStreetMap contributors - \url{https://www.openstreetmap.org/copyright/en}).   
-#' The sf dataset uses the projection WGS 84 / UTM zone 34N (EPSG:32634).
-#' The csv dataset uses WGS 84 (EPSG:4326). 
+#' (© OpenStreetMap contributors - \url{https://www.openstreetmap.org/copyright/en}).\cr   
+#' The sf dataset uses the projection WGS 84 / UTM zone 34N (EPSG:32634).\cr
+#' The csv dataset uses WGS 84 (EPSG:4326).\cr 
 #' 
 #' 
 #' 

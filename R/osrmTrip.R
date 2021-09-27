@@ -2,13 +2,12 @@
 #' @title Get the Travel Geometry Between Multiple Unordered Points
 #' @description Build and send an OSRM API query to get the shortest travel geometry between multiple points.
 #' This function interfaces the \emph{trip} OSRM service. 
-#' @param loc a SpatialPointsDataFrame or an sf object of the waypoints, or a data.frame with points as rows
+#' @param loc an sf object of the waypoints, or a data.frame with points as rows
 #' and 3 columns: identifier, longitudes and latitudes (WGS84 decimal degrees).
 #' @param exclude pass an optional "exclude" request option to the OSRM API. 
 #' @param overview "full", "simplified". Add geometry either full (detailed) or simplified 
 #' according to highest zoom level it could be display on. 
 #' @param returnclass if returnclass="sf" an sf LINESTRING is returned. 
-#' If returnclass="sp" a SpatialLineDataFrame is returned.
 #' @param osrm.server the base URL of the routing server.
 #' getOption("osrm.server") by default.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot"
@@ -19,7 +18,7 @@
 #' each connected component are returned.
 #' @return A list of connected components. Each component contains:
 #' @return \describe{
-#' \item{trip}{A SpatialLinesDataFrame or sf LINESTRING (loc's CRS if there is one, WGS84 if not)
+#' \item{trip}{An sf LINESTRING (loc's CRS if there is one, WGS84 if not)
 #' containing a line for each step of the trip.}
 #' \item{summary}{A list with 2 components: duration (in minutes)
 #' and distance (in kilometers).}
@@ -28,9 +27,9 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' # Load data
-#' data("berlin")
 #' library(sf)
+#' apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
+#'                        quiet = TRUE)
 #' # Get a trip with a set of points (sf POINT)
 #' trips <- osrmTrip(loc = apotheke.sf[1:5, ], returnclass = "sf")
 #' mytrip <- trips[[1]]$trip
@@ -40,7 +39,7 @@
 #' plot(st_geometry(apotheke.sf), pch = 21, bg = "red", cex = 1, add = TRUE)
 #' }
 osrmTrip <- function(loc, exclude = NULL, overview = "simplified", 
-                     returnclass="sp", osrm.server = getOption("osrm.server"),
+                     returnclass="sf", osrm.server = getOption("osrm.server"),
                      osrm.profile = getOption("osrm.profile")){
   if(osrm.server == "https://routing.openstreetmap.de/") {
     osrm.server = paste0(osrm.server, "routed-", osrm.profile, "/")
@@ -50,6 +49,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
     # check if inpout is sp, transform and name columns
     oprj <- NA
     if (methods::is(loc,"Spatial")){
+      warn_sp()
       loc <- sf::st_as_sf(x = loc)
     }
     
@@ -146,6 +146,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
       }
       # ouptut mgmt
       if(returnclass=="sp"){
+        warn_sp()
         sldf <- methods::as(sldf, "Spatial")
       }
       # Build tripSummary
