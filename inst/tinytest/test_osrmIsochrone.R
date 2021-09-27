@@ -1,9 +1,7 @@
-home <- length(unclass(packageVersion("osrm"))[[1]]) == 4
-localtest <- F
-
 if(home){
   suppressPackageStartupMessages(library(sf))
-  data("berlin")
+  apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"),
+                         quiet = TRUE)
   ss <- function(){Sys.sleep(1)}
   
   ######################## DEMO car ###########################
