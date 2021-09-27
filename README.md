@@ -50,14 +50,16 @@ new roles, or are simply busy on different projects
 
 ## Demo
 
-### `osrmTable`
+### `osrmTable()`
 
 ``` r
 library(osrm)
 ```
 
 ``` r
-data("berlin")
+library(sf)
+apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
+                       quiet = TRUE)
 # Travel time matrix
 distA <- osrmTable(loc = apotheke.sf[1:5,])
 distA$durations
@@ -65,71 +67,82 @@ distA$durations
 
 <small>
 
-|            | 440338666 | 538057637 | 977657079 | 3770254015 | 364363337 |
-|:-----------|----------:|----------:|----------:|-----------:|----------:|
-| 440338666  |       0.0 |      21.4 |      34.1 |       19.5 |      11.7 |
-| 538057637  |      22.8 |       0.0 |      42.8 |       16.1 |      20.7 |
-| 977657079  |      34.1 |      43.3 |       0.0 |       31.2 |      27.4 |
-| 3770254015 |      22.3 |      15.3 |      30.7 |        0.0 |      12.7 |
-| 364363337  |      12.0 |      20.2 |      26.8 |       12.0 |       0.0 |
+|     |    1 |    2 |    3 |    4 |    5 |
+|:----|-----:|-----:|-----:|-----:|-----:|
+| 1   |  0.0 | 21.4 | 33.6 | 20.6 | 12.0 |
+| 2   | 22.8 |  0.0 | 41.8 | 16.1 | 20.2 |
+| 3   | 33.2 | 42.4 |  0.0 | 30.2 | 27.4 |
+| 4   | 19.4 | 15.3 | 29.4 |  0.0 | 12.9 |
+| 5   |  9.5 | 20.2 | 26.8 | 12.3 |  0.0 |
 
 </small>
 
-### `osrmRoute`
+### `osrmRoute()`
 
 ``` r
-library(sf)
 library(maptiles)
 library(mapsf)
 # Route
 route <- osrmRoute(src = apotheke.sf[74,], dst = apotheke.sf[55,],
                    overview = "full", returnclass = "sf")
-# Display
+# Get map tiles
 osm <- get_tiles(x = route, crop = TRUE, zoom = 13)
-png("img/route.png", width = 693, height = 263)
-par(mar = c(0,0,0,0))
-plot_tiles(osm)
-mf_map(route, lwd = 4, add = TRUE, col = "black")
+# temporary fix for terra <= 1.3-22, replace NA values by 255
+osm[is.na(osm)] <- 255
+# Map
+theme <- mf_theme(mar = c(0,0,1.2,0), inner = FALSE, line = 1.2, cex = .9, 
+                  pos = "center", tab = FALSE)
+mf_export(osm,filename = "img/route.png", width = ncol(osm), theme = theme)
+mf_raster(osm, add = TRUE)
+mf_map(route, lwd = 4, add = TRUE, col = "blue")
 mf_map(route, lwd = 1, col = "white", add = TRUE)
 mf_map(apotheke.sf[c(74,55),], pch = 20, col = "red", add = TRUE)
-mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .9)
+mf_title("osrmRoute()")
+mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .8, 
+           bg = "#ffffff80")
 dev.off()
 ```
 
 ![](https://raw.githubusercontent.com/riatelab/osrm/master/img/route.png)
 
-### `osrmTrip`
+### `osrmTrip()`
 
 ``` r
 # Trip 
 trips <- osrmTrip(loc = apotheke.sf[10:20,], returnclass="sf")
 trip <- trips[[1]]$trip
-# Display
+# Get map tiles
 osm2 <- get_tiles(x = trip, crop = TRUE, zoom = 11)
-png("img/trip.png", width = 499, height = 420)
-par(mar = c(0,0,0,0))
-plot_tiles(osm2)
+# temporary fix for terra <= 1.3-22, replace NA values by 255
+osm2[is.na(osm2)] <- 255
+# Map
+mf_export(osm2,filename = "img/trip.png", width = ncol(osm), theme = theme)
+mf_raster(osm2, add = TRUE)
 mf_map(trip, col = "black", lwd = 4, add = TRUE )
 mf_map(trip, col = c("red", "white"), lwd = 1, add = TRUE)
 mf_map(apotheke.sf[10:20,], pch = 21, col = "red", cex = 1.5, add = TRUE)
-mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .9)
+mf_title("osrmTrip()")
+mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .8, 
+           bg = "#ffffff80")
 dev.off()
 ```
 
 ![](https://raw.githubusercontent.com/riatelab/osrm/master/img/trip.png)
 
-### `osrmIsochrone`
+### `osrmIsochrone()`
 
 ``` r
 bks <- seq(from = 0, to = 14, by = 2)
 iso <- osrmIsochrone(loc = apotheke.sf[87,], returnclass="sf",
                      breaks = bks, res = 70)
-osm3 <- get_tiles(x = iso, crop = TRUE, zoom = 12)
+# Get map tiles
+osm3 <- get_tiles(x = iso, crop = TRUE, zoom = 11)
+# temporary fix for terra <= 1.3-22, replace NA values by 255
+osm3[is.na(osm3)] <- 255
+# Map
 cols <- hcl.colors(n = 7, palette = "Emrld", alpha = 0.75, rev = F)
-png("img/iso.png", width = 604, height = 595)
-par(mar = c(0,0,0,0))
-plot_tiles(osm3)
-mf_theme(mar = c(0,0,0,0))
+mf_export(osm3,filename = "img/iso.png", width = ncol(osm), theme = theme)
+mf_raster(osm3, add = TRUE)
 mf_map(x = iso, var = "center", type = "choro", 
        breaks = bks, border = NA, pal = cols,
        leg_pos = "topleft", leg_frame = T,
@@ -138,7 +151,9 @@ mf_map(x = iso, var = "center", type = "choro",
        add = TRUE)
 mf_map(apotheke.sf[87,], pch = 21, col = "red", 
        cex = 1.5, add=TRUE)
-mf_credits(get_credit("OpenStreetMap"), cex = .9)
+mf_title("osrmIsochrone()")
+mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .8, 
+           bg = "#ffffff80")
 dev.off()
 ```
 
