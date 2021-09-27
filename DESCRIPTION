@@ -14,7 +14,6 @@ Description: An interface between R and the 'OSRM' API. 'OSRM' is a routing
     information. This package allows to compute routes, trips, isochrones and
     travel distances matrices (travel time and kilometric distance).
 License: GPL-3
-LazyData: TRUE
 Imports:
     jsonlite,
     curl,
