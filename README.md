@@ -4,7 +4,7 @@
 [![Version](http://www.r-pkg.org/badges/version/osrm)](https://CRAN.R-project.org/package=osrm/)
 ![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen) [![R build
 status](https://github.com/riatelab/osrm/workflows/R-CMD-check/badge.svg)](https://github.com/riatelab/osrm/actions)
-[![codecov](https://codecov.io/gh/riatelab/osrm/branch/master/graph/badge.svg?token=JOJNuBCH9M)](https://codecov.io/gh/riatelab/osrm)
+<!-- [![codecov](https://codecov.io/gh/riatelab/osrm/branch/master/graph/badge.svg?token=JOJNuBCH9M)](https://codecov.io/gh/riatelab/osrm) -->
 
 ***Interface Between R and the OpenStreetMap-Based Routing Service
 [OSRM](http://project-osrm.org/)***
@@ -29,12 +29,12 @@ containers](https://github.com/Project-OSRM/osrm-backend#using-docker).
 :warning: **You must be careful using the OSRM demo server and read the
 [*about* page](https://routing.openstreetmap.de/about.html) of the
 service**:  
-&gt; [One request per second max. No scraping, no heavy
+\> [One request per second max. No scraping, no heavy
 usage.](https://routing.openstreetmap.de/about.html)
 
-:heavy\_exclamation\_mark: **To consider when using OSRM**:  
-&gt; [“Most of the previously active core devs have either moved on to
-new roles, or are simply busy on different projects
+:heavy_exclamation_mark: **To consider when using OSRM**:  
+\> [“Most of the previously active core devs have either moved on to new
+roles, or are simply busy on different projects
 (…)”](https://github.com/Project-OSRM/osrm-backend/issues/5463)
 
 ## Features
@@ -69,11 +69,11 @@ distA$durations
 
 |     |    1 |    2 |    3 |    4 |    5 |
 |:----|-----:|-----:|-----:|-----:|-----:|
-| 1   |  0.0 | 21.4 | 33.6 | 20.6 | 12.0 |
-| 2   | 22.8 |  0.0 | 41.8 | 16.1 | 20.2 |
-| 3   | 33.2 | 42.4 |  0.0 | 30.2 | 27.4 |
-| 4   | 19.4 | 15.3 | 29.4 |  0.0 | 12.9 |
-| 5   |  9.5 | 20.2 | 26.8 | 12.3 |  0.0 |
+| 1   |  0.0 | 21.5 | 33.2 | 21.2 | 12.1 |
+| 2   | 22.6 |  0.0 | 41.8 | 16.1 | 20.2 |
+| 3   | 32.9 | 42.4 |  0.0 | 30.2 | 27.4 |
+| 4   | 20.1 | 15.3 | 29.4 |  0.0 | 12.9 |
+| 5   | 10.2 | 20.3 | 26.8 | 12.3 |  0.0 |
 
 </small>
 
@@ -87,8 +87,6 @@ route <- osrmRoute(src = apotheke.sf[74,], dst = apotheke.sf[55,],
                    overview = "full", returnclass = "sf")
 # Get map tiles
 osm <- get_tiles(x = route, crop = TRUE, zoom = 13)
-# temporary fix for terra <= 1.3-22, replace NA values by 255
-osm[is.na(osm)] <- 255
 # Map
 theme <- mf_theme(mar = c(0,0,1.2,0), inner = FALSE, line = 1.2, cex = .9, 
                   pos = "center", tab = FALSE)
@@ -113,8 +111,6 @@ trips <- osrmTrip(loc = apotheke.sf[10:20,], returnclass="sf")
 trip <- trips[[1]]$trip
 # Get map tiles
 osm2 <- get_tiles(x = trip, crop = TRUE, zoom = 11)
-# temporary fix for terra <= 1.3-22, replace NA values by 255
-osm2[is.na(osm2)] <- 255
 # Map
 mf_export(osm2,filename = "img/trip.png", width = ncol(osm), theme = theme)
 mf_raster(osm2, add = TRUE)
@@ -137,8 +133,6 @@ iso <- osrmIsochrone(loc = apotheke.sf[87,], returnclass="sf",
                      breaks = bks, res = 70)
 # Get map tiles
 osm3 <- get_tiles(x = iso, crop = TRUE, zoom = 11)
-# temporary fix for terra <= 1.3-22, replace NA values by 255
-osm3[is.na(osm3)] <- 255
 # Map
 cols <- hcl.colors(n = 7, palette = "Emrld", alpha = 0.75, rev = F)
 mf_export(osm3,filename = "img/iso.png", width = ncol(osm), theme = theme)

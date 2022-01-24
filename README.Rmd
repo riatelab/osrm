@@ -6,7 +6,7 @@ output: github_document
 [![Version](http://www.r-pkg.org/badges/version/osrm)](https://CRAN.R-project.org/package=osrm/)
 ![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen)
 [![R build status](https://github.com/riatelab/osrm/workflows/R-CMD-check/badge.svg)](https://github.com/riatelab/osrm/actions)
-[![codecov](https://codecov.io/gh/riatelab/osrm/branch/master/graph/badge.svg?token=JOJNuBCH9M)](https://codecov.io/gh/riatelab/osrm)
+<!-- [![codecov](https://codecov.io/gh/riatelab/osrm/branch/master/graph/badge.svg?token=JOJNuBCH9M)](https://codecov.io/gh/riatelab/osrm) -->
 
 
 
@@ -85,8 +85,6 @@ route <- osrmRoute(src = apotheke.sf[74,], dst = apotheke.sf[55,],
                    overview = "full", returnclass = "sf")
 # Get map tiles
 osm <- get_tiles(x = route, crop = TRUE, zoom = 13)
-# temporary fix for terra <= 1.3-22, replace NA values by 255
-osm[is.na(osm)] <- 255
 # Map
 theme <- mf_theme(mar = c(0,0,1.2,0), inner = FALSE, line = 1.2, cex = .9, 
                   pos = "center", tab = FALSE)
@@ -99,7 +97,6 @@ mf_title("osrmRoute()")
 mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .8, 
            bg = "#ffffff80")
 dev.off()
-
 ```
 
 ![](https://raw.githubusercontent.com/riatelab/osrm/master/img/route.png)
@@ -113,8 +110,6 @@ trips <- osrmTrip(loc = apotheke.sf[10:20,], returnclass="sf")
 trip <- trips[[1]]$trip
 # Get map tiles
 osm2 <- get_tiles(x = trip, crop = TRUE, zoom = 11)
-# temporary fix for terra <= 1.3-22, replace NA values by 255
-osm2[is.na(osm2)] <- 255
 # Map
 mf_export(osm2,filename = "img/trip.png", width = ncol(osm), theme = theme)
 mf_raster(osm2, add = TRUE)
@@ -137,8 +132,6 @@ iso <- osrmIsochrone(loc = apotheke.sf[87,], returnclass="sf",
                      breaks = bks, res = 70)
 # Get map tiles
 osm3 <- get_tiles(x = iso, crop = TRUE, zoom = 11)
-# temporary fix for terra <= 1.3-22, replace NA values by 255
-osm3[is.na(osm3)] <- 255
 # Map
 cols <- hcl.colors(n = 7, palette = "Emrld", alpha = 0.75, rev = F)
 mf_export(osm3,filename = "img/iso.png", width = ncol(osm), theme = theme)
