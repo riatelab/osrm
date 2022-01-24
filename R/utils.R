@@ -29,10 +29,12 @@ sfToDf <- function(x){
       call. = F)
   }
   # transform to centroid and to wgs84
-  if (methods::is(st_geometry(x), c("sfc_GEOMETRY", 'sfc_GEOMETRYCOLLECTION'))){
+  if (methods::is(st_geometry(x), "sfc_GEOMETRY") ||  
+      methods::is(st_geometry(x), "sfc_GEOMETRYCOLLECTION")){
     x <- sf::st_collection_extract(x, "POLYGON", warn = FALSE)
   }
-  if (methods::is(st_geometry(x), c("sfc_POLYGON", "sfc_MULTIPOLYGON"))){
+  if (methods::is(st_geometry(x), "sfc_POLYGON") || 
+      methods::is(st_geometry(x), "sfc_MULTIPOLYGON")){
     sf::st_geometry(x) <- sf::st_centroid(x = sf::st_geometry(x),
                                           of_largest_polygon = T)
   }
@@ -81,7 +83,8 @@ isopoly <- function(x, breaks,
   st_geometry(iso) <- st_make_valid(st_geometry(iso))  
 
   
-  if(methods::is(st_geometry(iso),c("sfc_GEOMETRYCOLLECTION", "sfc_GEOMETRY"))){
+  if(methods::is(st_geometry(iso), "sfc_GEOMETRYCOLLECTION") || 
+     methods::is(st_geometry(x), "sfc_GEOMETRY")){
     st_geometry(iso) <-   sf::st_collection_extract(st_geometry(iso), "POLYGON")
   }
   # get rid of out of breaks polys
