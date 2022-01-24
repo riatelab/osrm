@@ -1,4 +1,11 @@
-# osrm version 3.5.0 (Release date 2020-03)
+# osrm version 3.5.1 (Release date 2022-01)
+
+## Minor changes
+* Fix is() usage 
+
+
+
+# osrm version 3.5.0 (Release date 2021-09)
 
 ## Major change
 * remove sp argument from osrmRoute()
