@@ -1,5 +1,5 @@
 
-# osrm R package
+# osrm <img src="man/figures/logo.png" align="right" width="140"/>
 
 [![Version](http://www.r-pkg.org/badges/version/osrm)](https://CRAN.R-project.org/package=osrm/)
 ![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen) [![R build
