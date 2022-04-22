@@ -148,8 +148,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
         req_handle <- curl::new_handle(verbose = FALSE)
         curl::handle_setopt(req_handle, useragent = "osrm_R_package")
         resraw <- curl::curl_fetch_memory(utils::URLencode(req), handle = req_handle)
-        resjson <- jsonlite::prettify(rawToChar(resraw$content))
-        res <- jsonlite::fromJSON(resjson)
+        res <- RcppSimdJson::fparse(rawToChar(resraw$content))
         
       }, silent = TRUE)
       if (class(x)=="try-error") {

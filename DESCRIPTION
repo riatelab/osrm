@@ -22,7 +22,8 @@ Imports:
     isoband,
     methods,
     googlePolylines,
-    sf
+    sf,
+    RcppSimdJson
 Depends:
     R (>= 3.5.0)
 Suggests: mapsf, lwgeom, tinytest, covr, sp
