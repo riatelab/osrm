@@ -17,9 +17,6 @@
 #' be "duration" (in minutes), "distance" (meters), or both c('duration',
 #' 'distance'). The demo server only allows "duration". 
 #' @param exclude pass an optional "exclude" request option to the OSRM API. 
-#' @param gepaf a boolean indicating if coordinates are sent encoded with the
-#' google encoded algorithm format (TRUE) or not (FALSE). Must be FALSE if using
-#' the public OSRM API.
 #' @param osrm.server the base URL of the routing server.
 #' getOption("osrm.server") by default.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot"
@@ -68,7 +65,7 @@
 #' }
 #' @export
 osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL, 
-                      gepaf = FALSE, measure="duration", 
+                      measure="duration", 
                       osrm.server = getOption("osrm.server"),
                       osrm.profile = getOption("osrm.profile")){
   if(osrm.server == "https://routing.openstreetmap.de/") {
@@ -85,7 +82,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
       src <- loc
       dst <- loc
       sep <- "?"
-      req <- tableLoc(loc = loc, gepaf = gepaf, osrm.server = osrm.server, 
+      req <- tableLoc(loc = loc, osrm.server = osrm.server, 
                       osrm.profile = osrm.profile)
     }else{
       if(testSf(src)){
@@ -102,7 +99,7 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
       # Build the query
       loc <- rbind(src, dst)
       sep = "&"
-      req <- paste(tableLoc(loc = loc, gepaf = gepaf, osrm.server = osrm.server, 
+      req <- paste(tableLoc(loc = loc, osrm.server = osrm.server, 
                             osrm.profile = osrm.profile),
                    "?sources=", 
                    paste(0:(nrow(src)-1), collapse = ";"), 

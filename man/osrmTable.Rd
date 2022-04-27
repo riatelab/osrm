@@ -9,7 +9,6 @@ osrmTable(
   src = NULL,
   dst = NULL,
   exclude = NULL,
-  gepaf = FALSE,
   measure = "duration",
   osrm.server = getOption("osrm.server"),
   osrm.profile = getOption("osrm.profile")
@@ -31,10 +30,6 @@ and latitudes (WGS84). It can also be an sf object. If so, row names are used
 as identifiers.}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API.}
-
-\item{gepaf}{a boolean indicating if coordinates are sent encoded with the
-google encoded algorithm format (TRUE) or not (FALSE). Must be FALSE if using
-the public OSRM API.}
 
 \item{measure}{a character indicating what measures are calculated. It can 
 be "duration" (in minutes), "distance" (meters), or both c('duration',

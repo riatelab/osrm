@@ -81,7 +81,7 @@ isopoly <- function(x, breaks,
   
   # invalid polygons mgmnt
   st_geometry(iso) <- st_make_valid(st_geometry(iso))  
-
+  
   
   if(methods::is(st_geometry(iso), "sfc_GEOMETRYCOLLECTION") || 
      methods::is(st_geometry(x), "sfc_GEOMETRY")){
@@ -151,17 +151,10 @@ coordFormat <- function(res, src, dst){
 tableLoc <- function(loc, gepaf = FALSE,  osrm.server, 
                      osrm.profile){
   # Query build
-  if (gepaf == TRUE){
-    tab <- paste0(osrm.server, "table/v1/", osrm.profile, "/polyline(")
-    loc$lat <- as.numeric(as.character(loc$lat))
-    loc$lon <- as.numeric(as.character(loc$lon))
-    tab <- paste0(tab, googlePolylines::encode(loc[,c("lon","lat")]),")")
-  }else{
-    tab <- paste0(osrm.server, "table/v1/", osrm.profile, "/")
-    tab <- paste0(tab, paste(clean_coord(loc$lon), 
-                             clean_coord(loc$lat), 
-                             sep=",",collapse = ";"))
-  }
+  tab <- paste0(osrm.server, "table/v1/", osrm.profile, "/polyline(")
+  loc$lat <- as.numeric(as.character(loc$lat))
+  loc$lon <- as.numeric(as.character(loc$lon))
+  tab <- paste0(tab, googlePolylines::encode(loc[,c("lon","lat")]),")")
   return(tab)
 }
 
