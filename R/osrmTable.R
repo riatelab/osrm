@@ -78,10 +78,6 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
   tryCatch({
     # input mgmt
     if (is.null(src)){
-      if(methods::is(loc,"Spatial")){
-        warn_sp()
-        loc <- st_as_sf(x = loc)
-      }
       if(testSf(loc)){
         loc <- sfToDf(x = loc)
       }
@@ -92,16 +88,8 @@ osrmTable <- function(loc, src = NULL, dst = NULL, exclude = NULL,
       req <- tableLoc(loc = loc, gepaf = gepaf, osrm.server = osrm.server, 
                       osrm.profile = osrm.profile)
     }else{
-      if(methods::is(src,"Spatial")){
-        warn_sp()
-        src <- st_as_sf(x = src)
-      }
       if(testSf(src)){
         src <- sfToDf(x = src)
-      }
-      if(methods::is(dst,"Spatial")){
-        warn_sp()
-        dst <- st_as_sf(x = dst)
       }
       if(testSf(dst)){
         dst <- sfToDf(x = dst)

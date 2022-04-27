@@ -60,10 +60,6 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   
   # imput mngmnt
   oprj <- NA
-  if (methods::is(loc,"Spatial")){
-    warn_sp()
-    loc <- st_as_sf(loc[1,])
-  }    
   if(testSf(loc)){
     oprj <- st_crs(loc)
     loc <- loc[1,]
@@ -160,13 +156,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   }else{
     iso <- st_transform(x = iso, 4326)
   }
-  
-  # output mgmnt
-  if(returnclass=="sp"){
-    warn_sp()
-    iso <- methods::as(iso, "Spatial")
-  }
-  
+
   return(iso)
 }
 
@@ -207,10 +197,6 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
                           osrm.profile = getOption("osrm.profile")){
   # imput mngmnt
   oprj <- NA
-  if (methods::is(loc,"Spatial")){
-    warn_sp()
-    loc <- st_as_sf(loc[1,])
-  }    
   if(testSf(loc)){
     oprj <- st_crs(loc)
     loc <- loc[1,]
@@ -310,12 +296,7 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
     iso <- st_transform(x = iso, 4326)
   }
   
-  # output mgmnt
-  if(returnclass=="sp"){
-    warn_sp()
-    iso <- methods::as(iso, "Spatial")
-  }
-  
+
   return(iso)
 }
 

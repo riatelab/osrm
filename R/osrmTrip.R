@@ -46,13 +46,9 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
     osrm.profile = "driving"
   }
   tryCatch({
-    # check if inpout is sp, transform and name columns
+    #  transform and name columns
     oprj <- NA
-    if (methods::is(loc,"Spatial")){
-      warn_sp()
-      loc <- sf::st_as_sf(x = loc)
-    }
-    
+
     if(methods::is(loc,"sf")){
       oprj <- st_crs(loc)
       loc <- sfToDf(x = loc)
@@ -143,11 +139,6 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
       # Reproj
       if (!is.na(oprj)) {
         sldf <- sf::st_transform(sldf, oprj)
-      }
-      # ouptut mgmt
-      if(returnclass=="sp"){
-        warn_sp()
-        sldf <- methods::as(sldf, "Spatial")
       }
       # Build tripSummary
       tripSummary <- list(duration = res$trips[nt,]$duration/60,
