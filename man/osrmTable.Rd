@@ -6,9 +6,9 @@
 \usage{
 osrmTable(
   loc,
-  src = NULL,
-  dst = NULL,
-  exclude = NULL,
+  src,
+  dst,
+  exclude,
   measure = "duration",
   osrm.server = getOption("osrm.server"),
   osrm.profile = getOption("osrm.profile")
