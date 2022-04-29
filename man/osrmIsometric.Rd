@@ -7,25 +7,25 @@
 osrmIsometric(
   loc,
   breaks = seq(from = 0, to = 10000, length.out = 4),
-  exclude = NULL,
+  exclude,
   res = 30,
-  returnclass = "sf",
+  returnclass,
   osrm.server = getOption("osrm.server"),
   osrm.profile = getOption("osrm.profile")
 )
 }
 \arguments{
-\item{loc}{a numeric vector of longitude and latitude (WGS84), an sf object 
+\item{loc}{a numeric vector of longitude and latitude (WGS84), an sf object
 of the origine point.}
 
 \item{breaks}{a numeric vector of isometric values (in meters).}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API.}
 
-\item{res}{number of points used to compute isochrones, one side of the square 
+\item{res}{number of points used to compute isochrones, one side of the square
 grid, the total number of points will be res*res.}
 
-\item{returnclass}{class of the returned polygons.}
+\item{returnclass}{deprecated.}
 
 \item{osrm.server}{the base URL of the routing server.
 getOption("osrm.server") by default.}
@@ -35,24 +35,20 @@ getOption("osrm.server") by default.}
 getOption("osrm.profile") by default.}
 }
 \value{
-An sf MULTIPOLYGON of isochrones is returned. 
-The data frame of the output contains four fields: 
-id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
+An sf MULTIPOLYGON of isochrones is returned.
+The data frame of the output contains four fields:
+id (id of each polygon), min and max (minimum and maximum breaks of the polygon),
 center (central values of classes).
 }
 \description{
-Based on \code{\link{osrmTable}}, this function buids polygons 
+Based on \code{\link{osrmTable}}, this function buids polygons
  of isometric road distances.
 }
 \examples{
 \dontrun{
 library(sf)
 # Get isochones with lon/lat coordinates
-iso <- osrmIsometric(loc = c(13.43,52.47), breaks = c(0,100,200, 500, 1000),
-                     returnclass="sf")
+iso <- osrmIsometric(loc = c(13.43,52.47), breaks = c(0,100,200, 500, 1000))
 plot(st_geometry(iso))
 }
-}
-\seealso{
-\link{osrmTable}
 }

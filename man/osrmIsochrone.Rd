@@ -7,22 +7,22 @@
 osrmIsochrone(
   loc,
   breaks = seq(from = 0, to = 60, length.out = 7),
-  exclude = NULL,
+  exclude,
   res = 30,
-  returnclass = "sf",
+  returnclass,
   osrm.server = getOption("osrm.server"),
   osrm.profile = getOption("osrm.profile")
 )
 }
 \arguments{
-\item{loc}{a numeric vector of longitude and latitude (WGS84), an sf object 
+\item{loc}{a numeric vector of longitude and latitude (WGS84), an sf object
 of the origine point.}
 
 \item{breaks}{a numeric vector of isochrone values (in minutes).}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API.}
 
-\item{res}{number of points used to compute isochrones, one side of the square 
+\item{res}{number of points used to compute isochrones, one side of the square
 grid, the total number of points will be res*res.}
 
 \item{returnclass}{class of the returned polygons.}
@@ -35,48 +35,44 @@ getOption("osrm.server") by default.}
 getOption("osrm.profile") by default.}
 }
 \value{
-An sf MULTIPOLYGON of isochrones is returned. 
-The data frame of the output contains four fields: 
-id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
+An sf MULTIPOLYGON of isochrones is returned.
+The data frame of the output contains four fields:
+id (id of each polygon), min and max (minimum and maximum breaks of the polygon),
 center (central values of classes).
 }
 \description{
-Based on \code{\link{osrmTable}}, this function buids polygons 
+Based on \code{\link{osrmTable}}, this function buids polygons
  of isochrones.
 }
 \examples{
 \dontrun{
 # Load data
 library(sf)
-apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
+apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"),
                        quiet = TRUE)
 # Get isochones with lon/lat coordinates
-iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2),
-                     returnclass="sf")
+iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2))
 plot(st_geometry(iso), col = c('grey80','grey60','grey50',
                                'grey40','grey30','grey20'))
 # Map
 if(require("mapsf")){
   breaks <- sort(c(unique(iso$min), max(iso$max)))
-  mapsf::mf_map(x = iso, var = "center", type = "choro", 
+  mapsf::mf_map(x = iso, var = "center", type = "choro",
                 breaks = breaks, pal = "Greens",
                 border = NA, leg_pos = "topleft",
                 leg_frame = TRUE, leg_title = "Isochrones\n(min)")
 }
 
 # Get isochones with an sf POINT
-iso2 <- osrmIsochrone(loc = apotheke.sf[10,], returnclass="sf",
+iso2 <- osrmIsochrone(loc = apotheke.sf[10,], 
                       breaks = seq(from = 0, to = 16, by = 2))
 # Map
 if(require("mapsf")){
   breaks2 <- sort(c(unique(iso2$min), max(iso2$max)))
-  mapsf::mf_map(x = iso2, var = "center", type = "choro", 
+  mapsf::mf_map(x = iso2, var = "center", type = "choro",
                 breaks = breaks2, pal = "Blues",
                 border = NA, leg_pos = "topleft", leg_val_rnd = 0,
                 leg_frame = TRUE, leg_title = "Isochrones\n(min)")
 }
 }
-}
-\seealso{
-\link{osrmTable}
 }

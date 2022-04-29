@@ -29,18 +29,16 @@ If dst and src parameters are used, only pairs between scr/dst are computed.}
 and latitudes (WGS84). It can also be an sf object. If so, row names are used 
 as identifiers.}
 
-\item{exclude}{pass an optional "exclude" request option to the OSRM API.}
+\item{exclude}{pass an optional "exclude" request option to the OSRM API
+(not allowed with the OSRM demo server).}
 
 \item{measure}{a character indicating what measures are calculated. It can 
 be "duration" (in minutes), "distance" (meters), or both c('duration',
-'distance'). The demo server only allows "duration".}
+'distance').}
 
-\item{osrm.server}{the base URL of the routing server.
-getOption("osrm.server") by default.}
+\item{osrm.server}{the base URL of the routing server.}
 
-\item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot"
-(when using the routing.openstreetmap.de test server).
-getOption("osrm.profile") by default.}
+\item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot".}
 }
 \value{
 A list containing 3 data frames is returned. 
@@ -55,11 +53,13 @@ between points. This function interfaces the \emph{table} OSRM service.
 }
 \details{
 If loc, src or dst are data frames we assume that the 3 first 
-columns of the data.frame are: identifiers, longitudes and latitudes.
+columns of the data.frame are: identifiers, longitudes and latitudes.\cr
+The OSRM demo server does not allow large queries (more than 10000 distances 
+or durations).
 }
 \note{
 If you want to get a large number of distances make sure to set the 
-"max-table-size" argument (Max. locations supported in table) of the OSRM 
+"max-table-size" option (Max. locations supported in table) of the OSRM 
 server accordingly.
 }
 \examples{
@@ -90,7 +90,4 @@ distA4 <- osrmTable(src = apotheke.sf[1:10,], dst = apotheke.sf[11:20,])
 # First 5 rows and columns
 distA4$durations[1:5,1:5]
 }
-}
-\seealso{
-\link{osrmIsochrone}
 }

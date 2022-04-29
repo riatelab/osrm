@@ -9,7 +9,7 @@ osrmRoute(
   dst,
   loc,
   overview = "simplified",
-  exclude = NULL,
+  exclude,
   returnclass,
   osrm.server = getOption("osrm.server"),
   osrm.profile = getOption("osrm.profile")
@@ -23,8 +23,8 @@ of longitude and latitude (WGS84) or an sf object of the origine point.}
 of longitude and latitude (WGS84) or an sf object of the destination point.}
 
 \item{loc}{a data.frame of identifier, longitude and latitude (WGS84) 
-or an sf object of via 
-points. The first row is the origine, the last row is the destination.}
+or an sf object of via points. The first row is the origine, the last row 
+is the destination.}
 
 \item{overview}{"full", "simplified" or FALSE. Use "full" to return the 
 detailed geometry, use "simplified" to return a simplified geometry, use 
@@ -32,21 +32,14 @@ FALSE to return only time and distance.}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API.}
 
-\item{returnclass}{if returnclass="sf" an sf LINESTRING is returned. 
-If returnclass is not 
-set a data.frame of coordinates is returned.}
+\item{returnclass}{deprecated.}
 
-\item{osrm.server}{the base URL of the routing server.
-getOption("osrm.server") by default.}
+\item{osrm.server}{the base URL of the routing server.}
 
-\item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot"
-(when using the routing.openstreetmap.de test server).
-getOption("osrm.profile") by default.}
+\item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot".}
 }
 \value{
-If returnclass is not set, a data frame is returned. It contains the 
-longitudes and latitudes of the travel path between the two points.\cr
-If returnclass is set to "sf", an sf LINESTRING is returned. \cr
+An sf LINESTRING is returned. \cr
 The sf LINESTRING contains 4 fields: identifiers of 
 origine and destination, travel time in minutes and travel distance in 
 kilometers.\cr\cr
@@ -64,8 +57,7 @@ apotheke.df <- read.csv(system.file("csv/apotheke.csv", package = "osrm"))
 apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
                        quiet = TRUE)
 # Travel path between points
-route1 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
-                    returnclass="sf")
+route1 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ])
 # Display paths
 plot(st_geometry(route1))
 plot(st_geometry(apotheke.sf[c(1,16),]), col = "red", pch = 20, add = TRUE)
@@ -77,8 +69,7 @@ route3
 
 # Using only coordinates
 route4 <-  osrmRoute(src = c(13.412, 52.502), 
-                     dst = c(13.454, 52.592),
-                     returnclass = "sf")
+                     dst = c(13.454, 52.592))
 plot(st_geometry(route4))
 
 # Using via points
@@ -88,22 +79,21 @@ pts <- structure(
       y = c(52.40566, 52.44491, 52.52084, 52.59318, 52.61063, 52.55317, 
             52.50186, 52.49468, 52.46441, 52.39669)), 
  class = "data.frame", row.names = c(NA, -10L))
-route5 <- osrmRoute(loc = pts, returnclass = "sf")
+route5 <- osrmRoute(loc = pts)
 plot(st_geometry(route5), col = "red", lwd = 2)
 points(pts, pch = 20, cex = 2)
 
 # Using a different routing server
 u <- "https://routing.openstreetmap.de/routed-foot/"
-route5 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], returnclass="sf", 
-                    osrm.server = u)
+route5 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], osrm.server = u)
 
 # Using an open routing service with support for multiple modes
 # see https://github.com/riatelab/osrm/issues/67
 u <- "https://routing.openstreetmap.de/"
 options(osrm.server = u)
-route6 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], returnclass="sf", 
-                    osrm.profile = "bike")
-route7 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], returnclass="sf", 
+route6 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], 
+                   osrm.profile = "bike")
+route7 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ],  
                     osrm.profile = "car")
 plot(st_geometry(route5), col = "green")
 plot(st_geometry(route6), add = TRUE) # note the cycle route has fewer turns

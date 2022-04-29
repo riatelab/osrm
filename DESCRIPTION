@@ -15,10 +15,9 @@ Description: An interface between R and the 'OSRM' API. 'OSRM' is a routing
     travel distances matrices (travel time and kilometric distance).
 License: GPL-3
 Imports:
-    jsonlite,
+    RcppSimdJson,
     curl,
     utils, 
-    stats,
     isoband,
     methods,
     googlePolylines,
