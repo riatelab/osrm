@@ -81,7 +81,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
     curl::handle_setopt(req_handle, useragent = "osrm_R_package")
     r <- curl::curl_fetch_memory(utils::URLencode(url), handle = req_handle)
   }, silent = TRUE)
-  if (class(e) =="try-error"){
+  if (inherits(e,"try-error")){ 
     stop(e, call. = FALSE)
   }
   
