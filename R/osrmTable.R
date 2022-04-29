@@ -15,26 +15,24 @@
 #' as identifiers. 
 #' @param measure a character indicating what measures are calculated. It can 
 #' be "duration" (in minutes), "distance" (meters), or both c('duration',
-#' 'distance'). The demo server only allows "duration". 
-#' @param exclude pass an optional "exclude" request option to the OSRM API. 
+#' 'distance').  
+#' @param exclude pass an optional "exclude" request option to the OSRM API
+#' (not allowed with the OSRM demo server).
 #' @param osrm.server the base URL of the routing server.
-#' getOption("osrm.server") by default.
-#' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot"
-#' (when using the routing.openstreetmap.de test server).
-#' getOption("osrm.profile") by default.
+#' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot".
 #' @return A list containing 3 data frames is returned. 
 #' durations is the matrix of travel times (in minutes), 
 #' sources and destinations are the coordinates of 
 #' the origin and destination points actually used to compute the travel 
 #' times (WGS84).
 #' @details If loc, src or dst are data frames we assume that the 3 first 
-#' columns of the data.frame are: identifiers, longitudes and latitudes. 
+#' columns of the data.frame are: identifiers, longitudes and latitudes.\cr
+#' The OSRM demo server does not allow large queries (more than 10000 distances 
+#' or durations). 
 #' @note 
 #' If you want to get a large number of distances make sure to set the 
-#' "max-table-size" argument (Max. locations supported in table) of the OSRM 
+#' "max-table-size" option (Max. locations supported in table) of the OSRM 
 #' server accordingly.
-#' @seealso \link{osrmIsochrone}
-#' @importFrom sf st_as_sf
 #' @examples
 #' \dontrun{
 #' # Inputs are data frames
@@ -68,78 +66,11 @@ osrmTable <- function(loc, src, dst, exclude, measure = "duration",
                       osrm.server = getOption("osrm.server"),
                       osrm.profile = getOption("osrm.profile")){
   
+
   
+  opt <- options(error = NULL)
+  on.exit(options(opt), add=TRUE)
   
-  
-  # construct the base url
-  base_url <- function(osrm.server, osrm.profile, query){
-    if(osrm.server == "https://routing.openstreetmap.de/") {
-      url <- paste0(osrm.server, "routed-", osrm.profile, "/table/v1/driving/")
-    }else{
-      url <- paste0(osrm.server, query, "/v1/", osrm.profile, "/")
-    }
-    return(url)
-  }
-  
-  # create short and clean coordinates
-  clean_coord <- function(x){
-    format(round(as.numeric(x),5), scientific = FALSE, justify = "none", 
-           trim = TRUE, nsmall = 5, digits = 5)
-  }
-  
-  
-  # this function takes an sf and transforms it into a dataframe  
-  sf_2_df <- function(x){    
-    # transform to centroid and to wgs84
-    if (methods::is(sf::st_geometry(x), "sfc_GEOMETRY") ||  
-        methods::is(sf::st_geometry(x), "sfc_GEOMETRYCOLLECTION")){
-      x <- sf::st_collection_extract(x, "POLYGON", warn = FALSE)
-    }
-    if (methods::is(sf::st_geometry(x), "sfc_POLYGON") || 
-        methods::is(sf::st_geometry(x), "sfc_MULTIPOLYGON")){
-      sf::st_geometry(x) <- sf::st_centroid(x = sf::st_geometry(x),
-                                            of_largest_polygon = TRUE)
-    }
-    x <- sf::st_transform(x = x, crs = 4326)
-    coords <- sf::st_coordinates(x)
-    x <- data.frame(id = row.names(x), 
-                    lon = clean_coord(coords[,1]), 
-                    lat = clean_coord(coords[,2]))
-    return(x)
-  }
-  
-  
-  encode_coords <- function(x){
-    x$lat <- as.numeric(as.character(x$lat))
-    x$lon <- as.numeric(as.character(x$lon))
-    res <- paste0("polyline(", googlePolylines::encode(x[,c("lon","lat")]), ")")
-    return(res)
-  }
-  test_http_error <- function(r){
-    if (httr::http_error(r)) {
-      if (httr::http_type(r) != "application/json") {
-        stop(
-          sprintf(
-            "OSRM API request failed [%s]", 
-            httr::status_code(r)),
-          call. = FALSE)
-      }else{
-        rep <- RcppSimdJson::fparse(rawToChar(r$content))
-        stop(
-          sprintf(
-            "OSRM API request failed [%s]\n%s\n%s", 
-            httr::status_code(r), 
-            rep$code, 
-            rep$message
-          ),
-          call. = FALSE
-        )
-      }
-    }
-  }
-  
-  
-  args <- list()
   url <- base_url(osrm.server, osrm.profile, "table")
   
   # input management
@@ -149,6 +80,8 @@ osrmTable <- function(loc, src, dst, exclude, measure = "duration",
     }
     names(loc) <- c("id", "lon", "lat")
     dst <- src <- loc
+    url <- paste0(url, encode_coords(x = loc), "?")
+    
   }else{
     if (methods::is(src,"sf")){
       src <- sf_2_df(src)
@@ -159,156 +92,52 @@ osrmTable <- function(loc, src, dst, exclude, measure = "duration",
     names(src) <- c("id", "lon", "lat")
     names(dst) <- c("id", "lon", "lat")
     loc <- rbind(src, dst)
-    args['sources'] <- paste0(paste(0:(nrow(src)-1), collapse = ";"), 
-                             "&destinations=", 
-                             paste(nrow(src):(nrow(loc)-1), collapse = ";"))
+    url <- paste0(url, 
+                  encode_coords(x = loc), 
+                  paste0("?sources=", 
+                         paste(0:(nrow(src)-1), collapse = ";"), 
+                         "&destinations=", 
+                         paste(nrow(src):(nrow(loc)-1), collapse = ";")),
+                  "&")
   }
   
-  # coord encoding
-  coords_en <- encode_coords(x = loc)
-  
-  # adding parameters
-  args["annotations"] <- paste0(measure, collapse=',')
+  # adding exclude parameter
   if (!missing(exclude)) {
-    args["exclude"] = exclude
+    url <- paste0(url, "exclude=", exclude, "&")
   }
+  # adding measure parameter
+  url <- paste0(url, "annotations=", paste0(measure, collapse=',') )
   
-  
-  # Send / test / receive / inspect query & results
+  print(url)
   e <- try({
-    r <- httr::GET(url = utils::URLencode(paste0(url, coords_en)), 
-                   query = args,
-                   config = httr::config(useragent = "osrm R package",
-                                         upload_buffersize = 512))
+    req_handle <- curl::new_handle(verbose = FALSE)
+    curl::handle_setopt(req_handle, useragent = "osrm_R_package")
+    r <- curl::curl_fetch_memory(utils::URLencode(url), handle = req_handle)
   }, silent = TRUE)
-  
   if (class(e) =="try-error"){
     stop(e, call. = FALSE)
   }
-  # print( args['source'] )
+  
+  # test result validity
   test_http_error(r)
 
   res <- RcppSimdJson::fparse(rawToChar(r$content))
-  
-  
-  
-  
+
+  # format results
   output <- list()
   if(!is.null(res$durations)){
-    # get the duration table
-    output$durations <- durTableFormat(res = res, src = src, dst = dst)
+    output$durations <- tab_format(res = res, src = src, dst = dst, 
+                                   type = "duration")
   }
   if(!is.null(res$distances)){
-    # get the distance table
-    output$distances <- distTableFormat(res = res, src = src, dst = dst)
+    output$distances <- tab_format(res = res, src = src, dst = dst, 
+                                   type = "distance")
   }
   # get the coordinates
-  coords <- coordFormat(res = res, src = src, dst = dst)
+  coords <- coord_format(res = res, src = src, dst = dst)
   output$sources <- coords$sources
   output$destinations = coords$destinations
   return(output)
   
   return(r)
 }
-
-
-# 
-#   
-#   httr::get(r)
-#   rawToChar(r$content)
-#   ?simpleError
-#   
-#   
-#   res <- RcppSimdJson::fparse(rawToChar(r$content)) 
-#   
-#   
-#   
-#   
-#   
-
-#       if(testSf(src)){
-#         src <- sfToDf(x = src)
-#       }
-#       if(testSf(dst)){
-#         dst <- sfToDf(x = dst)
-#       }
-#       
-#       names(src) <- c("id", "lon", "lat")
-#       names(dst) <- c("id", "lon", "lat")
-#       
-#       
-#       # Build the query
-#       loc <- rbind(src, dst)
-#       sep = "&"
-#       req <- paste(tableLoc(loc = loc, osrm.server = osrm.server, 
-#                             osrm.profile = osrm.profile),
-#                    "?sources=", 
-#                    paste(0:(nrow(src)-1), collapse = ";"), 
-#                    "&destinations=", 
-#                    paste(nrow(src):(nrow(loc)-1), collapse = ";"),
-#                    sep="")
-#     }
-#     
-#     # exclude mngmnt
-#     if (!is.null(exclude)) {
-#       exclude_str <- paste0(sep,"exclude=", exclude, sep = "") 
-#       sep="&"
-#     }else{
-#       exclude_str <- ""
-#     }
-#     
-#     # annotation mngmnt
-#     annotations <- paste0(sep, "annotations=", paste0(measure, collapse=','))
-#     
-#     # final req
-#     req <- paste0(req, exclude_str, annotations)
-#     
-#     # print(req)
-#     req <- utils::URLencode(req)
-#     osrmLimit(nSrc = nrow(src), nDst = nrow(dst), nreq = nchar(req))
-#     
-#     # Get the result
-#     bo=0
-#     while(bo!=10){
-#       x = try({
-#         req_handle <- curl::new_handle(verbose = FALSE)
-#         curl::handle_setopt(req_handle, useragent = "osrm_R_package")
-#         resraw <- curl::curl_fetch_memory(utils::URLencode(req), handle = req_handle)
-#         resjson <- jsonlite::prettify(rawToChar(resraw$content))
-#         res <- jsonlite::fromJSON(resjson)
-#         
-#       }, silent = TRUE)
-#       if (class(x)=="try-error") {
-#         Sys.sleep(1)
-#         bo <- bo+1
-#       } else
-#         break 
-#     }
-#     
-#     # Check results
-#     if(is.null(res$code)){
-#       e <- simpleError(res$message)
-#       stop(e)
-#     }else{
-#       e <- simpleError(paste0(res$code,"\n",res$message))
-#       if(res$code != "Ok"){stop(e)}
-#     }
-#     
-#     output <- list()
-#     if(!is.null(res$durations)){
-#       # get the duration table
-#       output$durations <- durTableFormat(res = res, src = src, dst = dst)
-#     }
-#     if(!is.null(res$distances)){
-#       # get the distance table
-#       output$distances <- distTableFormat(res = res, src = src, dst = dst)  
-#     }
-#     # get the coordinates
-#     coords <- coordFormat(res = res, src = src, dst = dst)
-#     output$sources <- coords$sources
-#     output$destinations = coords$destinations
-#     return(output)
-#   }, error=function(e) {message("The OSRM server returned an error:\n", e)})
-#   return(NULL)
-# }
-# 

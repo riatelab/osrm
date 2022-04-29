@@ -1,71 +1,76 @@
 #' @name osrmIsochrone
 #' @title Get Polygons of Isochrones
-#' @description Based on \code{\link{osrmTable}}, this function buids polygons 
-#'  of isochrones. 
-#' @param loc a numeric vector of longitude and latitude (WGS84), an sf object 
+#' @description Based on \code{\link{osrmTable}}, this function buids polygons
+#'  of isochrones.
+#' @param loc a numeric vector of longitude and latitude (WGS84), an sf object
 #' of the origine point.
 #' @param breaks a numeric vector of isochrone values (in minutes).
-#' @param exclude pass an optional "exclude" request option to the OSRM API. 
-#' @param res number of points used to compute isochrones, one side of the square 
-#' grid, the total number of points will be res*res.  
+#' @param exclude pass an optional "exclude" request option to the OSRM API.
+#' @param res number of points used to compute isochrones, one side of the square
+#' grid, the total number of points will be res*res.
 #' @param returnclass class of the returned polygons.
 #' @param osrm.server the base URL of the routing server.
 #' getOption("osrm.server") by default.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot"
 #' (when using the routing.openstreetmap.de test server).
 #' getOption("osrm.profile") by default.
-#' @return An sf MULTIPOLYGON of isochrones is returned. 
-#' The data frame of the output contains four fields: 
-#' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
+#' @return An sf MULTIPOLYGON of isochrones is returned.
+#' The data frame of the output contains four fields:
+#' id (id of each polygon), min and max (minimum and maximum breaks of the polygon),
 #' center (central values of classes).
-#' @seealso \link{osrmTable}
 #' @importFrom sf st_as_sf st_crs st_transform st_convex_hull st_union st_intersects st_bbox
 #' @export
 #' @examples
 #' \dontrun{
 #' # Load data
 #' library(sf)
-#' apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
+#' apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"),
 #'                        quiet = TRUE)
 #' # Get isochones with lon/lat coordinates
-#' iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2),
-#'                      returnclass="sf")
+#' iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2))
 #' plot(st_geometry(iso), col = c('grey80','grey60','grey50',
 #'                                'grey40','grey30','grey20'))
 #' # Map
 #' if(require("mapsf")){
 #'   breaks <- sort(c(unique(iso$min), max(iso$max)))
-#'   mapsf::mf_map(x = iso, var = "center", type = "choro", 
+#'   mapsf::mf_map(x = iso, var = "center", type = "choro",
 #'                 breaks = breaks, pal = "Greens",
 #'                 border = NA, leg_pos = "topleft",
 #'                 leg_frame = TRUE, leg_title = "Isochrones\n(min)")
 #' }
-#' 
+#'
 #' # Get isochones with an sf POINT
-#' iso2 <- osrmIsochrone(loc = apotheke.sf[10,], returnclass="sf",
+#' iso2 <- osrmIsochrone(loc = apotheke.sf[10,], 
 #'                       breaks = seq(from = 0, to = 16, by = 2))
 #' # Map
 #' if(require("mapsf")){
 #'   breaks2 <- sort(c(unique(iso2$min), max(iso2$max)))
-#'   mapsf::mf_map(x = iso2, var = "center", type = "choro", 
+#'   mapsf::mf_map(x = iso2, var = "center", type = "choro",
 #'                 breaks = breaks2, pal = "Blues",
 #'                 border = NA, leg_pos = "topleft", leg_val_rnd = 0,
 #'                 leg_frame = TRUE, leg_title = "Isochrones\n(min)")
 #' }
 #' }
-osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7), 
-                          exclude = NULL, res = 30, returnclass = "sf",  
+osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
+                          exclude, res = 30, returnclass,
                           osrm.server = getOption("osrm.server"),
                           osrm.profile = getOption("osrm.profile")){
   
+  opt <- options(error = NULL)
+  on.exit(options(opt), add=TRUE)
+  
+  if(!missing(returnclass)){
+    warning('"returnclass" is deprecated.', call. = FALSE)
+  }
+  
   # imput mngmnt
   oprj <- NA
-  if(testSf(loc)){
+  if (methods::is(loc,"sf")){
     oprj <- st_crs(loc)
     loc <- loc[1,]
   }else{
     loc <- data.frame(lon = loc[1], lat = loc[2])
-    loc <- st_as_sf(loc, coords=c("lon","lat"), crs = 4326)
+    loc <- st_as_sf(loc, coords = c("lon","lat"), crs = 4326)
   }
   loc <- st_transform(loc, 3857)
   row.names(loc) <- "0"
@@ -94,23 +99,21 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   }else{
     sleeptime <- 1
     deco <- 75
-    osrm.server = paste0(osrm.server, "routed-", osrm.profile, "/")
-    osrm.profile = "driving"
   }
   
-
-  # slice the grid to make several API calls  
+  
+  # slice the grid to make several API calls
   lsgr <- nrow(sgrid)
   f500 <- lsgr %/% deco
   r500 <- lsgr %% deco
   listDur <- list()
   listDest <- list()
-
+  
   if(f500>0){
     for (i in 1:f500){
       st <- (i-1) * deco + 1
       en <- i * deco
-      dmat <- osrmTable(src = loc, dst = sgrid[st:en,], exclude = exclude, 
+      dmat <- osrmTable(src = loc, dst = sgrid[st:en,], exclude = exclude,
                         osrm.server = osrm.server, osrm.profile = osrm.profile)
       durations <- dmat$durations
       listDur[[i]] <- dmat$durations
@@ -118,8 +121,8 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
       Sys.sleep(sleeptime)
     }
     if(r500>0){
-      dmat <- osrmTable(src = loc, dst = sgrid[(en+1):(en+r500),], 
-                        exclude = exclude, osrm.server = osrm.server, 
+      dmat <- osrmTable(src = loc, dst = sgrid[(en+1):(en+r500),],
+                        exclude = exclude, osrm.server = osrm.server,
                         osrm.profile = osrm.profile)
       listDur[[i+1]] <- dmat$durations
       listDest[[i+1]] <- dmat$destinations
@@ -156,48 +159,53 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   }else{
     iso <- st_transform(x = iso, 4326)
   }
-
+  
   return(iso)
 }
 
 #' @name osrmIsometric
 #' @title Get Polygons of Isodistances
-#' @description Based on \code{\link{osrmTable}}, this function buids polygons 
-#'  of isometric road distances. 
-#' @param loc a numeric vector of longitude and latitude (WGS84), an sf object 
+#' @description Based on \code{\link{osrmTable}}, this function buids polygons
+#'  of isometric road distances.
+#' @param loc a numeric vector of longitude and latitude (WGS84), an sf object
 #' of the origine point.
 #' @param breaks a numeric vector of isometric values (in meters).
-#' @param exclude pass an optional "exclude" request option to the OSRM API. 
-#' @param res number of points used to compute isochrones, one side of the square 
-#' grid, the total number of points will be res*res.  
-#' @param returnclass class of the returned polygons. 
+#' @param exclude pass an optional "exclude" request option to the OSRM API.
+#' @param res number of points used to compute isochrones, one side of the square
+#' grid, the total number of points will be res*res.
+#' @param returnclass deprecated.
 #' @param osrm.server the base URL of the routing server.
 #' getOption("osrm.server") by default.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot"
 #' (when using the routing.openstreetmap.de test server).
 #' getOption("osrm.profile") by default.
-#' @return An sf MULTIPOLYGON of isochrones is returned. 
-#' The data frame of the output contains four fields: 
-#' id (id of each polygon), min and max (minimum and maximum breaks of the polygon), 
+#' @return An sf MULTIPOLYGON of isochrones is returned.
+#' The data frame of the output contains four fields:
+#' id (id of each polygon), min and max (minimum and maximum breaks of the polygon),
 #' center (central values of classes).
-#' @seealso \link{osrmTable}
 #' @importFrom sf st_as_sf st_crs st_transform st_convex_hull st_union st_intersects
 #' @export
 #' @examples
 #' \dontrun{
 #' library(sf)
 #' # Get isochones with lon/lat coordinates
-#' iso <- osrmIsometric(loc = c(13.43,52.47), breaks = c(0,100,200, 500, 1000),
-#'                      returnclass="sf")
+#' iso <- osrmIsometric(loc = c(13.43,52.47), breaks = c(0,100,200, 500, 1000))
 #' plot(st_geometry(iso))
 #' }
-osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4), 
-                          exclude = NULL, res = 30, returnclass = "sf", 
+osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4),
+                          exclude, res = 30, returnclass,
                           osrm.server = getOption("osrm.server"),
                           osrm.profile = getOption("osrm.profile")){
+  opt <- options(error = NULL)
+  on.exit(options(opt), add=TRUE)
+  
+  if(!missing(returnclass)){
+    warning('"returnclass" is deprecated.', call. = FALSE)
+  }
+  
   # imput mngmnt
   oprj <- NA
-  if(testSf(loc)){
+  if (methods::is(loc,"sf")){
     oprj <- st_crs(loc)
     loc <- loc[1,]
   }else{
@@ -206,7 +214,7 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
   }
   loc <- st_transform(loc, 3857)
   row.names(loc) <- "0"
-  
+
   # max distance mngmnt to see how far to extend the grid to get measures
   breaks <- unique(sort(breaks))
   tmax <- max(breaks)
@@ -221,11 +229,11 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
   }
   # 2.2 seems to be a reasonable multiplier to max distance given
   dmax <- 2.2 * max(breaks)
-  
+
   # create a grid to obtain measures
   sgrid <- rgrid(loc = loc, dmax = dmax, res = res)
-  
-  # slice the grid to make several API calls  
+
+  # slice the grid to make several API calls
   lsgr <- nrow(sgrid)
   f500 <- lsgr %/% 150
   r500 <- lsgr %% 150
@@ -236,15 +244,13 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
     sleeptime <- 0
   }else{
     sleeptime <- 1
-    osrm.server = paste0(osrm.server, "routed-", osrm.profile, "/")
-    osrm.profile = "driving"
   }
   if(f500>0){
     for (i in 1:f500){
       st <- (i-1) * 150 + 1
       en <- i * 150
       dmat <- osrmTable(src = loc, dst = sgrid[st:en,], exclude = exclude,
-                        measure = "distance", 
+                        measure = "distance",
                         osrm.server = osrm.server, osrm.profile = osrm.profile)
       distances <- dmat$distances
       listDur[[i]] <- dmat$distances
@@ -252,14 +258,14 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
       Sys.sleep(sleeptime)
     }
     if(r500>0){
-      dmat <- osrmTable(src = loc, dst = sgrid[(en+1):(en+r500),], 
+      dmat <- osrmTable(src = loc, dst = sgrid[(en+1):(en+r500),],
                         exclude = exclude, measure = "distance" ,
                         osrm.server = osrm.server, osrm.profile = osrm.profile)
       listDur[[i+1]] <- dmat$distances
       listDest[[i+1]] <- dmat$destinations
     }
   }else{
-    dmat <- osrmTable(src = loc, dst = sgrid, exclude = exclude, 
+    dmat <- osrmTable(src = loc, dst = sgrid, exclude = exclude,
                       measure = "distance" ,
                       osrm.server = osrm.server, osrm.profile = osrm.profile)
     listDur[[1]] <- dmat$distances
@@ -285,17 +291,17 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
     stop(e, call. = FALSE)
   }
   ########### END OF QUICK FIX ################
-  
+
   # computes isopolygones
   iso <- isopoly(x = sgrid, breaks = breaks, var = "distances")
-  
+
   # proj mgmnt
   if (!is.na(oprj)){
     iso <- st_transform(x = iso, oprj)
   }else{
     iso <- st_transform(x = iso, 4326)
   }
-  
+
 
   return(iso)
 }

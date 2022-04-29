@@ -1,53 +1,3 @@
-## All Functions Utils
-testSf <- function(x){
-  if (methods::is(x,"sf")){
-    if (is.na(sf::st_crs(x))){
-      stop(
-        paste(
-          "Your input (", quote(x),
-          ") does not have a valid coordinate reference system.", sep=""),
-        call. = F)
-    }
-    return(TRUE)
-  }
-  return(FALSE)
-}
-
-clean_coord <- function(x){
-  format(round(as.numeric(x),5), scientific = FALSE, justify = "none", 
-         trim = TRUE, nsmall = 5, digits = 5)
-}
-
-
-
-sfToDf <- function(x){    
-  if (is.na(sf::st_crs(x))){
-    stop(
-      paste(
-        "Your input (", quote(x),
-        ") does not have a valid coordinate reference system.", sep=""),
-      call. = F)
-  }
-  # transform to centroid and to wgs84
-  if (methods::is(st_geometry(x), "sfc_GEOMETRY") ||  
-      methods::is(st_geometry(x), "sfc_GEOMETRYCOLLECTION")){
-    x <- sf::st_collection_extract(x, "POLYGON", warn = FALSE)
-  }
-  if (methods::is(st_geometry(x), "sfc_POLYGON") || 
-      methods::is(st_geometry(x), "sfc_MULTIPOLYGON")){
-    sf::st_geometry(x) <- sf::st_centroid(x = sf::st_geometry(x),
-                                          of_largest_polygon = T)
-  }
-  x <- sf::st_transform(x = x, crs = 4326)
-  coords <- sf::st_coordinates(x)
-  # this function takes an sf and transforms it into a dataframe
-  x <- data.frame(id = row.names(x), 
-                  lon = clean_coord(coords[,1]), 
-                  lat = clean_coord(coords[,2]), 
-                  stringsAsFactors = FALSE)
-  return(x)
-}
-
 
 
 ## osrmIsochrone Utils
@@ -112,30 +62,23 @@ rgrid <- function(loc, dmax, res){
 
 
 
-
-## osrmTable Utils
-durTableFormat <- function(res, src, dst){
-  # extract distance table
-  mat <- res$durations
-  # From sec to minutes
-  mat <- round(mat/(60), 1)
+# output formating
+tab_format <- function(res, src, dst, type){
+  if(type == "duration"){
+    mat <- res$durations
+    # From sec to minutes
+    mat <- round(mat/(60), 1)
+  }else{
+    mat <- res$distances
+    mat <- round(mat, 0)
+  }
   # col and row names management
   dimnames(mat) <- list(src$id, dst$id)
   return(mat)
 }  
 
 
-distTableFormat <- function(res, src, dst){
-  # extract distance table
-  mat <- res$distances
-  # rounding meters
-  mat <- round(mat, 0)
-  # col and row names management
-  dimnames(mat) <- list(src$id, dst$id)
-  return(mat)
-} 
-
-coordFormat <- function(res, src, dst){
+coord_format <- function(res, src, dst){
   sources <- data.frame(matrix(unlist(res$sources$location, 
                                       use.names = T), 
                                ncol = 2, byrow = T, 
@@ -148,34 +91,6 @@ coordFormat <- function(res, src, dst){
   )
 }
 
-tableLoc <- function(loc, gepaf = FALSE,  osrm.server, 
-                     osrm.profile){
-  # Query build
-  tab <- paste0(osrm.server, "table/v1/", osrm.profile, "/polyline(")
-  loc$lat <- as.numeric(as.character(loc$lat))
-  loc$lon <- as.numeric(as.character(loc$lon))
-  tab <- paste0(tab, googlePolylines::encode(loc[,c("lon","lat")]),")")
-  return(tab)
-}
-
-osrmLimit <- function(nSrc, nDst, nreq){
-  e <- simpleError("The public OSRM API does not allow results with a number of durations 
-higher than 10000. Ask for fewer durations or use your own server and set its 
---max-table-size option.")
-  e2 <- simpleError("This request is to large for the public OSRM API. Ask for 
-fewer durations or use your own server and set its --max-table-size option.")
-  e3 <- simpleError("This request is to large for the public OSRM API. Ask for 
-fewer locations or use your own server and set its --max-trip-size option.")
-  if(getOption("osrm.server") == "https://routing.openstreetmap.de/" & (nSrc*nDst) > 9998){
-    stop(e)
-  }
-  if(getOption("osrm.server") == "https://routing.openstreetmap.de/" & nreq >= 8000){
-    stop(e2)
-  }
-  if(getOption("osrm.server") == "https://routing.openstreetmap.de/" & nSrc > 99 & nDst==0){
-    stop(e3)
-  }
-}
 
 
 
@@ -197,7 +112,7 @@ input_route <- function(x, id, single = TRUE){
     if(is.data.frame(x)){
       if(methods::is(x,"sf")){
         oprj <- sf::st_crs(x)
-        x <- sfToDf(x)
+        x <- sf_2_df(x)
         i <- 1
         id <- x[1, i]
       }else{
@@ -217,7 +132,7 @@ input_route <- function(x, id, single = TRUE){
     if(is.data.frame(x)){
       if(methods::is(x,"sf")){
         oprj <- sf::st_crs(x)
-        x <- sfToDf(x)
+        x <- sf_2_df(x)
         i <- 1
         id1 <- x[1,1]
         id2 <- x[nrow(x),1]
@@ -238,4 +153,78 @@ input_route <- function(x, id, single = TRUE){
     return(list(id1 = id1, id2 = id2, lon = lon, lat = lat, oprj = oprj))
   }
 } 
+
+
+# construct the base url
+base_url <- function(osrm.server, osrm.profile, query){
+  if(osrm.server == "https://routing.openstreetmap.de/") {
+    url <- paste0(osrm.server, "routed-", osrm.profile, "/", 
+                  query, "/v1/driving/")
+  }else{
+    url <- paste0(osrm.server, query, "/v1/", osrm.profile, "/")
+  }
+  return(url)
+}
+
+# create short and clean coordinates
+clean_coord <- function(x){
+  format(round(as.numeric(x),5), scientific = FALSE, justify = "none", 
+         trim = TRUE, nsmall = 5, digits = 5)
+}
+
+
+# this function takes an sf and transforms it into a dataframe  
+sf_2_df <- function(x){    
+  # transform to centroid and to wgs84
+  if (methods::is(sf::st_geometry(x), "sfc_GEOMETRY") ||  
+      methods::is(sf::st_geometry(x), "sfc_GEOMETRYCOLLECTION")){
+    x <- sf::st_collection_extract(x, "POLYGON", warn = FALSE)
+  }
+  if (methods::is(sf::st_geometry(x), "sfc_POLYGON") || 
+      methods::is(sf::st_geometry(x), "sfc_MULTIPOLYGON")){
+    sf::st_geometry(x) <- sf::st_centroid(x = sf::st_geometry(x),
+                                          of_largest_polygon = TRUE)
+  }
+  x <- sf::st_transform(x = x, crs = 4326)
+  coords <- sf::st_coordinates(x)
+  x <- data.frame(id = row.names(x), 
+                  lon = clean_coord(coords[,1]), 
+                  lat = clean_coord(coords[,2]))
+  return(x)
+}
+
+
+encode_coords <- function(x){
+  
+  x$lat <- as.numeric(as.character(x$lat))
+  x$lon <- as.numeric(as.character(x$lon))
+  paste0("polyline(", googlePolylines::encode(x[,c("lon","lat")]),")")
+  # paste(clean_coord(x$lon), clean_coord(x$lat), sep=",",collapse = ";")
+}
+
+
+
+test_http_error <- function(r){
+  if (r$status_code >= 400) {
+    if (substr(r$type, 1, 16) != "application/json") {
+      stop(
+        sprintf(
+          "OSRM API request failed [%s]", 
+          r$status_code),
+        call. = FALSE)
+    }else{
+      rep <- RcppSimdJson::fparse(rawToChar(r$content))
+      stop(
+        sprintf(
+          "OSRM API request failed [%s]\n%s\n%s", 
+          r$status_code, 
+          rep$code, 
+          rep$message
+        ),
+        call. = FALSE
+      )
+    }
+  }
+  return(NULL)
+}
 
