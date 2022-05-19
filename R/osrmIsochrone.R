@@ -8,7 +8,7 @@
 #' @param exclude pass an optional "exclude" request option to the OSRM API.
 #' @param res number of points used to compute isochrones, one side of the square
 #' grid, the total number of points will be res*res.
-#' @param returnclass class of the returned polygons.
+#' @param returnclass deprecated.
 #' @param osrm.server the base URL of the routing server.
 #' getOption("osrm.server") by default.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot"

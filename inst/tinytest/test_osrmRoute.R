@@ -21,8 +21,7 @@ if(home){
   ss()
   # Using only coordinates
   r <-  osrmRoute(src = c(13.412, 52.502), 
-                  dst = c(13.454, 52.592),
-                  returnclass = "sf")
+                  dst = c(13.454, 52.592))
   expect_true(methods::is(r, "sf"))
   ss()
   # Using via points
@@ -32,7 +31,7 @@ if(home){
          y = c(52.40566, 52.44491, 52.52084, 52.59318, 52.61063, 52.55317, 
                52.50186, 52.49468, 52.46441, 52.39669)), 
     class = "data.frame", row.names = c(NA, -10L))
-  r <- osrmRoute(loc = pts, returnclass = "sf")
+  r <- osrmRoute(loc = pts)
   expect_true(methods::is(r, "sf"))
   ss()
   
@@ -50,8 +49,7 @@ if(home){
   ss()
   # Using only coordinates
   r <-  osrmRoute(src = c(13.412, 52.502), 
-                  dst = c(13.454, 52.592),
-                  returnclass = "sf")
+                  dst = c(13.454, 52.592))
   expect_true(methods::is(r, "sf"))
   ss()
   # Using via points
@@ -61,7 +59,7 @@ if(home){
          y = c(52.40566, 52.44491, 52.52084, 52.59318, 52.61063, 52.55317, 
                52.50186, 52.49468, 52.46441, 52.39669)), 
     class = "data.frame", row.names = c(NA, -10L))
-  r <- osrmRoute(loc = pts, returnclass = "sf")
+  r <- osrmRoute(loc = pts)
   expect_true(methods::is(r, "sf"))
   ss()
   
@@ -82,8 +80,7 @@ if(home){
   ss()
   # Using only coordinates
   r <-  osrmRoute(src = c(13.412, 52.502), 
-                  dst = c(13.454, 52.592),
-                  returnclass = "sf")
+                  dst = c(13.454, 52.592))
   expect_true(methods::is(r, "sf"))
   ss()
   # Using via points
@@ -93,7 +90,7 @@ if(home){
          y = c(52.40566, 52.44491, 52.52084, 52.59318, 52.61063, 52.55317, 
                52.50186, 52.49468, 52.46441, 52.39669)), 
     class = "data.frame", row.names = c(NA, -10L))
-  r <- osrmRoute(loc = pts, returnclass = "sf")
+  r <- osrmRoute(loc = pts)
   expect_true(methods::is(r, "sf"))
   ss()
   
@@ -124,8 +121,7 @@ if(home){
     expect_equal(length(r), 2)
     # Using only coordinates
     r <-  osrmRoute(src = c(13.412, 52.502),
-                    dst = c(13.454, 52.592),
-                    returnclass = "sf")
+                    dst = c(13.454, 52.592))
     expect_true(methods::is(r, "sf"))
     # Using via points
     pts <- structure(
@@ -134,7 +130,7 @@ if(home){
            y = c(52.40566, 52.44491, 52.52084, 52.59318, 52.61063, 52.55317,
                  52.50186, 52.49468, 52.46441, 52.39669)),
       class = "data.frame", row.names = c(NA, -10L))
-    r <- osrmRoute(loc = pts, returnclass = "sf")
+    r <- osrmRoute(loc = pts)
     expect_true(methods::is(r, "sf"))
 
   }

@@ -25,7 +25,7 @@ of the origine point.}
 \item{res}{number of points used to compute isochrones, one side of the square
 grid, the total number of points will be res*res.}
 
-\item{returnclass}{class of the returned polygons.}
+\item{returnclass}{deprecated.}
 
 \item{osrm.server}{the base URL of the routing server.
 getOption("osrm.server") by default.}
