@@ -99,11 +99,11 @@ distA$durations
 ``` r
 library(maptiles)
 library(mapsf)
+# Transform to webmercator for a better display of map tiles
+apotheke.sf <- st_transform(apotheke.sf, 3857)
 # Route
 route <- osrmRoute(src = apotheke.sf[74,], dst = apotheke.sf[55,],
                    overview = "full")
-# Transform to webmercator for a better display of map tiles
-route <- st_transform(route, 3857)
 # Get map tiles
 osm <- get_tiles(x = route, crop = TRUE, zoom = 13)
 # Map
@@ -128,8 +128,6 @@ dev.off()
 # Trip 
 trips <- osrmTrip(loc = apotheke.sf[10:20,])
 trip <- trips[[1]]$trip
-# Transform to webmercator for a better display of map tiles
-trip <- st_transform(trip, 3857)
 # Get map tiles
 osm2 <- get_tiles(x = trip, crop = TRUE, zoom = 11)
 # Map
@@ -150,15 +148,7 @@ dev.off()
 
 ``` r
 bks <- seq(from = 0, to = 14, by = 2)
-iso <- osrmIsochrone(loc = apotheke.sf[87,], returnclass="sf",
-                     breaks = bks, res = 70)
-```
-
-    ## Warning: "returnclass" is deprecated.
-
-``` r
-# Transform to webmercator for a better display of map tiles
-iso <- st_transform(iso, 3857)
+iso <- osrmIsochrone(loc = apotheke.sf[87,], breaks = bks, res = 70)
 # Get map tiles
 osm3 <- get_tiles(x = iso, crop = TRUE, zoom = 12)
 # Map
