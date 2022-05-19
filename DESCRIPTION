@@ -24,8 +24,8 @@ Imports:
     sf
 Depends:
     R (>= 3.5.0)
-Suggests: mapsf, lwgeom, tinytest, covr
+Suggests: mapsf, lwgeom, tinytest, covr, maptiles
 URL: https://github.com/riatelab/osrm
 BugReports: https://github.com/riatelab/osrm/issues
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0
