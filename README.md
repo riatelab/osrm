@@ -58,21 +58,38 @@ library(osrm)
 
 ``` r
 library(sf)
+```
+
+    ## Linking to GEOS 3.9.0, GDAL 3.2.2, PROJ 7.1.0; sf_use_s2() is TRUE
+
+``` r
 apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
                        quiet = TRUE)
 # Travel time matrix
 distA <- osrmTable(loc = apotheke.sf[1:5,])
+```
+
+    ## [1] "http://0.0.0.0:5000/table/v1/car/polyline(_nh_Iyu_qA`vBikZo`^dgPzkVmvDmVnnK)?annotations=duration"
+
+``` r
 distA$durations
 ```
+
+    ##      1    2    3    4    5
+    ## 1  0.0 21.1 33.2 21.2 12.6
+    ## 2 22.1  0.0 42.3 16.1 20.2
+    ## 3 32.7 43.0  0.0 30.5 27.4
+    ## 4 20.1 15.3 29.7  0.0 12.7
+    ## 5 10.2 20.3 26.8 12.3  0.0
 
 <small>
 
 |     |    1 |    2 |    3 |    4 |    5 |
 |:----|-----:|-----:|-----:|-----:|-----:|
-| 1   |  0.0 | 21.5 | 33.2 | 21.2 | 12.1 |
-| 2   | 22.6 |  0.0 | 41.8 | 16.1 | 20.2 |
-| 3   | 32.9 | 42.4 |  0.0 | 30.2 | 27.4 |
-| 4   | 20.1 | 15.3 | 29.4 |  0.0 | 12.9 |
+| 1   |  0.0 | 21.1 | 33.2 | 21.2 | 12.6 |
+| 2   | 22.1 |  0.0 | 42.3 | 16.1 | 20.2 |
+| 3   | 32.7 | 43.0 |  0.0 | 30.5 | 27.4 |
+| 4   | 20.1 | 15.3 | 29.7 |  0.0 | 12.7 |
 | 5   | 10.2 | 20.3 | 26.8 | 12.3 |  0.0 |
 
 </small>
@@ -84,14 +101,16 @@ library(maptiles)
 library(mapsf)
 # Route
 route <- osrmRoute(src = apotheke.sf[74,], dst = apotheke.sf[55,],
-                   overview = "full", returnclass = "sf")
+                   overview = "full")
+# Transform to webmercator for a better display of map tiles
+route <- st_transform(route, 3857)
 # Get map tiles
 osm <- get_tiles(x = route, crop = TRUE, zoom = 13)
 # Map
 theme <- mf_theme(mar = c(0,0,1.2,0), inner = FALSE, line = 1.2, cex = .9, 
                   pos = "center", tab = FALSE)
 mf_export(osm,filename = "img/route.png", width = ncol(osm), theme = theme)
-mf_raster(osm, add = TRUE)
+mf_raster(osm, add = T)
 mf_map(route, lwd = 4, add = TRUE, col = "blue")
 mf_map(route, lwd = 1, col = "white", add = TRUE)
 mf_map(apotheke.sf[c(74,55),], pch = 20, col = "red", add = TRUE)
@@ -107,12 +126,14 @@ dev.off()
 
 ``` r
 # Trip 
-trips <- osrmTrip(loc = apotheke.sf[10:20,], returnclass="sf")
+trips <- osrmTrip(loc = apotheke.sf[10:20,])
 trip <- trips[[1]]$trip
+# Transform to webmercator for a better display of map tiles
+trip <- st_transform(trip, 3857)
 # Get map tiles
 osm2 <- get_tiles(x = trip, crop = TRUE, zoom = 11)
 # Map
-mf_export(osm2,filename = "img/trip.png", width = ncol(osm), theme = theme)
+mf_export(osm2,filename = "img/trip.png", width = ncol(osm2), theme = theme)
 mf_raster(osm2, add = TRUE)
 mf_map(trip, col = "black", lwd = 4, add = TRUE )
 mf_map(trip, col = c("red", "white"), lwd = 1, add = TRUE)
@@ -131,11 +152,18 @@ dev.off()
 bks <- seq(from = 0, to = 14, by = 2)
 iso <- osrmIsochrone(loc = apotheke.sf[87,], returnclass="sf",
                      breaks = bks, res = 70)
+```
+
+    ## Warning: "returnclass" is deprecated.
+
+``` r
+# Transform to webmercator for a better display of map tiles
+iso <- st_transform(iso, 3857)
 # Get map tiles
-osm3 <- get_tiles(x = iso, crop = TRUE, zoom = 11)
+osm3 <- get_tiles(x = iso, crop = TRUE, zoom = 12)
 # Map
 cols <- hcl.colors(n = 7, palette = "Emrld", alpha = 0.75, rev = F)
-mf_export(osm3,filename = "img/iso.png", width = ncol(osm), theme = theme)
+mf_export(osm3,filename = "img/iso.png", width = ncol(osm3), theme = theme)
 mf_raster(osm3, add = TRUE)
 mf_map(x = iso, var = "center", type = "choro", 
        breaks = bks, border = NA, pal = cols,
