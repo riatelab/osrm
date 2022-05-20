@@ -71,10 +71,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
   
   # adding exclude parameter
   if (!missing(exclude)) {url <- paste0(url, "&exclude=", exclude)}
-  
-  
-  
-  print(url)
+
   # Send the query
   e <- try({
     req_handle <- curl::new_handle(verbose = FALSE)
