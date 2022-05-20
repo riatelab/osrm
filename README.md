@@ -67,11 +67,6 @@ apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"),
                        quiet = TRUE)
 # Travel time matrix
 distA <- osrmTable(loc = apotheke.sf[1:5,])
-```
-
-    ## [1] "http://0.0.0.0:5000/table/v1/car/polyline(_nh_Iyu_qA`vBikZo`^dgPzkVmvDmVnnK)?annotations=duration"
-
-``` r
 distA$durations
 ```
 
@@ -120,10 +115,7 @@ mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .8,
 dev.off()
 ```
 
-![](https://raw.githubusercontent.com/riatelab/osrm/refactor/img/route.png)
-
-
-
+![](https://raw.githubusercontent.com/riatelab/osrm/master/img/route.png)
 
 ### `osrmTrip()`
 
@@ -145,7 +137,7 @@ mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .8,
 dev.off()
 ```
 
-![](https://raw.githubusercontent.com/riatelab/osrm/refactor/img/trip.png)
+![](https://raw.githubusercontent.com/riatelab/osrm/master/img/trip.png)
 
 ### `osrmIsochrone()`
 
@@ -172,7 +164,7 @@ mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .8,
 dev.off()
 ```
 
-![](https://raw.githubusercontent.com/riatelab/osrm/refactor/img/iso.png)
+![](https://raw.githubusercontent.com/riatelab/osrm/master/img/iso.png)
 
 ## Installation
 
