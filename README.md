@@ -120,7 +120,10 @@ mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .8,
 dev.off()
 ```
 
-![](https://raw.githubusercontent.com/riatelab/osrm/master/img/route.png)
+![](https://raw.githubusercontent.com/riatelab/osrm/refactor/img/route.png)
+
+
+
 
 ### `osrmTrip()`
 
@@ -142,7 +145,7 @@ mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .8,
 dev.off()
 ```
 
-![](https://raw.githubusercontent.com/riatelab/osrm/master/img/trip.png)
+![](https://raw.githubusercontent.com/riatelab/osrm/refactor/img/trip.png)
 
 ### `osrmIsochrone()`
 
@@ -169,7 +172,7 @@ mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .8,
 dev.off()
 ```
 
-![](https://raw.githubusercontent.com/riatelab/osrm/master/img/iso.png)
+![](https://raw.githubusercontent.com/riatelab/osrm/refactor/img/iso.png)
 
 ## Installation
 
