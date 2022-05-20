@@ -107,7 +107,7 @@ osrmTable <- function(loc, src, dst, exclude, measure = "duration",
   }
   # adding measure parameter
   url <- paste0(url, "annotations=", paste0(measure, collapse=',') )
-  print(url)
+  # print(url)
   e <- try({
     req_handle <- curl::new_handle(verbose = FALSE)
     curl::handle_setopt(req_handle, useragent = "osrm_R_package")
