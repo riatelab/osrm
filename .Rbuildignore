@@ -6,3 +6,5 @@
 ^img$
 ^\.github$
 ^README\.Rmd$
+^CITATION\.cff$
+^codemeta\.json$

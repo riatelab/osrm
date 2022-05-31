@@ -1,10 +1,14 @@
 
 # osrm <img src="man/figures/logo.png" align="right" width="140"/>
 
-[![Version](http://www.r-pkg.org/badges/version/osrm)](https://CRAN.R-project.org/package=osrm/)
-![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen) [![R build
+[![CRAN](https://www.r-pkg.org/badges/version/osrm)](https://cran.r-project.org/package=osrm)
+[![downloads](https://cranlogs.r-pkg.org/badges/osrm?color=brightgreen)](https://cran.r-project.org/package=osrm)
+[![R build
 status](https://github.com/riatelab/osrm/workflows/R-CMD-check/badge.svg)](https://github.com/riatelab/osrm/actions)
-<!-- [![codecov](https://codecov.io/gh/riatelab/osrm/branch/master/graph/badge.svg?token=JOJNuBCH9M)](https://codecov.io/gh/riatelab/osrm) -->
+[![codecov](https://codecov.io/gh/riatelab/osrm/branch/master/graph/badge.svg?token=JOJNuBCH9M)](https://app.codecov.io/gh/riatelab/osrm)
+[![Project Status: Active – The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
 ***Interface Between R and the OpenStreetMap-Based Routing Service
 [OSRM](http://project-osrm.org/)***
@@ -60,30 +64,22 @@ library(osrm)
 library(sf)
 ```
 
-    ## Linking to GEOS 3.9.0, GDAL 3.2.2, PROJ 7.1.0; sf_use_s2() is TRUE
+    ## Linking to GEOS 3.9.0, GDAL 3.2.2, PROJ 7.2.1; sf_use_s2() is TRUE
 
 ``` r
 apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
                        quiet = TRUE)
 # Travel time matrix
 distA <- osrmTable(loc = apotheke.sf[1:5,])
-distA$durations
 ```
-
-    ##      1    2    3    4    5
-    ## 1  0.0 21.1 33.2 21.2 12.6
-    ## 2 22.1  0.0 42.3 16.1 20.2
-    ## 3 32.7 43.0  0.0 30.5 27.4
-    ## 4 20.1 15.3 29.7  0.0 12.7
-    ## 5 10.2 20.3 26.8 12.3  0.0
 
 <small>
 
 |     |    1 |    2 |    3 |    4 |    5 |
 |:----|-----:|-----:|-----:|-----:|-----:|
-| 1   |  0.0 | 21.1 | 33.2 | 21.2 | 12.6 |
+| 1   |  0.0 | 21.1 | 33.4 | 21.2 | 12.6 |
 | 2   | 22.1 |  0.0 | 42.3 | 16.1 | 20.2 |
-| 3   | 32.7 | 43.0 |  0.0 | 30.5 | 27.4 |
+| 3   | 33.0 | 43.0 |  0.0 | 30.5 | 27.4 |
 | 4   | 20.1 | 15.3 | 29.7 |  0.0 | 12.7 |
 | 5   | 10.2 | 20.3 | 26.8 | 12.3 |  0.0 |
 

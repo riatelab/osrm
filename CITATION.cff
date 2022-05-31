@@ -1,0 +1,220 @@
+# -----------------------------------------------------------
+# CITATION file created with {cffr} R package, v0.2.2
+# See also: https://docs.ropensci.org/cffr/
+# -----------------------------------------------------------
+ 
+cff-version: 1.2.0
+message: 'To cite package "osrm" in publications use:'
+type: software
+license: GPL-3.0-only
+title: 'osrm: Interface Between R and the OpenStreetMap-Based Routing Service OSRM'
+version: 4.0.0
+abstract: An interface between R and the 'OSRM' API. 'OSRM' is a routing service based
+  on 'OpenStreetMap' data. See <http://project-osrm.org/> for more information. This
+  package allows to compute routes, trips, isochrones and travel distances matrices
+  (travel time and kilometric distance).
+authors:
+- family-names: Giraud
+  given-names: Timothée
+  email: timothee.giraud@cnrs.fr
+  orcid: https://orcid.org/0000-0002-1932-3323
+preferred-citation:
+  type: manual
+  title: 'osrm: Interface Between R and the OpenStreetMap-Based Routing Service OSRM'
+  authors:
+  - family-names: Giraud
+    given-names: Timothée
+    email: timothee.giraud@cnrs.fr
+    orcid: https://orcid.org/0000-0002-1932-3323
+  version: 4.0.0
+  abstract: An interface between R and the 'OSRM' API. 'OSRM' is a routing service
+    based on 'OpenStreetMap' data. See <http://project-osrm.org/> for more information.
+    This package allows to compute routes, trips, isochrones and travel distances
+    matrices (travel time and kilometric distance).
+  repository: https://CRAN.R-project.org/package=osrm
+  repository-code: https://github.com/riatelab/osrm
+  url: https://github.com/riatelab/osrm
+  contact:
+  - family-names: Giraud
+    given-names: Timothée
+    email: timothee.giraud@cnrs.fr
+    orcid: https://orcid.org/0000-0002-1932-3323
+  keywords:
+  - cran
+  - openstreetmap
+  - osrm
+  - r
+  - r-package
+  - shortest-paths
+  - travel
+  license: GPL-3.0-only
+  year: '2022'
+repository: https://CRAN.R-project.org/package=osrm
+repository-code: https://github.com/riatelab/osrm
+url: https://github.com/riatelab/osrm
+contact:
+- family-names: Giraud
+  given-names: Timothée
+  email: timothee.giraud@cnrs.fr
+  orcid: https://orcid.org/0000-0002-1932-3323
+keywords:
+- cran
+- openstreetmap
+- osrm
+- r
+- r-package
+- shortest-paths
+- travel
+references:
+- type: software
+  title: RcppSimdJson
+  abstract: 'RcppSimdJson: ''Rcpp'' Bindings for the ''simdjson'' Header-Only Library
+    for ''JSON'' Parsing'
+  notes: Imports
+  authors:
+  - family-names: Eddelbuettel
+    given-names: Dirk
+  - family-names: Knapp
+    given-names: Brendan
+  - family-names: Lemire
+    given-names: Daniel
+  year: '2022'
+  url: https://CRAN.R-project.org/package=RcppSimdJson
+- type: software
+  title: curl
+  abstract: 'curl: A Modern and Flexible Web Client for R'
+  notes: Imports
+  authors:
+  - family-names: Ooms
+    given-names: Jeroen
+    email: jeroen@berkeley.edu
+    orcid: https://orcid.org/0000-0002-4035-0289
+  year: '2022'
+  url: https://CRAN.R-project.org/package=curl
+- type: software
+  title: utils
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  location:
+    name: Vienna, Austria
+  year: '2022'
+  url: https://www.R-project.org/
+  institution:
+    name: R Foundation for Statistical Computing
+- type: software
+  title: isoband
+  abstract: 'isoband: Generate Isolines and Isobands from Regularly Spaced Elevation
+    Grids'
+  notes: Imports
+  authors:
+  - family-names: Wilke
+    given-names: Claus O.
+    email: wilke@austin.utexas.edu
+    orcid: https://orcid.org/0000-0002-7470-9261
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomasp85@gmail.com
+    orcid: https://orcid.org/0000-0002-5147-4711
+  year: '2022'
+  url: https://CRAN.R-project.org/package=isoband
+- type: software
+  title: methods
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  location:
+    name: Vienna, Austria
+  year: '2022'
+  url: https://www.R-project.org/
+  institution:
+    name: R Foundation for Statistical Computing
+- type: software
+  title: googlePolylines
+  abstract: 'googlePolylines: Encoding Coordinates into ''Google'' Polylines'
+  notes: Imports
+  authors:
+  - family-names: Cooley
+    given-names: David
+    email: dcooley@symbolix.com.au
+  year: '2022'
+  url: https://CRAN.R-project.org/package=googlePolylines
+- type: software
+  title: sf
+  abstract: 'sf: Simple Features for R'
+  notes: Imports
+  authors:
+  - family-names: Pebesma
+    given-names: Edzer
+    email: edzer.pebesma@uni-muenster.de
+    orcid: https://orcid.org/0000-0001-8049-7069
+  year: '2022'
+  url: https://CRAN.R-project.org/package=sf
+- type: software
+  title: 'R: A Language and Environment for Statistical Computing'
+  notes: Depends
+  authors:
+  - name: R Core Team
+  location:
+    name: Vienna, Austria
+  year: '2022'
+  url: https://www.R-project.org/
+  institution:
+    name: R Foundation for Statistical Computing
+  version: '>= 3.5.0'
+- type: software
+  title: mapsf
+  abstract: 'mapsf: Thematic Cartography'
+  notes: Suggests
+  authors:
+  - family-names: Giraud
+    given-names: Timothée
+    email: timothee.giraud@cnrs.fr
+    orcid: https://orcid.org/0000-0002-1932-3323
+  year: '2022'
+  url: https://CRAN.R-project.org/package=mapsf
+- type: software
+  title: lwgeom
+  abstract: 'lwgeom: Bindings to Selected ''liblwgeom'' Functions for Simple Features'
+  notes: Suggests
+  authors:
+  - family-names: Pebesma
+    given-names: Edzer
+    email: edzer.pebesma@uni-muenster.de
+    orcid: https://orcid.org/0000-0001-8049-7069
+  year: '2022'
+  url: https://CRAN.R-project.org/package=lwgeom
+- type: software
+  title: tinytest
+  abstract: 'tinytest: Lightweight and Feature Complete Unit Testing Framework'
+  notes: Suggests
+  authors:
+  - family-names: van der Loo
+    given-names: Mark
+    email: mark.vanderloo@gmail.com
+    orcid: https://orcid.org/0000-0002-9807-4686
+  year: '2022'
+  url: https://CRAN.R-project.org/package=tinytest
+- type: software
+  title: covr
+  abstract: 'covr: Test Coverage for Packages'
+  notes: Suggests
+  authors:
+  - family-names: Hester
+    given-names: Jim
+    email: james.f.hester@gmail.com
+  year: '2022'
+  url: https://CRAN.R-project.org/package=covr
+- type: software
+  title: maptiles
+  abstract: 'maptiles: Download and Display Map Tiles'
+  notes: Suggests
+  authors:
+  - family-names: Giraud
+    given-names: Timothée
+    email: timothee.giraud@cnrs.fr
+    orcid: https://orcid.org/0000-0002-1932-3323
+  year: '2022'
+  url: https://CRAN.R-project.org/package=maptiles
