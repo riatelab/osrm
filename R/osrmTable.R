@@ -138,5 +138,4 @@ osrmTable <- function(loc, src, dst, exclude, measure = "duration",
   output$destinations = coords$destinations
   return(output)
   
-  return(r)
 }

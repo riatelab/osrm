@@ -62,15 +62,11 @@ library(osrm)
 
 ``` r
 library(sf)
-```
-
-    ## Linking to GEOS 3.9.0, GDAL 3.2.2, PROJ 7.2.1; sf_use_s2() is TRUE
-
-``` r
 apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
                        quiet = TRUE)
 # Travel time matrix
 distA <- osrmTable(loc = apotheke.sf[1:5,])
+distA$durations
 ```
 
 <small>
@@ -101,7 +97,7 @@ osm <- get_tiles(x = route, crop = TRUE, zoom = 13)
 theme <- mf_theme(mar = c(0,0,1.2,0), inner = FALSE, line = 1.2, cex = .9, 
                   pos = "center", tab = FALSE)
 mf_export(osm,filename = "img/route.png", width = ncol(osm), theme = theme)
-mf_raster(osm, add = T)
+mf_raster(osm, add = TRUE)
 mf_map(route, lwd = 4, add = TRUE, col = "blue")
 mf_map(route, lwd = 1, col = "white", add = TRUE)
 mf_map(apotheke.sf[c(74,55),], pch = 20, col = "red", add = TRUE)
