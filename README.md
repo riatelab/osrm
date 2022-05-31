@@ -1,10 +1,14 @@
 
 # osrm <img src="man/figures/logo.png" align="right" width="140"/>
 
-[![Version](http://www.r-pkg.org/badges/version/osrm)](https://CRAN.R-project.org/package=osrm/)
-![](http://cranlogs.r-pkg.org/badges/osrm?color=brightgreen) [![R build
+[![CRAN](https://www.r-pkg.org/badges/version/osrm)](https://cran.r-project.org/package=osrm)
+[![downloads](https://cranlogs.r-pkg.org/badges/osrm?color=brightgreen)](https://cran.r-project.org/package=osrm)
+[![R build
 status](https://github.com/riatelab/osrm/workflows/R-CMD-check/badge.svg)](https://github.com/riatelab/osrm/actions)
-<!-- [![codecov](https://codecov.io/gh/riatelab/osrm/branch/master/graph/badge.svg?token=JOJNuBCH9M)](https://codecov.io/gh/riatelab/osrm) -->
+[![codecov](https://codecov.io/gh/riatelab/osrm/branch/master/graph/badge.svg?token=JOJNuBCH9M)](https://app.codecov.io/gh/riatelab/osrm)
+[![Project Status: Active – The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 
 ***Interface Between R and the OpenStreetMap-Based Routing Service
 [OSRM](http://project-osrm.org/)***
@@ -69,10 +73,10 @@ distA$durations
 
 |     |    1 |    2 |    3 |    4 |    5 |
 |:----|-----:|-----:|-----:|-----:|-----:|
-| 1   |  0.0 | 21.5 | 33.2 | 21.2 | 12.1 |
-| 2   | 22.6 |  0.0 | 41.8 | 16.1 | 20.2 |
-| 3   | 32.9 | 42.4 |  0.0 | 30.2 | 27.4 |
-| 4   | 20.1 | 15.3 | 29.4 |  0.0 | 12.9 |
+| 1   |  0.0 | 21.1 | 33.4 | 21.2 | 12.6 |
+| 2   | 22.1 |  0.0 | 42.3 | 16.1 | 20.2 |
+| 3   | 33.0 | 43.0 |  0.0 | 30.5 | 27.4 |
+| 4   | 20.1 | 15.3 | 29.7 |  0.0 | 12.7 |
 | 5   | 10.2 | 20.3 | 26.8 | 12.3 |  0.0 |
 
 </small>
@@ -82,9 +86,11 @@ distA$durations
 ``` r
 library(maptiles)
 library(mapsf)
+# Transform to webmercator for a better display of map tiles
+apotheke.sf <- st_transform(apotheke.sf, 3857)
 # Route
 route <- osrmRoute(src = apotheke.sf[74,], dst = apotheke.sf[55,],
-                   overview = "full", returnclass = "sf")
+                   overview = "full")
 # Get map tiles
 osm <- get_tiles(x = route, crop = TRUE, zoom = 13)
 # Map
@@ -107,12 +113,12 @@ dev.off()
 
 ``` r
 # Trip 
-trips <- osrmTrip(loc = apotheke.sf[10:20,], returnclass="sf")
+trips <- osrmTrip(loc = apotheke.sf[10:20,])
 trip <- trips[[1]]$trip
 # Get map tiles
 osm2 <- get_tiles(x = trip, crop = TRUE, zoom = 11)
 # Map
-mf_export(osm2,filename = "img/trip.png", width = ncol(osm), theme = theme)
+mf_export(osm2,filename = "img/trip.png", width = ncol(osm2), theme = theme)
 mf_raster(osm2, add = TRUE)
 mf_map(trip, col = "black", lwd = 4, add = TRUE )
 mf_map(trip, col = c("red", "white"), lwd = 1, add = TRUE)
@@ -129,13 +135,12 @@ dev.off()
 
 ``` r
 bks <- seq(from = 0, to = 14, by = 2)
-iso <- osrmIsochrone(loc = apotheke.sf[87,], returnclass="sf",
-                     breaks = bks, res = 70)
+iso <- osrmIsochrone(loc = apotheke.sf[87,], breaks = bks, res = 70)
 # Get map tiles
-osm3 <- get_tiles(x = iso, crop = TRUE, zoom = 11)
+osm3 <- get_tiles(x = iso, crop = TRUE, zoom = 12)
 # Map
 cols <- hcl.colors(n = 7, palette = "Emrld", alpha = 0.75, rev = F)
-mf_export(osm3,filename = "img/iso.png", width = ncol(osm), theme = theme)
+mf_export(osm3,filename = "img/iso.png", width = ncol(osm3), theme = theme)
 mf_raster(osm3, add = TRUE)
 mf_map(x = iso, var = "center", type = "choro", 
        breaks = bks, border = NA, pal = cols,

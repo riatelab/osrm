@@ -85,17 +85,7 @@ if(home){
                  osrm.profile = "driving")
   expect_equal(dim(A$durations), c(10,10))
   
-  
-  
-  
-  
-  ################### GEPAF
-  ss()
-  A <- osrmTable(src = apotheke.df[1:10,c("id","lon","lat")],
-                 dst = apotheke.df[1:10,c("id","lon","lat")], 
-                 measure = c("distance", "duration"), gepaf = TRUE)
-  expect_equal(dim(A$distances), c(10,10))
-  
+
   
   ############## ONLY LOCAL ############################################
   if(localtest){

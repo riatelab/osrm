@@ -8,7 +8,7 @@ osrmTrip(
   loc,
   exclude = NULL,
   overview = "simplified",
-  returnclass = "sf",
+  returnclass,
   osrm.server = getOption("osrm.server"),
   osrm.profile = getOption("osrm.profile")
 )
@@ -22,7 +22,7 @@ and 3 columns: identifier, longitudes and latitudes (WGS84 decimal degrees).}
 \item{overview}{"full", "simplified". Add geometry either full (detailed) or simplified 
 according to highest zoom level it could be display on.}
 
-\item{returnclass}{if returnclass="sf" an sf LINESTRING is returned.}
+\item{returnclass}{deprecated.}
 
 \item{osrm.server}{the base URL of the routing server.
 getOption("osrm.server") by default.}
@@ -56,14 +56,11 @@ library(sf)
 apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
                        quiet = TRUE)
 # Get a trip with a set of points (sf POINT)
-trips <- osrmTrip(loc = apotheke.sf[1:5, ], returnclass = "sf")
+trips <- osrmTrip(loc = apotheke.sf[1:5, ])
 mytrip <- trips[[1]]$trip
 # Display the trip
 plot(st_geometry(mytrip), col = "black", lwd = 4)
 plot(st_geometry(mytrip), col = c("red", "white"), lwd = 1, add = TRUE)
 plot(st_geometry(apotheke.sf), pch = 21, bg = "red", cex = 1, add = TRUE)
 }
-}
-\seealso{
-\link{osrmRoute}
 }
