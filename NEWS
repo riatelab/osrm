@@ -1,3 +1,11 @@
+# osrm version 4.0.0
+
+## Major changes
+* drop sp support (deprecate returnclass,to be removed in the next minor vesrion)
+* refactor to better display server error and warnings messages
+* always use googlepolylines in osrmTable
+* use RcppSimdJson instead of jsonlite
+
 # osrm version 3.5.1 (Release date 2022-01)
 
 ## Minor changes

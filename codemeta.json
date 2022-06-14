@@ -197,7 +197,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "418.542KB",
+  "fileSize": "434.589KB",
   "releaseNotes": "https://github.com/riatelab/osrm/blob/master/NEWS",
   "readme": "https://github.com/riatelab/osrm/blob/master/README.md",
   "contIntegration": ["https://github.com/riatelab/osrm/actions", "https://app.codecov.io/gh/riatelab/osrm"],
