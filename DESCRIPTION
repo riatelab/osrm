@@ -13,7 +13,7 @@ Description: An interface between R and the 'OSRM' API. 'OSRM' is a routing
     service based on 'OpenStreetMap' data. See <http://project-osrm.org/> for more
     information. This package allows to compute routes, trips, isochrones and
     travel distances matrices (travel time and kilometric distance).
-License: GPL-3
+License: GPL (>= 3)
 Imports:
     RcppSimdJson,
     curl,

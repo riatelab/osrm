@@ -8,3 +8,4 @@
 ^README\.Rmd$
 ^CITATION\.cff$
 ^codemeta\.json$
+^LICENSE\.md$
