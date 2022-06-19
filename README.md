@@ -36,11 +36,6 @@ service**:
 \> [One request per second max. No scraping, no heavy
 usage.](https://routing.openstreetmap.de/about.html)
 
-:heavy_exclamation_mark: **To consider when using OSRM**:  
-\> [“Most of the previously active core devs have either moved on to new
-roles, or are simply busy on different projects
-(…)”](https://github.com/Project-OSRM/osrm-backend/issues/5463)
-
 ## Features
 
 -   `osrmTable` Get travel time matrices between points.
