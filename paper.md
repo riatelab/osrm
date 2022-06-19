@@ -27,15 +27,15 @@ It contains five functions that interface OSRM services:
 - `osrmTrip()` uses the *trip* service to query trips,
 - `osrmIsochone()` and `osrmIsometric()` use multiple `osrmTable()` calls to create isochrones or isometric polygons.
 
-An instance of OSRM can be installed on a local or remote server and thus allowing a free and heavy usage of the routing engine. 
+An instance of OSRM can be installed on a local or remote server, allowing free and heavy usage of the routing engine.
 
 
 
 # Statement of need
 
 Distance based computations and models are at the core of many spatial analysis operations in various scientific fields.
-The simplest distance metric is the Euclidean distance (or distance as the crow flies), its computation is fairly easy and does not cost much computing power. The use of this simple metric may be well fitted to study some phenomenon, such as species distribution or pollution diffusion. 
-But whenever a research aims at studying human activities (transport of persons or goods for example) it is most of the time needed to use more realistic metrics based on road distance or travel time. 
+The simplest distance metric is the Euclidean distance (or distance as the crow flies), it is easy and inexpensive to compute. The use of this simple metric may be well fitted to study some phenomenon, such as species distribution or pollution diffusion. 
+But whenever research aims at studying human activities (transport of persons or goods for example) it is common to use more realistic metrics based on road distance or travel time.
 
 To compute these metrics with R one has to use packages that interfaces routing engines. Most routing engines are commercial, use tokens to limit the number of requests, or heavily restrict the usage of derived datasets. 
 The use of open source software based on open source data enables a high level of transparency useful to research works that aim at reproducibility. 
@@ -47,18 +47,16 @@ transport [@Danesi:2020; @Barroso_2021; @SAVARIA2021102964],
 education [@doi:10.1080/00131881.2017.1339285], 
 health [@ijerph18073813; @CHEN2021126; @wisch2022naturalistic; @SNYDER2022102526], 
 applied geography [@doi:10.1080/23754931.2018.1519458; @Kandlbinder; @doi:10.1080/23754931.2021.1895875; @Oberst2021hedonischer], 
-environment [@https://doi.org/10.1111/cobi.13326; @WALKER2021127097], 
+environmental science [@https://doi.org/10.1111/cobi.13326; @WALKER2021127097], 
 urban planning [@XU2019103452; @dey2022urban; @doi:10.1177/23998083211040519] 
-or linguistic [@ijgi8090400].  
+and linguistics [@ijgi8090400].  
 
-The use of `osrm` is also a suggested by the package for sustainable transport planning `stplanr` [@stplanr]
+The use of `osrm` is also suggested by the package for sustainable transport planning `stplanr` [@stplanr]
 
 
 # State of the field
 
-Several packages exist to compute routes, trips or distance matrices. Most of them rely on commercial and non-free software and use non-free data. See for example `hereR` [@hereR] that uses here services, `gmapsdistance` [@gmapsdistance], `googleway` [@googleway] and `mapsapi` [@mapsapi] that use Google Maps Platform or `mapboxapi` [@mapboxapi] that relies on Mapbox.  Using these packages implies many restrictions on data extraction, exploitation and sharing.  
-Other packages use open source routing engines and open data: `graphhopper` [@graphhopper] uses GraphHopper, `opentripplanner`[@openttripplanner] uses OpenTripPlanner, `valhallr` [@val] uses Valhalla.   
-Among these packages `osrm` has the advantage of using OSRM which is easy to install and to run on a local or remote server. 
+Several packages exist to compute routes, trips or distance matrices. Most of them rely on commercial and non-free software and use non-free data. See for example `hereR` [@hereR] that uses here services, `gmapsdistance` [@gmapsdistance], `googleway` [@googleway] and `mapsapi` [@mapsapi] that use Google Maps Platform or `mapboxapi` [@mapboxapi] that relies on Mapbox. Using these packages imposes many restrictions on data extraction, exploitation and sharing. Other packages use open source routing engines and open data: `graphhopper` [@graphhopper] uses GraphHopper, `opentripplanner`[@openttripplanner] uses OpenTripPlanner, `valhallr` [@val] uses Valhalla. Among these packages `osrm` has the advantage of using OSRM which is easy to install and to run on a local or remote server.
 
 
 # References
