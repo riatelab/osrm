@@ -18,7 +18,9 @@
 #' The data frame of the output contains four fields:
 #' id (id of each polygon), min and max (minimum and maximum breaks of the polygon),
 #' center (central values of classes).
-#' @importFrom sf st_as_sf st_crs st_transform st_convex_hull st_union st_intersects st_bbox
+#' @importFrom sf st_as_sf st_crs st_transform st_convex_hull st_union 
+#' st_intersects st_bbox st_buffer st_distance st_make_grid
+#' @importFrom mapiso mapiso
 #' @export
 #' @examples
 #' \dontrun{
@@ -85,7 +87,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
     speed =  20 * 1000/60
   }
   if(osrm.profile %in% c("driving","car")){
-    speed =  130 * 1000/60
+    speed =  120 * 1000/60
   }
   dmax <- tmax * speed
   
@@ -95,7 +97,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   # gentle sleeptime & param for demo server
   if(osrm.server != "https://routing.openstreetmap.de/"){
     sleeptime <- 0
-    deco <- 300
+    deco <- 450
   }else{
     sleeptime <- 1
     deco <- 75
@@ -152,7 +154,15 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   }
   ########### END OF QUICK FIX ################
   # computes isopolygones
-  iso <- isopoly(x = sgrid, breaks = breaks, var = "durations")
+  
+  iso <- mapiso(x = sgrid, breaks = breaks, var = "durations")
+  # get rid of out of breaks polys
+  iso <- iso[-nrow(iso),]
+  # iso <- isopoly(x = sgrid, breaks = breaks, var = "durations")
+  names(iso)[1:3] <- c("id", "min", "max")
+  iso[1,"min"] <- 0
+  iso$center <- iso$min + (iso$max - iso$min) / 2
+
   # proj mgmnt
   if (!is.na(oprj)){
     iso <- st_transform(x = iso, oprj)
@@ -293,8 +303,16 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
   ########### END OF QUICK FIX ################
 
   # computes isopolygones
-  iso <- isopoly(x = sgrid, breaks = breaks, var = "distances")
-
+  iso <- mapiso(x = sgrid, breaks = breaks, var = "distances")
+  # get rid of out of breaks polys
+  iso <- iso[-nrow(iso),]
+  # iso <- isopoly(x = sgrid, breaks = breaks, var = "durations")
+  names(iso)[1:3] <- c("id", "min", "max")
+  iso[1,"min"] <- 0
+  iso$center <- iso$min + (iso$max - iso$min) / 2
+  
+  
+  
   # proj mgmnt
   if (!is.na(oprj)){
     iso <- st_transform(x = iso, oprj)
