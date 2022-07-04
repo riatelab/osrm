@@ -6,7 +6,7 @@
 cff-version: 1.2.0
 message: 'To cite package "osrm" in publications use:'
 type: software
-license: GPL-3.0-only
+license: GPL-3.0-or-later
 title: 'osrm: Interface Between R and the OpenStreetMap-Based Routing Service OSRM'
 version: 4.0.0
 abstract: An interface between R and the 'OSRM' API. 'OSRM' is a routing service based
@@ -47,7 +47,7 @@ preferred-citation:
   - r-package
   - shortest-paths
   - travel
-  license: GPL-3.0-only
+  license: GPL-3.0-or-later
   year: '2022'
 repository: https://CRAN.R-project.org/package=osrm
 repository-code: https://github.com/riatelab/osrm
@@ -104,21 +104,16 @@ references:
   institution:
     name: R Foundation for Statistical Computing
 - type: software
-  title: isoband
-  abstract: 'isoband: Generate Isolines and Isobands from Regularly Spaced Elevation
-    Grids'
+  title: mapiso
+  abstract: 'mapiso: Create Contour Polygons from Regular Grids'
   notes: Imports
   authors:
-  - family-names: Wilke
-    given-names: Claus O.
-    email: wilke@austin.utexas.edu
-    orcid: https://orcid.org/0000-0002-7470-9261
-  - family-names: Pedersen
-    given-names: Thomas Lin
-    email: thomasp85@gmail.com
-    orcid: https://orcid.org/0000-0002-5147-4711
+  - family-names: Giraud
+    given-names: Timothée
+    email: timothee.giraud@cnrs.fr
+    orcid: https://orcid.org/0000-0002-1932-3323
   year: '2022'
-  url: https://CRAN.R-project.org/package=isoband
+  url: https://CRAN.R-project.org/package=mapiso
 - type: software
   title: methods
   abstract: 'R: A Language and Environment for Statistical Computing'

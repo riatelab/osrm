@@ -18,7 +18,7 @@ Imports:
     RcppSimdJson,
     curl,
     utils, 
-    isoband,
+    mapiso,
     methods,
     googlePolylines,
     sf

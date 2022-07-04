@@ -1,5 +1,5 @@
 if ( requireNamespace("tinytest", quietly=TRUE) ){
   localtest <- FALSE
-  home <- TRUE
+  home <- FALSE
   tinytest::test_package("osrm")
 }
