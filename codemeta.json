@@ -13,7 +13,7 @@
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.2.0 (2022-04-22)",
+  "runtimePlatform": "R version 4.2.1 (2022-06-23)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -150,15 +150,15 @@
     },
     "4": {
       "@type": "SoftwareApplication",
-      "identifier": "isoband",
-      "name": "isoband",
+      "identifier": "mapiso",
+      "name": "mapiso",
       "provider": {
         "@id": "https://cran.r-project.org",
         "@type": "Organization",
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=isoband"
+      "sameAs": "https://CRAN.R-project.org/package=mapiso"
     },
     "5": {
       "@type": "SoftwareApplication",
@@ -197,7 +197,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "434.589KB",
+  "fileSize": "433.601KB",
   "releaseNotes": "https://github.com/riatelab/osrm/blob/master/NEWS",
   "readme": "https://github.com/riatelab/osrm/blob/master/README.md",
   "contIntegration": ["https://github.com/riatelab/osrm/actions", "https://app.codecov.io/gh/riatelab/osrm"],
