@@ -9,3 +9,5 @@
 ^CITATION\.cff$
 ^codemeta\.json$
 ^LICENSE\.md$
+^paper.md$
+^paper.bib$

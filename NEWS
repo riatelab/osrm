@@ -5,6 +5,7 @@
 * refactor to better display server error and warnings messages
 * always use googlepolylines in osrmTable
 * use RcppSimdJson instead of jsonlite
+* use mapiso instead of isoband code for isopolygon creation
 
 # osrm version 3.5.1 (Release date 2022-01)
 
