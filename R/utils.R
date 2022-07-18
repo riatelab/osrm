@@ -1,10 +1,13 @@
 rgrid <- function(loc, dmax, res){
   # create a regular grid centerd on loc
-  boxCoordX <- seq(from = sf::st_coordinates(loc)[1,1] - dmax,
-                   to = sf::st_coordinates(loc)[1,1] + dmax,
+  coords <- sf::st_coordinates(loc)
+  xf <- coords[1,1]
+  yf <- coords[1,2]
+  boxCoordX <- seq(from = xf - dmax,
+                   to = xf + dmax,
                    length.out = res)
-  boxCoordY <- seq(from = sf::st_coordinates(loc)[1,2] - dmax,
-                   to = sf::st_coordinates(loc)[1,2] + dmax,
+  boxCoordY <- seq(from = yf - dmax,
+                   to = yf + dmax,
                    length.out = res)
   sgrid <- expand.grid(boxCoordX, boxCoordY)
   sgrid <- data.frame(ID = seq(1, nrow(sgrid), 1),
