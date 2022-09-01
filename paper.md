@@ -19,7 +19,7 @@ bibliography: paper.bib
 
 # Summary
 
-`osrm` is an interface between R and the Open Source Routing Machine (OSRM) API. OSRM [@luxen-vetter-2011] is a routing service based on OpenStreetMap (OSM) data. This package allows to compute routes, trips, isochrones and travel distances matrices (travel times and kilometric distances) based on the OSM road network. 
+`osrm` is an interface between R and the Open Source Routing Machine (OSRM) API. OSRM [@luxen-vetter-2011] is a routing service based on OpenStreetMap (OSM) data. This package enables the computation of routes, trips, isochrones and travel distances matrices (travel times and kilometric distances) based on the OSM road network. 
 It contains five functions that interface OSRM services:
 
 - `osrmTable()` uses the *table* service to query time/distance matrices,

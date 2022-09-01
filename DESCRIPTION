@@ -11,7 +11,7 @@ Authors@R: c(person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr",
     )
 Description: An interface between R and the 'OSRM' API. 'OSRM' is a routing
     service based on 'OpenStreetMap' data. See <http://project-osrm.org/> for more
-    information. This package allows to compute routes, trips, isochrones and
+    information. This package enables the computation of routes, trips, isochrones and
     travel distances matrices (travel time and kilometric distance).
 License: GPL (>= 3)
 Imports:
@@ -28,4 +28,4 @@ Suggests: mapsf, lwgeom, tinytest, covr, maptiles
 URL: https://github.com/riatelab/osrm
 BugReports: https://github.com/riatelab/osrm/issues
 Encoding: UTF-8
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1

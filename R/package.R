@@ -3,7 +3,7 @@
 #' @description An interface between R and the OSRM API.\cr
 #' OSRM is a routing
 #' service based on OpenStreetMap data. See <http://project-osrm.org/> for more
-#' information. This package allows to compute routes, trips, isochrones and
+#' information. This package enables the computation of routes, trips, isochrones and
 #' travel distances matrices (travel time and kilometric distance).\cr
 #' \itemize{
 #' \item{\code{\link{osrmTable}} Get travel time matrices between points.}

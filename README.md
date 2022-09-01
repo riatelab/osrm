@@ -18,9 +18,9 @@ developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.re
 ## Description
 
 OSRM is a routing service based on OpenStreetMap data. See
-<http://project-osrm.org/> for more information. This package allows to
-compute routes, trips, isochrones and travel distances matrices (travel
-time and kilometric distance).
+<http://project-osrm.org/> for more information. This package enables
+the computation of routes, trips, isochrones and travel distances
+matrices (travel time and kilometric distance).
 
 This package relies on the usage of a running OSRM service (tested with
 v5.26.0 of OSRM).
