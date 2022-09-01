@@ -61,6 +61,7 @@ mytrip <- trips[[1]]$trip
 # Display the trip
 plot(st_geometry(mytrip), col = "black", lwd = 4)
 plot(st_geometry(mytrip), col = c("red", "white"), lwd = 1, add = TRUE)
-plot(st_geometry(apotheke.sf), pch = 21, bg = "red", cex = 1, add = TRUE)
+plot(st_geometry(apotheke.sf[1:5, ]), pch = 21, bg = "red", cex = 1, 
+     add = TRUE)
 }
 }
