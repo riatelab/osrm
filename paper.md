@@ -20,7 +20,7 @@ bibliography: paper.bib
 # Summary
 
 `osrm` is an interface between R and the Open Source Routing Machine (OSRM) API. OSRM [@luxen-vetter-2011] is a routing service based on OpenStreetMap (OSM) data. This package enables the computation of routes, trips, isochrones and travel distances matrices (travel times and kilometric distances) based on the OSM road network. 
-It contains five functions that interface OSRM services:
+It contains five functions that interface with OSRM services:
 
 - `osrmTable()` uses the *table* service to query time/distance matrices,
 - `osrmRoute()` uses the *route* service to query routes,
@@ -34,7 +34,7 @@ An instance of OSRM can be installed on a local or remote server, allowing free 
 # Statement of need
 
 Distance based computations and models are at the core of many spatial analysis operations in various scientific fields.
-The simplest distance metric is the Euclidean distance (or distance as the crow flies), it is easy and inexpensive to compute. The use of this simple metric may be well fitted to study some phenomenon, such as species distribution or pollution diffusion. 
+The simplest distance metric is the Euclidean distance (or distance as the crow flies) which is easy and inexpensive to compute. The use of this simple metric may be well fitted to study some phenomenon, such as species distribution or pollution diffusion. 
 But whenever research aims at studying human activities (transport of persons or goods for example) it is common to use more realistic metrics based on road distance or travel time.
 
 To compute these metrics with R one has to use packages that interfaces routing engines. Most routing engines are commercial, use tokens to limit the number of requests, or heavily restrict the usage of derived datasets. 
@@ -56,7 +56,13 @@ The use of `osrm` is also suggested by the package for sustainable transport pla
 
 # State of the field
 
-Several packages exist to compute routes, trips or distance matrices. Most of them rely on commercial and non-free software and use non-free data. See for example `hereR` [@hereR] that uses here services, `gmapsdistance` [@gmapsdistance], `googleway` [@googleway] and `mapsapi` [@mapsapi] that use Google Maps Platform or `mapboxapi` [@mapboxapi] that relies on Mapbox. Using these packages imposes many restrictions on data extraction, exploitation and sharing. Other packages use open source routing engines and open data: `graphhopper` [@graphhopper] uses GraphHopper, `opentripplanner`[@openttripplanner] uses OpenTripPlanner, `valhallr` [@val] uses Valhalla. Among these packages `osrm` has the advantage of using OSRM which is easy to install and to run on a local or remote server.
+Several packages exist to compute routes, trips or distance matrices. Most of them rely on commercial and non-free software and use non-free data. See for example `hereR` [@hereR] that uses here services, `gmapsdistance` [@gmapsdistance], `googleway` [@googleway] and `mapsapi` [@mapsapi] that use Google Maps Platform or `mapboxapi` [@mapboxapi] that relies on Mapbox. Using these packages imposes many restrictions on data extraction, analysis and sharing. Other packages use open source routing engines and open data: `graphhopper` [@graphhopper] uses GraphHopper, `opentripplanner` [@openttripplanner] uses OpenTripPlanner, `valhallr` [@val] uses Valhalla. `osrmr` [@osrmr] uses OSRM, it exposes only a small subset of OSRM services and does not handle spatial data formats. 
+Among these packages, `osrm` has the advantage of using OSRM, which is easy to install and run on a local or remote server, of giving access to most OSRM services and of handling spatial data formats. 
+
+# Features 
+This is a short overview of the main features of `osrm`. The dataset used here is shipped with the package, it is a sample of 100 random pharmacies in Berlin ([© OpenStreetMap contributors](https://www.openstreetmap.org/copyright/en) stored in a [geopackage](https://www.geopackage.org/) file. 
+
+
 
 
 # References
