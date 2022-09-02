@@ -3,11 +3,11 @@
 #' @description Build and send an OSRM API query to get the travel geometry 
 #' between two points. This function interfaces the \emph{route} OSRM service. 
 #' @param src a vector of identifier, longitude and latitude (WGS84), a vector 
-#' of longitude and latitude (WGS84) or an sf object of the origine point.
+#' of longitude and latitude (WGS84) or an sf object of the origin point.
 #' @param dst a vector of identifier, longitude and latitude (WGS84), a vector 
 #' of longitude and latitude (WGS84) or an sf object of the destination point.
 #' @param loc a data.frame of identifier, longitude and latitude (WGS84) 
-#' or an sf object of via points. The first row is the origine, the last row 
+#' or an sf object of via points. The first row is the origin, the last row 
 #' is the destination.
 #' @param overview "full", "simplified" or FALSE. Use "full" to return the 
 #' detailed geometry, use "simplified" to return a simplified geometry, use 
@@ -19,7 +19,7 @@
 #' @return
 #' An sf LINESTRING is returned. \cr
 #' The sf LINESTRING contains 4 fields: identifiers of 
-#' origine and destination, travel time in minutes and travel distance in 
+#' origin and destination, travel time in minutes and travel distance in 
 #' kilometers.\cr\cr
 #' If overview is FALSE, a named numeric vector is returned. It contains travel 
 #' time (in minutes) and travel distance (in kilometers).

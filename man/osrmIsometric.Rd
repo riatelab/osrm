@@ -16,7 +16,7 @@ osrmIsometric(
 }
 \arguments{
 \item{loc}{a numeric vector of longitude and latitude (WGS84), an sf object
-of the origine point.}
+of the origin point.}
 
 \item{breaks}{a numeric vector of isometric values (in meters).}
 

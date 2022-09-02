@@ -3,7 +3,7 @@
 #' @description Based on \code{\link{osrmTable}}, this function buids polygons
 #'  of isochrones.
 #' @param loc a numeric vector of longitude and latitude (WGS84), an sf object
-#' of the origine point.
+#' of the origin point.
 #' @param breaks a numeric vector of isochrone values (in minutes).
 #' @param exclude pass an optional "exclude" request option to the OSRM API.
 #' @param res number of points used to compute isochrones, one side of the square
@@ -178,7 +178,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
 #' @description Based on \code{\link{osrmTable}}, this function buids polygons
 #'  of isometric road distances.
 #' @param loc a numeric vector of longitude and latitude (WGS84), an sf object
-#' of the origine point.
+#' of the origin point.
 #' @param breaks a numeric vector of isometric values (in meters).
 #' @param exclude pass an optional "exclude" request option to the OSRM API.
 #' @param res number of points used to compute isochrones, one side of the square
