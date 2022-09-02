@@ -171,4 +171,6 @@ install.packages("osrm")
 
 One can contribute to the package through [pull
 requests](https://github.com/riatelab/osrm/pulls) and report issues or
-ask questions [here](https://github.com/riatelab/osrm/issues).
+ask questions [here](https://github.com/riatelab/osrm/issues). See the
+[CONTRIBUTING.md](https://github.com/riatelab/osrm/blob/master/CONTRIBUTING.md)
+file for detailed instructions.
