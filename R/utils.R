@@ -49,7 +49,53 @@ coord_format <- function(res, src, dst){
   )
 }
 
-
+input_table <- function(x, id){
+  if (inherits(x = x, what = c("sfc", "sf"))) {
+    lx <- length(st_geometry(x))
+    if (lx < 1){
+      stop(paste0('"', id, '" should have at least 1 row or element.'), 
+           call. = FALSE)
+    }
+    type <- sf::st_geometry_type(x, by_geometry = TRUE)
+    type <- as.character(unique(type))
+    if (length(type) > 1 || type != "POINT") {
+      stop(paste0('"', id, '" geometry should be of type POINT.'), 
+           call. = FALSE)    }
+    if(inherits(x, "sfc")){
+      idx <- 1:lx
+    }else{
+      idx <- row.names(x)
+    }
+    x <- sf::st_transform(x = x, crs = 4326)
+    coords <- sf::st_coordinates(x)
+    x <- data.frame(id = idx, 
+                    lon = clean_coord(coords[,1]), 
+                    lat = clean_coord(coords[,2]))
+    return(x)
+  }
+  if(inherits(x = x, what = c("data.frame", "matrix"))){
+    lx <- nrow(x)
+    if(lx < 1){
+      stop(paste0('"', id, '" should have at least 1 row or element.'), 
+           call. = FALSE)
+    }
+    if(ncol(x) == 2 & is.numeric(x[,1]) & is.numeric(x[,2])){
+      x <- data.frame(id = row.names(x), 
+                      lon = clean_coord(x[,1]), 
+                      lat = clean_coord(x[,2]))
+      return(x)
+    }else{
+      stop(paste0('"', id, '" should contain coordinates.'), 
+           call. = FALSE)
+    }
+  }else{
+    stop(paste0('"', id, '" should be ', 
+                'a data.frame or a matrix ', 
+                'of coordinates, an sfc POINT object or an ', 
+                'sf POINT objetc.'), 
+         call. = FALSE)
+  }
+}
 
 
 # x <- x_v
@@ -107,7 +153,8 @@ input_route <- function(x, id, single = TRUE){
       }
     }else{
       stop(paste0('"', id, '" should be a vector of coordinates, ', 
-                  'a data.frame of coordinates, an sfc POINT object or an ', 
+                  'a data.frame or a matrix ', 
+                  'of coordinates, an sfc POINT object or an ', 
                   'sf POINT objetc.'), 
            call. = FALSE)
     }
@@ -116,7 +163,8 @@ input_route <- function(x, id, single = TRUE){
       oprj <- st_crs(x)
       lx <- length(st_geometry(x))
       if (lx < 2){
-        message('"loc" should have at least 2 rows or elements.')
+        stop('"loc" should have at least 2 rows or elements.', 
+             call. = FALSE)
       }
       type <- sf::st_geometry_type(x, by_geometry = FALSE)
       type <- as.character(unique(type))
@@ -155,12 +203,16 @@ input_route <- function(x, id, single = TRUE){
       }
     }else{
       stop(paste0('"loc" should be a vector of coordinates, ', 
-                  'a data.frame of coordinates, an sfc POINT object or an ', 
-                  'sf POINT objetc.'), 
+                  'a data.frame or a matrix ', 
+                  'of coordinates, an sfc POINT object or an ', 
+                  'sf POINT object.'), 
            call. = FALSE)
     }
   }
 }
+
+
+
 
 
 

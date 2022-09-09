@@ -5,9 +5,9 @@
 \title{Get Travel Time Matrices Between Points}
 \usage{
 osrmTable(
-  loc,
   src,
-  dst,
+  dst = src,
+  loc,
   exclude,
   measure = "duration",
   osrm.server = getOption("osrm.server"),
@@ -15,19 +15,28 @@ osrmTable(
 )
 }
 \arguments{
-\item{loc}{a data frame containing 3 fields: points identifiers, longitudes 
-and latitudes (WGS84). It can also be an sf object. If so, row names are used 
-as identifiers.
-If loc parameter is used, all pair-wise distances are computed.}
+\item{src}{origin points. 
+\code{src} can be: \itemize{
+  \item a data.frame of longitudes and latitudes (WGS 84),
+  \item a matrix of longitudes and latitudes (WGS 84),
+  \item an sfc object of type POINT,
+  \item an sf object of type POINT.
+}}
 
-\item{src}{a data frame containing origin points identifiers, longitudes 
-and latitudes (WGS84). It can also be an sf object. If so, row names are used
-as identifiers. 
-If dst and src parameters are used, only pairs between scr/dst are computed.}
+\item{dst}{destination. 
+\code{dst} can be: \itemize{
+  \item a data.frame of longitudes and latitudes (WGS 84),
+  \item a matrix of longitudes and latitudes (WGS 84),
+  \item an sfc object of type POINT,
+  \item an sf object of type POINT.
+}}
 
-\item{dst}{a data frame containing destination points identifiers, longitudes 
-and latitudes (WGS84). It can also be an sf object. If so, row names are used 
-as identifiers.}
+\item{loc}{points. \code{loc} can be: \itemize{
+  \item a data.frame of longitudes and latitudes (WGS 84),
+  \item a matrix of longitudes and latitudes (WGS 84),
+  \item an sfc object of type POINT,
+  \item an sf object of type POINT.
+}}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API
 (not allowed with the OSRM demo server).}
@@ -49,7 +58,10 @@ times (WGS84).
 }
 \description{
 Build and send OSRM API queries to get travel time matrices 
-between points. This function interfaces the \emph{table} OSRM service.
+between points. This function interfaces the \emph{table} OSRM service. 
+Use \code{src} and \code{dst} to set different origins and destinations.\cr
+Use \code{loc} to compute travel times or travel distances between all 
+points.
 }
 \details{
 If loc, src or dst are data frames we assume that the 3 first 
