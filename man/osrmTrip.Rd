@@ -54,8 +54,8 @@ and total distance (in kilometers) of the trip.}
 \description{
 Build and send an OSRM API query to get the shortest travel 
 geometry between multiple unordered points.
-This function interfaces the \emph{trip} OSRM service. Use this function to resolve the 
-travelling salesman problem.
+This function interfaces the \emph{trip} OSRM service.\cr
+Use this function to resolve the travelling salesman problem.
 }
 \details{
 As stated in the OSRM API, if input coordinates can not be joined by a single trip 

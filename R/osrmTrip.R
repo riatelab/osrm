@@ -2,8 +2,8 @@
 #' @title Get the Travel Geometry Between Multiple Unordered Points
 #' @description Build and send an OSRM API query to get the shortest travel 
 #' geometry between multiple unordered points.
-#' This function interfaces the \emph{trip} OSRM service. Use this function to resolve the 
-#' travelling salesman problem.
+#' This function interfaces the \emph{trip} OSRM service.\cr
+#' Use this function to resolve the travelling salesman problem.
 #' @param loc starting point and waypoints to reach along the 
 #' route. \code{loc} can be: \itemize{
 #'   \item a data.frame of longitudes and latitudes (WGS 84),

@@ -58,7 +58,7 @@ times (WGS84).
 }
 \description{
 Build and send OSRM API queries to get travel time matrices 
-between points. This function interfaces the \emph{table} OSRM service. 
+between points. This function interfaces the \emph{table} OSRM service.\cr 
 Use \code{src} and \code{dst} to set different origins and destinations.\cr
 Use \code{loc} to compute travel times or travel distances between all 
 points.
