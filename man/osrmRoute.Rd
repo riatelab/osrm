@@ -24,6 +24,7 @@ osrmRoute(
   \item an sfc object of type POINT,
   \item an sf object of type POINT.
 }
+If relevant row names are used as identifiers.\cr
 If \code{src} is a data.frame, a matrix, an sfc object or an sf object then 
 only the first row or element is considered.}
 
@@ -35,6 +36,7 @@ only the first row or element is considered.}
   \item an sfc object of type POINT,
   \item an sf object of type POINT.
 }
+If relevant row names are used as identifiers.\cr
 If \code{dst} is a data.frame, a matrix, an sfc object or an sf object then 
 only the first row or element is considered.}
 
@@ -45,8 +47,10 @@ route. \code{loc} can be: \itemize{
   \item an sfc object of type POINT,
   \item an sf object of type POINT.
 }
-The first row or element is the starting point, the last row or element is 
-the destination.}
+The first row or element is the starting point, the waypoints are used in 
+the order they are stored in \code{loc}, the last row or element is 
+the destination.\cr
+If relevant row names are used as identifiers.\cr}
 
 \item{overview}{"full", "simplified" or FALSE. Use "full" to return the 
 detailed geometry, use "simplified" to return a simplified geometry, use 
@@ -63,10 +67,8 @@ FALSE to return only time and distance.}
 \value{
 The output of this function is an sf LINESTRING of the shortest route.\cr
 It contains 4 fields: \itemize{
-  \item starting point identifier (src row name or "src" if src is a vector 
-  of coordinates or an sfc object)
-  \item destination identifier (dst row name or "dst" if dst is a vector 
-  of coordinates or an sfc object)
+  \item starting point identifier
+  \item destination identifier
   \item travel time in minutes
   \item travel distance in kilometers.
   }

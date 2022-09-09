@@ -80,7 +80,11 @@ input_table <- function(x, id){
            call. = FALSE)
     }
     if(ncol(x) == 2 & is.numeric(x[,1]) & is.numeric(x[,2])){
-      x <- data.frame(id = row.names(x), 
+      
+      rn <- row.names(x)
+      if(is.null(rn)){rn <- 1:lx}
+      
+      x <- data.frame(id = rn, 
                       lon = clean_coord(x[,1]), 
                       lat = clean_coord(x[,2]))
       return(x)
@@ -99,7 +103,7 @@ input_table <- function(x, id){
 
 
 # x <- x_v
-input_route <- function(x, id, single = TRUE){
+input_route <- function(x, id, single = TRUE, all.ids = FALSE){
   # test various cases (vector, data.frame, sf or sfc)
   oprj <- NA
   if(single){
@@ -142,6 +146,7 @@ input_route <- function(x, id, single = TRUE){
         x <- x[1, , drop = FALSE]
       }
       idx <- row.names(x)
+      if(is.null(idx)){idx <- id}
       x <- unlist(x)
       if(length(x) == 2 & is.numeric(x)){
         lon <- clean_coord(x[1])
@@ -174,6 +179,7 @@ input_route <- function(x, id, single = TRUE){
       if(inherits(x, "sfc")){
         id1 <- "src"
         id2 <- "dst"
+        if(all.ids){rn <- 1:lx}
       }else{
         rn <- row.names(x)
         id1 <- rn[1]
@@ -183,26 +189,35 @@ input_route <- function(x, id, single = TRUE){
       coords <- sf::st_coordinates(x)
       lon <- clean_coord(coords[,1])
       lat <- clean_coord(coords[,2])
-      return(list(id1 = id1, id2 = id2, lon = lon, lat = lat, oprj = oprj))
+      if(!all.ids){
+        return(list(id1 = id1, id2 = id2, lon = lon, lat = lat, oprj = oprj))
+      }else{
+        return(list(id = rn, lon = lon, lat = lat, oprj = oprj))
+      }
     }
     if(inherits(x = x, what = c("data.frame", "matrix"))){
       lx <- nrow(x)
       if(lx < 2){
-        message('"loc" should have at least 2 rows.')
+        stop('"loc" should have at least 2 rows.', call. = FALSE)
       }
       if(ncol(x) == 2 & is.numeric(x[,1]) & is.numeric(x[,2])){
         lon <- clean_coord(x[,1])
         lat <- clean_coord(x[,2])
         rn <- row.names(x)
+        if(is.null(rn)){rn <- 1:lx}
         id1 <- rn[1]
         id2 <- rn[lx]
-        return(list(id1 = id1, id2 = id2, lon = lon, lat = lat, oprj = oprj))
+        if(!all.ids){
+          return(list(id1 = id1, id2 = id2, lon = lon, lat = lat, oprj = oprj))
+        }else{
+          return(list(id = rn, lon = lon, lat = lat, oprj = oprj))
+        }
       }else{
         stop(paste0('"loc" should contain coordinates.'), 
              call. = FALSE)
       }
     }else{
-      stop(paste0('"loc" should be a vector of coordinates, ', 
+      stop(paste0('"loc" should be ', 
                   'a data.frame or a matrix ', 
                   'of coordinates, an sfc POINT object or an ', 
                   'sf POINT object.'), 

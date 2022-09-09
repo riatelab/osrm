@@ -14,8 +14,15 @@ osrmTrip(
 )
 }
 \arguments{
-\item{loc}{an sf object of the waypoints, or a data.frame with points as rows
-and 3 columns: identifier, longitudes and latitudes (WGS84 decimal degrees).}
+\item{loc}{starting point and waypoints to reach along the 
+route. \code{loc} can be: \itemize{
+  \item a data.frame of longitudes and latitudes (WGS 84),
+  \item a matrix of longitudes and latitudes (WGS 84),
+  \item an sfc object of type POINT,
+  \item an sf object of type POINT.
+}
+The first row or element is the starting point.\cr
+Row names, if relevant, or element indexes are used as identifiers.}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API.}
 
@@ -24,30 +31,35 @@ according to highest zoom level it could be display on.}
 
 \item{returnclass}{deprecated.}
 
-\item{osrm.server}{the base URL of the routing server.
-getOption("osrm.server") by default.}
+\item{osrm.server}{the base URL of the routing server.}
 
-\item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot"
-(when using the routing.openstreetmap.de test server).
-getOption("osrm.profile") by default.}
+\item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot".}
 }
 \value{
-A list of connected components. Each component contains:
-
+A list of connected components is returned. Each component contains:
 \describe{
-\item{trip}{An sf LINESTRING (loc's CRS if there is one, WGS84 if not)
-containing a line for each step of the trip.}
-\item{summary}{A list with 2 components: duration (in minutes)
-and distance (in kilometers).}
+\item{trip}{
+An sf LINESTRING. If loc is a data.frame or a matrix the coordinate 
+reference system (CRS) of the route is EPSG:4326 (WGS84). If loc is an sfc or 
+sf object, the route has the same CRS as loc.\cr
+Each line of the returned route is a step of the trip. The object has four 
+columns: start (identifier of the starting point), 
+end (identifier of the destination), duration (duration of the step in minutes), 
+distance (length of the step in kilometers).
+}
+\item{summary}{A list with 2 components: total duration (in minutes)
+and total distance (in kilometers) of the trip.}
 }
 }
 \description{
-Build and send an OSRM API query to get the shortest travel geometry between multiple points.
-This function interfaces the \emph{trip} OSRM service.
+Build and send an OSRM API query to get the shortest travel 
+geometry between multiple unordered points.
+This function interfaces the \emph{trip} OSRM service. Use this function to resolve the 
+travelling salesman problem.
 }
 \details{
 As stated in the OSRM API, if input coordinates can not be joined by a single trip 
-(e.g. the coordinates are on several disconnecte islands) multiple trips for 
+(e.g. the coordinates are on several disconnected islands) multiple trips for 
 each connected component are returned.
 }
 \examples{
