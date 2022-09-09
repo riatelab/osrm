@@ -1,14 +1,44 @@
 #' @name osrmRoute
 #' @title Get the Shortest Path Between Two Points
 #' @description Build and send an OSRM API query to get the travel geometry 
-#' between two points. This function interfaces the \emph{route} OSRM service. 
-#' @param src a vector of identifier, longitude and latitude (WGS84), a vector 
-#' of longitude and latitude (WGS84) or an sf object of the origin point.
-#' @param dst a vector of identifier, longitude and latitude (WGS84), a vector 
-#' of longitude and latitude (WGS84) or an sf object of the destination point.
-#' @param loc a data.frame of identifier, longitude and latitude (WGS84) 
-#' or an sf object of via points. The first row is the origin, the last row 
-#' is the destination.
+#' between two points. This function interfaces with the \emph{route} OSRM 
+#' service.\cr
+#' Use \code{src} and \code{dst} to get the shortest direct route between
+#' two points.\cr
+#' Use \code{loc} to get the shortest route between two points using
+#' waypoints. 
+#' 
+#' 
+#' @param src starting point of the route. 
+#' \code{src} can be: \itemize{
+#'   \item a vector of coordinates (longitude and latitude, WGS 84), 
+#'   \item a data.frame of longitudes and latitudes (WGS 84),
+#'   \item a matrix of longitudes and latitudes (WGS 84),
+#'   \item an sfc object of type POINT,
+#'   \item an sf object of type POINT.
+#'}
+#' If \code{src} is a data.frame, a matrix, an sfc object or an sf object then 
+#' only the first row or element is considered.
+#' @param dst destination of the route. 
+#' \code{dst} can be: \itemize{
+#'   \item a vector of coordinates (longitude and latitude, WGS 84), 
+#'   \item a data.frame of longitudes and latitudes (WGS 84),
+#'   \item a matrix of longitudes and latitudes (WGS 84),
+#'   \item an sfc object of type POINT,
+#'   \item an sf object of type POINT.
+#'}
+#' If \code{dst} is a data.frame, a matrix, an sfc object or an sf object then 
+#' only the first row or element is considered.
+#' 
+#' @param loc starting point, waypoints (optional) and destination of the 
+#' route. \code{loc} can be: \itemize{
+#'   \item a data.frame of longitudes and latitudes (WGS 84),
+#'   \item a matrix of longitudes and latitudes (WGS 84),
+#'   \item an sfc object of type POINT,
+#'   \item an sf object of type POINT.
+#'}
+#' The first row or element is the starting point, the last row or element is 
+#' the destination.
 #' @param overview "full", "simplified" or FALSE. Use "full" to return the 
 #' detailed geometry, use "simplified" to return a simplified geometry, use 
 #' FALSE to return only time and distance.
@@ -16,11 +46,21 @@
 #' @param osrm.server the base URL of the routing server.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot".
 #' @param returnclass deprecated.
+
 #' @return
-#' An sf LINESTRING is returned. \cr
-#' The sf LINESTRING contains 4 fields: identifiers of 
-#' origin and destination, travel time in minutes and travel distance in 
-#' kilometers.\cr\cr
+#' The output of this function is an sf LINESTRING of the shortest route.\cr
+#' It contains 4 fields: \itemize{
+#'   \item starting point identifier (src row name or "src" if src is a vector 
+#'   of coordinates or an sfc object)
+#'   \item destination identifier (dst row name or "dst" if dst is a vector 
+#'   of coordinates or an sfc object)
+#'   \item travel time in minutes
+#'   \item travel distance in kilometers.
+#'   }
+#' If src (or loc) is a vector, a data.frame or a matrix the coordinate 
+#' reference system (CRS) of the route is EPSG:4326 (WGS84).\cr 
+#' If src (or loc) is an sfc or sf object, the route has the same CRS 
+#' as src (or loc).\cr\cr
 #' If overview is FALSE, a named numeric vector is returned. It contains travel 
 #' time (in minutes) and travel distance (in kilometers).
 #' @importFrom sf st_as_sfc st_crs st_geometry st_sf st_as_sf st_transform
@@ -74,7 +114,11 @@
 #' plot(st_geometry(route7), col = "red", add = TRUE) # car route, indirect = good!
 #' }
 #' @export
-osrmRoute <- function(src, dst, loc, overview = "simplified", exclude,
+osrmRoute <- function(src, 
+                      dst, 
+                      loc, 
+                      overview = "simplified", 
+                      exclude,
                       returnclass,
                       osrm.server = getOption("osrm.server"),
                       osrm.profile = getOption("osrm.profile")){
@@ -86,9 +130,8 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude,
   if(!missing(returnclass)){
     warning('"returnclass" is deprecated.', call. = FALSE)
   }
-  
-  
   url <- base_url(osrm.server, osrm.profile, "route")
+  
   
   if(missing(loc)){
     # From src to dst
@@ -110,6 +153,7 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude,
       collapse=";"
     )
   }
+  
   
   url <- paste0(url, coords, 
                 "?alternatives=false&geometries=polyline&steps=false&overview=", 
@@ -155,4 +199,3 @@ osrmRoute <- function(src, dst, loc, overview = "simplified", exclude,
   return(rosf)
   
 }
-

@@ -52,65 +52,117 @@ coord_format <- function(res, src, dst){
 
 
 
+# x <- x_v
 input_route <- function(x, id, single = TRUE){
-  # test various cases (vector, data.frame, with or without id, sf)
+  # test various cases (vector, data.frame, sf or sfc)
   oprj <- NA
   if(single){
     if(is.vector(x)){
-      if(length(x) == 2){
-        id <- id
-        i <- 0
+      if(length(x) == 2 & is.numeric(x)){
+        lon <- clean_coord(x[1])
+        lat <- clean_coord(x[2])  
+        return(list(id = id, lon = lon, lat = lat, oprj = oprj))
       }else{
-        i <- 1
-        id <- x[i]
+        stop(paste0('"', id, '" should be a vector of coordinates, ', 
+                    'i.e., c(lon, lat).'), 
+             call. = FALSE)
       }
-      lon <- clean_coord(x[i+1])
-      lat <- clean_coord(x[i+2])       
     }
-    if(is.data.frame(x)){
-      if(methods::is(x,"sf")){
-        oprj <- sf::st_crs(x)
-        x <- sf_2_df(x)
-        i <- 1
-        id <- x[1, i]
+    if (inherits(x = x, what = c("sfc", "sf"))) {
+      oprj <- st_crs(x)
+      if (length(st_geometry(x))>1){
+        message(paste0('Only the first row/element of "', id, '" is used.'))
+      }
+      if(inherits(x, "sfc")){
+        x <- x[1]
+        idx <- id
       }else{
-        if(length(x) == 2){
-          i <- 0
-          id <- id
-        }else{
-          i <- 1
-          id <- x[1, i]
-        }
+        x <- x[1, ]
+        idx <- row.names(x)
       }
-      lon <- clean_coord(x[1, i+1])
-      lat <- clean_coord(x[1, i+2])       
+      if(sf::st_geometry_type(x, by_geometry = FALSE) != "POINT"){
+        stop(paste0('"', id, '" geometry should be of type POINT.'), 
+             call. = FALSE)
+      }
+      x <- sf::st_transform(x = x, crs = 4326)
+      coords <- sf::st_coordinates(x)
+      lon <- clean_coord(coords[,1])
+      lat <- clean_coord(coords[,2])
+      return(list(id = idx, lon = lon, lat = lat, oprj = oprj))
     }
-    return(list(id = id, lon = lon, lat = lat, oprj = oprj))
+    if(inherits(x = x, what = c("data.frame", "matrix"))){
+      if(nrow(x) > 1){
+        message(paste0('Only the first row of "', id, '" is used.'))
+        x <- x[1, , drop = FALSE]
+      }
+      idx <- row.names(x)
+      x <- unlist(x)
+      if(length(x) == 2 & is.numeric(x)){
+        lon <- clean_coord(x[1])
+        lat <- clean_coord(x[2])  
+        return(list(id = idx, lon = lon, lat = lat, oprj = oprj))
+      }else{
+        stop(paste0('"', id, '" should contain coordinates.'), 
+             call. = FALSE)
+      }
+    }else{
+      stop(paste0('"', id, '" should be a vector of coordinates, ', 
+                  'a data.frame of coordinates, an sfc POINT object or an ', 
+                  'sf POINT objetc.'), 
+           call. = FALSE)
+    }
   }else{
-    if(is.data.frame(x)){
-      if(methods::is(x,"sf")){
-        oprj <- sf::st_crs(x)
-        x <- sf_2_df(x)
-        i <- 1
-        id1 <- x[1,1]
-        id2 <- x[nrow(x),1]
-      }else{
-        if(length(x) == 2){
-          i <- 0
-          id1 <- "src"
-          id2 <- "dst"
-        }else{
-          i <- 1
-          id1 <- x[1,1]
-          id2 <- x[nrow(x),1]
-        }
+    if (inherits(x = x, what = c("sfc", "sf"))) {
+      oprj <- st_crs(x)
+      lx <- length(st_geometry(x))
+      if (lx < 2){
+        message('"loc" should have at least 2 rows or elements.')
       }
-      lon <- clean_coord(x[, i+1])
-      lat <- clean_coord(x[, i+2])       
+      type <- sf::st_geometry_type(x, by_geometry = FALSE)
+      type <- as.character(unique(type))
+      if (length(type) > 1 || type != "POINT") {
+        stop('"loc" geometry should be of type POINT', call. = FALSE)
+      }
+      if(inherits(x, "sfc")){
+        id1 <- "src"
+        id2 <- "dst"
+      }else{
+        rn <- row.names(x)
+        id1 <- rn[1]
+        id2 <- rn[lx]
+      }
+      x <- sf::st_transform(x = x, crs = 4326)
+      coords <- sf::st_coordinates(x)
+      lon <- clean_coord(coords[,1])
+      lat <- clean_coord(coords[,2])
+      return(list(id1 = id1, id2 = id2, lon = lon, lat = lat, oprj = oprj))
     }
-    return(list(id1 = id1, id2 = id2, lon = lon, lat = lat, oprj = oprj))
+    if(inherits(x = x, what = c("data.frame", "matrix"))){
+      lx <- nrow(x)
+      if(lx < 2){
+        message('"loc" should have at least 2 rows.')
+      }
+      if(ncol(x) == 2 & is.numeric(x[,1]) & is.numeric(x[,2])){
+        lon <- clean_coord(x[,1])
+        lat <- clean_coord(x[,2])
+        rn <- row.names(x)
+        id1 <- rn[1]
+        id2 <- rn[lx]
+        return(list(id1 = id1, id2 = id2, lon = lon, lat = lat, oprj = oprj))
+      }else{
+        stop(paste0('"loc" should contain coordinates.'), 
+             call. = FALSE)
+      }
+    }else{
+      stop(paste0('"loc" should be a vector of coordinates, ', 
+                  'a data.frame of coordinates, an sfc POINT object or an ', 
+                  'sf POINT objetc.'), 
+           call. = FALSE)
+    }
   }
-} 
+}
+
+
 
 
 # construct the base url
