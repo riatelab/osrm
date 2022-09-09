@@ -64,8 +64,8 @@ Use \code{loc} to compute travel times or travel distances between all
 points.
 }
 \details{
-If loc, src or dst are data frames we assume that the 3 first 
-columns of the data.frame are: identifiers, longitudes and latitudes.\cr
+If loc, src or dst are data.frames or matrices it must have two
+colums containing longitudes and latitudes in WGS 84.\cr
 The OSRM demo server does not allow large queries (more than 10000 distances 
 or durations).
 }
