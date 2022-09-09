@@ -84,7 +84,7 @@ service.\cr
 Use \code{src} and \code{dst} to get the shortest direct route between
 two points.\cr
 Use \code{loc} to get the shortest route between two points using
-waypoints.
+ordered waypoints.
 }
 \examples{
 \dontrun{
