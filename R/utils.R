@@ -79,7 +79,7 @@ input_table <- function(x, id){
       stop(paste0('"', id, '" should have at least 1 row or element.'), 
            call. = FALSE)
     }
-    if(ncol(x) == 2 & is.numeric(x[,1]) & is.numeric(x[,2])){
+    if(ncol(x) == 2 && is.numeric(x[,1]) && is.numeric(x[,2])){
       
       rn <- row.names(x)
       if(is.null(rn)){rn <- 1:lx}
@@ -96,7 +96,7 @@ input_table <- function(x, id){
     stop(paste0('"', id, '" should be ', 
                 'a data.frame or a matrix ', 
                 'of coordinates, an sfc POINT object or an ', 
-                'sf POINT objetc.'), 
+                'sf POINT object.'), 
          call. = FALSE)
   }
 }
@@ -160,7 +160,7 @@ input_route <- function(x, id, single = TRUE, all.ids = FALSE){
       stop(paste0('"', id, '" should be a vector of coordinates, ', 
                   'a data.frame or a matrix ', 
                   'of coordinates, an sfc POINT object or an ', 
-                  'sf POINT objetc.'), 
+                  'sf POINT object.'), 
            call. = FALSE)
     }
   }else{
@@ -200,7 +200,7 @@ input_route <- function(x, id, single = TRUE, all.ids = FALSE){
       if(lx < 2){
         stop('"loc" should have at least 2 rows.', call. = FALSE)
       }
-      if(ncol(x) == 2 & is.numeric(x[,1]) & is.numeric(x[,2])){
+      if(ncol(x) == 2 && is.numeric(x[,1]) && is.numeric(x[,2])){
         lon <- clean_coord(x[,1])
         lat <- clean_coord(x[,2])
         rn <- row.names(x)
@@ -250,33 +250,10 @@ clean_coord <- function(x){
 }
 
 
-# this function takes an sf and transforms it into a dataframe  
-sf_2_df <- function(x){    
-  # transform to centroid and to wgs84
-  if (methods::is(sf::st_geometry(x), "sfc_GEOMETRY") ||  
-      methods::is(sf::st_geometry(x), "sfc_GEOMETRYCOLLECTION")){
-    x <- sf::st_collection_extract(x, "POLYGON", warn = FALSE)
-  }
-  if (methods::is(sf::st_geometry(x), "sfc_POLYGON") || 
-      methods::is(sf::st_geometry(x), "sfc_MULTIPOLYGON")){
-    sf::st_geometry(x) <- sf::st_centroid(x = sf::st_geometry(x),
-                                          of_largest_polygon = TRUE)
-  }
-  x <- sf::st_transform(x = x, crs = 4326)
-  coords <- sf::st_coordinates(x)
-  x <- data.frame(id = row.names(x), 
-                  lon = clean_coord(coords[,1]), 
-                  lat = clean_coord(coords[,2]))
-  return(x)
-}
-
-
 encode_coords <- function(x){
-  
   x$lat <- as.numeric(as.character(x$lat))
   x$lon <- as.numeric(as.character(x$lon))
   paste0("polyline(", googlePolylines::encode(x[,c("lon","lat")]),")")
-  # paste(clean_coord(x$lon), clean_coord(x$lat), sep=",",collapse = ";")
 }
 
 
