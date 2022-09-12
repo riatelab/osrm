@@ -1,5 +1,5 @@
 if ( requireNamespace("tinytest", quietly=TRUE) ){
-  local_server <- TRUE
+  local_server <- FALSE
   demo_server <- TRUE
   home <- FALSE
   localtest <- FALSE
