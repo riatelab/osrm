@@ -127,6 +127,9 @@ osrmTable <- function(src,
 
   res <- RcppSimdJson::fparse(rawToChar(r$content))
 
+  # create dummy dataset for tests
+  # return(list(res = res, src = src_r, dst = dst_r))
+  
   # format results
   output <- list()
   if(!is.null(res$durations)){

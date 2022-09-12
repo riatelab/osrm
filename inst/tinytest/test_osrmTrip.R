@@ -1,41 +1,96 @@
-if(home){
-  suppressPackageStartupMessages(library(sf))
-  apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"),
-                         quiet = TRUE)
-  ss <- function(){Sys.sleep(1)}
-  
+if(demo_server){
   ######################## DEMO car ###########################
-  options(osrm.server = "https://routing.openstreetmap.de/", osrm.profile = "car")
-  ss()
-  trips <- osrmTrip(loc = apotheke.sf[1:5,])
-  expect_true(methods::is(trips[[1]]$trip, "sf"))
-  
+  options(osrm.server = "https://routing.openstreetmap.de/", 
+          osrm.profile = "car")
+  wait()
+  r <- osrmTrip(loc = x_sf[1:16, ])
+  trip <- r[[1]]$trip
+  trip_summary <- r[[1]]$summary
+  expect_true(inherits(trip, "sf"))
+  expect_identical(st_crs(trip), st_crs(x_sf))
+  expect_true(nrow(trip) == 16)
+  expect_identical(colnames(trip), 
+                   c("start", "end", "duration", "distance", "geometry"))
+  expect_true(st_geometry_type(trip, by_geometry = FALSE) == "LINESTRING")
+  expect_identical(names(trip_summary),c('duration', 'distance'))
   
   ################# DEMO BIKE #####################
   options(osrm.server = "https://routing.openstreetmap.de/", osrm.profile = "bike")
-  ss()
-  trips <- osrmTrip(loc = apotheke.sf[1:5,])
-  expect_true(methods::is(trips[[1]]$trip, "sf"))
+  wait()
+  r <- osrmTrip(loc = x_sf[1:16, ])
+  trip <- r[[1]]$trip
+  trip_summary <- r[[1]]$summary
+  expect_true(inherits(trip, "sf"))
+  expect_identical(st_crs(trip), st_crs(x_sf))
+  expect_true(nrow(trip) == 16)
+  expect_identical(colnames(trip), 
+                   c("start", "end", "duration", "distance", "geometry"))
+  expect_true(st_geometry_type(trip, by_geometry = FALSE) == "LINESTRING")
+  expect_identical(names(trip_summary),c('duration', 'distance'))
   
   
   ############## DEMO FOOT #################"""""
   options(osrm.server = "https://routing.openstreetmap.de/", osrm.profile = "foot")
-  ss()
-  trips <- osrmTrip(loc = apotheke.sf[1:5,])
-  expect_true(methods::is(trips[[1]]$trip, "sf"))
+  wait()
+  r <- osrmTrip(loc = x_sf[1:16, ])
+  trip <- r[[1]]$trip
+  trip_summary <- r[[1]]$summary
+  expect_true(inherits(trip, "sf"))
+  expect_identical(st_crs(trip), st_crs(x_sf))
+  expect_true(nrow(trip) == 16)
+  expect_identical(colnames(trip), 
+                   c("start", "end", "duration", "distance", "geometry"))
+  expect_true(st_geometry_type(trip, by_geometry = FALSE) == "LINESTRING")
+  expect_identical(names(trip_summary),c('duration', 'distance'))
   
+  ############# server param ##################""
+  wait()
+  r <- osrmTrip(loc = x_sf[1:5,], 
+                osrm.server = "http://router.project-osrm.org/", 
+                osrm.profile = "driving")
+  trip <- r[[1]]$trip
+  trip_summary <- r[[1]]$summary
+  expect_true(inherits(trip, "sf"))
+  expect_identical(st_crs(trip), st_crs(x_sf))
+  expect_true(nrow(trip) == 5)
+  expect_identical(colnames(trip), 
+                   c("start", "end", "duration", "distance", "geometry"))
+  expect_true(st_geometry_type(trip, by_geometry = FALSE) == "LINESTRING")
+  expect_identical(names(trip_summary),c('duration', 'distance'))  
+  # server error
+  wait()
+  expect_error(osrmTrip(loc = x_sf[1:5, ], 
+                        osrm.server = "https://router.project-osrm.orgS/", 
+                        osrm.profile = "driving"))
+  wait()
+  expect_error(osrmTrip(loc = x_sf[1:5, ], 
+                        exclude = "motorway",
+                        osrm.server = "https://router.project-osrm.org/", 
+                        osrm.profile = "driving"))
+}
+
+
+# ############## ONLY LOCAL ############################################
+if(local_server){
+  options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "test")
+  trip <- r[[1]]$trip
+  trip_summary <- r[[1]]$summary
+  expect_true(inherits(trip, "sf"))
+  expect_identical(st_crs(trip), st_crs(x_sf))
+  expect_true(nrow(trip) == 16)
+  expect_identical(colnames(trip), 
+                   c("start", "end", "duration", "distance", "geometry"))
+  expect_true(st_geometry_type(trip, by_geometry = FALSE) == "LINESTRING")
+  expect_identical(names(trip_summary),c('duration', 'distance'))
   
-  ############# fun param ##################""
-  ss()
-  trips <- osrmTrip(loc = apotheke.sf[1:5,], 
-                    osrm.server = "http://router.project-osrm.org/", 
-                    osrm.profile = "driving")
-  expect_true(methods::is(trips[[1]]$trip, "sf"))
-  
-  ############## ONLY LOCAL ############################################
-  if(localtest){
-    options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "bike")
-    trips <- osrmTrip(loc = apotheke.sf)
-    expect_true(methods::is(trips[[1]]$trip, "sf"))
-  }
+  # server error
+  wait()
+  expect_error(osrmTrip(loc = x_sf[1:5, ], 
+                        osrm.server = "http://0.0.0.0:5100/", 
+                        osrm.profile = "driving"))
+  wait()
+  expect_error(osrmTrip(loc = x_sf[1:5, ], 
+                        exclude = "autoroute",
+                        osrm.server = "http://0.0.0.0:5000/", 
+                        osrm.profile = "driving"))
 }
