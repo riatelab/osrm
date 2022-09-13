@@ -126,11 +126,9 @@ if(local_server){
   expect_true(length(r) == 2)
   
   # server error
-  wait()
   expect_error(osrmRoute(src = x_sf[1, ], dst = x_sf[16, ], 
                          osrm.server = "http://0.0.0.0:5100/", 
                          osrm.profile = "driving"))
-  wait()
   expect_error(osrmRoute(src = x_sf[1, ], dst = x_sf[16, ], 
                          exclude = "autoroute",
                          osrm.server = "http://0.0.0.0:5000/", 

@@ -102,11 +102,13 @@ expect_identical(osrm:::input_route(x =  x_m[1,,drop = F],
 #                                         single = TRUE,
 #                                         all.ids = FALSE)
 # saveRDS(input_route_out_sfc, "inst/tinytest/input_route_out_sfc.rds")
-expect_equivalent(osrm:::input_route(x = x_sfc[1], 
-                                     id = "src", 
-                                     single = TRUE, 
-                                     all.ids = FALSE), 
-                  readRDS("input_route_out_sfc.rds"))
+target <- readRDS("input_route_out_sfc.rds")
+target$oprj <- st_crs(x_sfc)
+expect_identical(osrm:::input_route(x = x_sfc[1], 
+                                    id = "src", 
+                                    single = TRUE, 
+                                    all.ids = FALSE),
+                 target)
 
 # input sf
 # input_route_out_sf <- osrm:::input_route(x = x_sf[1,],
@@ -114,11 +116,13 @@ expect_equivalent(osrm:::input_route(x = x_sfc[1],
 #                                         single = TRUE,
 #                                         all.ids = FALSE)
 # saveRDS(input_route_out_sf, "inst/tinytest/input_route_out_sf.rds")
-expect_equivalent(osrm:::input_route(x = x_sf[1, ], 
-                                     id = "src", 
-                                     single = TRUE, 
-                                     all.ids = FALSE), 
-                  readRDS("input_route_out_sf.rds"))
+target <- readRDS("input_route_out_sf.rds")
+target$oprj <- st_crs(x_sf)
+expect_identical(osrm:::input_route(x = x_sf[1, ], 
+                                    id = "src", 
+                                    single = TRUE, 
+                                    all.ids = FALSE), 
+                 target)
 
 
 ######## MULTI
@@ -152,11 +156,13 @@ expect_identical(osrm:::input_route(x =  x_m[1:4,],
 #                                         single = FALSE,
 #                                         all.ids = FALSE)
 # saveRDS(input_route_out_sfc_m, "inst/tinytest/input_route_out_sfc_m.rds")
-expect_equivalent(osrm:::input_route(x = x_sfc[1:4], 
-                                     id = "loc", 
-                                     single = FALSE, 
-                                     all.ids = FALSE), 
-                  readRDS("input_route_out_sfc_m.rds"))
+target <- readRDS("input_route_out_sfc_m.rds")
+target$oprj <- st_crs(x_sfc)
+expect_identical(osrm:::input_route(x = x_sfc[1:4], 
+                                    id = "loc", 
+                                    single = FALSE, 
+                                    all.ids = FALSE), 
+                 target)
 
 # input sf
 # input_route_out_sf_m <- osrm:::input_route(x = x_sf[1:4,],
@@ -164,11 +170,13 @@ expect_equivalent(osrm:::input_route(x = x_sfc[1:4],
 #                                         single = FALSE,
 #                                         all.ids = FALSE)
 # saveRDS(input_route_out_sf_m, "inst/tinytest/input_route_out_sf_m.rds")
-expect_equivalent(osrm:::input_route(x = x_sf[1:4, ], 
-                                     id = "loc", 
-                                     single = FALSE, 
-                                     all.ids = FALSE), 
-                  readRDS("input_route_out_sf_m.rds"))
+target <- readRDS("input_route_out_sf_m.rds")
+target$oprj <- st_crs(x_sf)
+expect_identical(osrm:::input_route(x = x_sf[1:4, ], 
+                                    id = "loc", 
+                                    single = FALSE, 
+                                    all.ids = FALSE), 
+                 target)
 
 
 
@@ -203,11 +211,13 @@ expect_identical(osrm:::input_route(x =  x_m[1:4,],
 #                                         single = FALSE,
 #                                         all.ids = TRUE)
 # saveRDS(input_route_out_sfc_m_id, "inst/tinytest/input_route_out_sfc_m_id.rds")
-expect_equivalent(osrm:::input_route(x = x_sfc[1:4], 
-                                     id = "loc", 
-                                     single = FALSE, 
-                                     all.ids = TRUE), 
-                  readRDS("input_route_out_sfc_m_id.rds"))
+target <- readRDS("input_route_out_sfc_m_id.rds")
+target$oprj <- st_crs(x_sfc)
+expect_identical(osrm:::input_route(x = x_sfc[1:4], 
+                                    id = "loc", 
+                                    single = FALSE, 
+                                    all.ids = TRUE), 
+                 target)
 
 # input sf
 # input_route_out_sf_m_id <- osrm:::input_route(x = x_sf[1:4,],
@@ -215,8 +225,10 @@ expect_equivalent(osrm:::input_route(x = x_sfc[1:4],
 #                                         single = FALSE,
 #                                         all.ids = TRUE)
 # saveRDS(input_route_out_sf_m_id, "inst/tinytest/input_route_out_sf_m_id.rds")
+target <-  readRDS("input_route_out_sf_m_id.rds")
+target$oprj <- st_crs(x_sf)
 expect_equivalent(osrm:::input_route(x = x_sf[1:4, ], 
                                      id = "loc", 
                                      single = FALSE, 
                                      all.ids = TRUE), 
-                  readRDS("input_route_out_sf_m_id.rds"))
+                  target)

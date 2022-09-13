@@ -73,6 +73,7 @@ if(demo_server){
 # ############## ONLY LOCAL ############################################
 if(local_server){
   options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "test")
+  r <- osrmTrip(loc = x_sf[1:16, ])
   trip <- r[[1]]$trip
   trip_summary <- r[[1]]$summary
   expect_true(inherits(trip, "sf"))
@@ -84,11 +85,9 @@ if(local_server){
   expect_identical(names(trip_summary),c('duration', 'distance'))
   
   # server error
-  wait()
   expect_error(osrmTrip(loc = x_sf[1:5, ], 
                         osrm.server = "http://0.0.0.0:5100/", 
                         osrm.profile = "driving"))
-  wait()
   expect_error(osrmTrip(loc = x_sf[1:5, ], 
                         exclude = "autoroute",
                         osrm.server = "http://0.0.0.0:5000/", 
