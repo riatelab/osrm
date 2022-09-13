@@ -11,10 +11,22 @@ service based on OpenStreetMap data. See <http://project-osrm.org/> for more
 information. This package enables the computation of routes, trips, isochrones and
 travel distances matrices (travel time and kilometric distance).\cr
 \itemize{
-\item{\code{\link{osrmTable}} Get travel time matrices between points.}
-\item{\code{\link{osrmRoute}} Get the shortest path between two points.}
-\item{\code{\link{osrmTrip}} Get the travel geometry between multiple unordered points.}
-\item{\code{\link{osrmIsochrone}} Get polygons of isochrones.}
+\item{\code{\link{osrmTable}}: Build and send OSRM API queries to get travel 
+time matrices between points. This function interfaces the \emph{table} 
+OSRM service.}
+\item{\code{\link{osrmRoute}}: Build and send an OSRM API query to get the 
+travel geometry between two points. This function interfaces with the 
+\emph{route} OSRM service.}
+\item{\code{\link{osrmTrip}}: Build and send an OSRM API query to get the 
+shortest travel geometry between multiple unordered points. This function 
+interfaces the \emph{trip} OSRM service. Use this function to resolve the 
+travelling salesman problem.}
+\item{\code{\link{osrmIsochrone}}: This function computes areas that are 
+reachable within a given time span from a point and returns the reachable 
+regions as polygons.}
+\item{\code{\link{osrmIsometric}}: This function computes areas that are 
+reachable within a given road distance from a point and returns the reachable 
+regions as polygons.}
 }
 }
 \note{

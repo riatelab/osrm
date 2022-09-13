@@ -39,8 +39,8 @@
 #'   \item an sfc object of type POINT,
 #'   \item an sf object of type POINT.
 #'}
-#' The first row or element is the starting point, the waypoints are used in 
-#' the order they are stored in \code{loc}, the last row or element is 
+#' The first row or element is the starting point then waypoints are used in 
+#' the order they are stored in \code{loc} and the last row or element is 
 #' the destination.\cr
 #' If relevant, row names are used as identifiers.\cr
 #' @param overview "full", "simplified" or FALSE. Use "full" to return the 
@@ -59,7 +59,7 @@
 #'   \item travel time in minutes
 #'   \item travel distance in kilometers.
 #'   }
-#' If src (or loc) is a vector, a data.frame or a matrix the coordinate 
+#' If src (or loc) is a vector, a data.frame or a matrix, the coordinate 
 #' reference system (CRS) of the route is EPSG:4326 (WGS84).\cr 
 #' If src (or loc) is an sfc or sf object, the route has the same CRS 
 #' as src (or loc).\cr\cr
@@ -73,13 +73,14 @@
 #' apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
 #'                        quiet = TRUE)
 #' # Travel path between points
-#' route1 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ])
+#' route1 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.sf[16, ])
 #' # Display paths
 #' plot(st_geometry(route1))
 #' plot(st_geometry(apotheke.sf[c(1,16),]), col = "red", pch = 20, add = TRUE)
 #' 
 #' # Return only duration and distance
-#' route3 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.df[16, ], 
+#' route3 <- osrmRoute(src = apotheke.df[1, c('lon', 'lat')], 
+#'                     dst = apotheke.df[16, c('lon', 'lat')], 
 #'                     overview = FALSE)
 #' route3
 #' 
@@ -89,31 +90,26 @@
 #' plot(st_geometry(route4))
 #' 
 #' # Using via points
-#' pts <- structure(
-#'  list(x = c(13.32500, 13.30688, 13.30519, 13.31025, 
-#'             13.4721, 13.56651, 13.55303, 13.37263, 13.50919, 13.5682), 
-#'       y = c(52.40566, 52.44491, 52.52084, 52.59318, 52.61063, 52.55317, 
-#'             52.50186, 52.49468, 52.46441, 52.39669)), 
-#'  class = "data.frame", row.names = c(NA, -10L))
-#' route5 <- osrmRoute(loc = pts)
+#' route5 <- osrmRoute(loc = apotheke.sf[c(1,2,4,3),])
 #' plot(st_geometry(route5), col = "red", lwd = 2)
-#' points(pts, pch = 20, cex = 2)
+#' plot(st_geometry(apotheke.sf[c(1,2,4,3),]), add = TRUE)
 #' 
 #' # Using a different routing server
 #' u <- "https://routing.openstreetmap.de/routed-foot/"
-#' route5 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], osrm.server = u)
+#' route5 <- osrmRoute(apotheke.sf[1, ], apotheke.sf[16, ], osrm.server = u)
+#' route5
 #' 
 #' # Using an open routing service with support for multiple modes
 #' # see https://github.com/riatelab/osrm/issues/67
 #' u <- "https://routing.openstreetmap.de/"
 #' options(osrm.server = u)
-#' route6 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ], 
-#'                    osrm.profile = "bike")
-#' route7 <- osrmRoute(apotheke.sf[1, ], apotheke.df[16, ],  
+#' route6 <- osrmRoute(apotheke.sf[1, ], apotheke.sf[16, ], 
+#'                     osrm.profile = "bike")
+#' route7 <- osrmRoute(apotheke.sf[1, ], apotheke.sf[16, ],  
 #'                     osrm.profile = "car")
-#' plot(st_geometry(route5), col = "green")
-#' plot(st_geometry(route6), add = TRUE) # note the cycle route has fewer turns
-#' plot(st_geometry(route7), col = "red", add = TRUE) # car route, indirect = good!
+#' plot(st_geometry(route7), col = "green") # car
+#' plot(st_geometry(route6), add = TRUE) # bike
+#' plot(st_geometry(route5), col = "red", add = TRUE) # foot
 #' }
 #' @export
 osrmRoute <- function(src, 
