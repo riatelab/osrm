@@ -282,3 +282,25 @@ test_http_error <- function(r){
   return(NULL)
 }
 
+fill_grid <- function(destinations, measure, sgrid, res, tmax){
+  rpt <- st_as_sf(destinations, coords = c('lon', 'lat'), crs = 4326)
+  rpt <- st_transform(rpt, 3857)
+  rpt$measure <- measure
+  b <- as.numeric(st_distance(sgrid[1,], sgrid[2,]) / 2)
+  xx <- st_make_grid(x = st_buffer(x = st_as_sfc(st_bbox(sgrid)), 
+                                   dist = b), 
+                     n = c(res, res))
+  ag_pt <- function(x){
+    if (length(x > 0)){
+      min(rpt[["measure"]][x], na.rm=TRUE)
+    }else{
+      tmax + 1
+    }
+  }
+  inter <- st_intersects(xx, rpt)
+  sgrid$measure <- unlist(lapply(inter, ag_pt))
+  sgrid[is.infinite(sgrid$measure), "measure"] <- tmax + 1
+  sgrid[is.nan(sgrid$measure), "measure"] <- tmax + 1
+  sgrid[sgrid$measure > tmax, "measure"] <- tmax + 1
+  sgrid
+}
