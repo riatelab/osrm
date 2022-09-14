@@ -38,120 +38,165 @@ usage.](https://routing.openstreetmap.de/about.html)
 
 ## Features
 
--   `osrmTable` Get travel time matrices between points.
-
--   `osrmRoute` Get the shortest path between two points.
-
--   `osrmTrip` Get the travel geometry between multiple unordered
-    points.
-
--   `osrmIsochrone` Get polygons of isochrones.
+-   `osrmTable()` uses the *table* service to query time/distance
+    matrices,
+-   `osrmRoute()` uses the *route* service to query routes,
+-   `osrmTrip()` uses the *trip* service to query trips,
+-   `osrmIsochone()` and `osrmIsometric()` use multiple `osrmTable()`
+    calls to create isochrones or isometric polygons.
 
 ## Demo
 
-### `osrmTable()`
+This is a short overview of the main features of `osrm`. The dataset
+used here is shipped with the package, it is a sample of 100 random
+pharmacies in Berlin ([© OpenStreetMap
+contributors](https://www.openstreetmap.org/copyright/en)) stored in a
+[geopackage](https://www.geopackage.org/) file.
+
+-   `osrmTable()` gives access to the *table* OSRM service. In this
+    example we use this function to get the median time needed to access
+    any pharmacy from any other pharmacy.
 
 ``` r
 library(osrm)
 ```
 
+    ## Data: (c) OpenStreetMap contributors, ODbL 1.0 - http://www.openstreetmap.org/copyright
+
+    ## Routing: OSRM - http://project-osrm.org/
+
 ``` r
 library(sf)
-apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
-                       quiet = TRUE)
-# Travel time matrix
-distA <- osrmTable(loc = apotheke.sf[1:5,])
-distA$durations
 ```
 
-<small>
-
-|     |    1 |    2 |    3 |    4 |    5 |
-|:----|-----:|-----:|-----:|-----:|-----:|
-| 1   |  0.0 | 21.1 | 33.4 | 21.2 | 12.6 |
-| 2   | 22.1 |  0.0 | 42.3 | 16.1 | 20.2 |
-| 3   | 33.0 | 43.0 |  0.0 | 30.5 | 27.4 |
-| 4   | 20.1 | 15.3 | 29.7 |  0.0 | 12.7 |
-| 5   | 10.2 | 20.3 | 26.8 | 12.3 |  0.0 |
-
-</small>
-
-### `osrmRoute()`
+    ## Linking to GEOS 3.9.0, GDAL 3.2.2, PROJ 7.2.1; sf_use_s2() is TRUE
 
 ``` r
-library(maptiles)
-library(mapsf)
-# Transform to webmercator for a better display of map tiles
-apotheke.sf <- st_transform(apotheke.sf, 3857)
-# Route
-route <- osrmRoute(src = apotheke.sf[74,], dst = apotheke.sf[55,],
-                   overview = "full")
-# Get map tiles
-osm <- get_tiles(x = route, crop = TRUE, zoom = 13)
-# Map
-theme <- mf_theme(mar = c(0,0,1.2,0), inner = FALSE, line = 1.2, cex = .9, 
-                  pos = "center", tab = FALSE)
-mf_export(osm,filename = "img/route.png", width = ncol(osm), theme = theme)
-mf_raster(osm, add = TRUE)
-mf_map(route, lwd = 4, add = TRUE, col = "blue")
-mf_map(route, lwd = 1, col = "white", add = TRUE)
-mf_map(apotheke.sf[c(74,55),], pch = 20, col = "red", add = TRUE)
-mf_title("osrmRoute()")
-mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .8, 
-           bg = "#ffffff80")
-dev.off()
+pharmacy <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
+                    quiet = TRUE)
+travel_time <- osrmTable(loc = pharmacy)
+travel_time$durations[1:5,1:5]
 ```
 
-![](https://raw.githubusercontent.com/riatelab/osrm/master/img/route.png)
-
-### `osrmTrip()`
+    ##      1    2    3    4    5
+    ## 1  0.0 21.1 33.4 21.2 12.6
+    ## 2 22.1  0.0 42.3 16.1 20.2
+    ## 3 33.0 43.0  0.0 30.5 27.4
+    ## 4 20.1 15.3 29.7  0.0 12.7
+    ## 5 10.2 20.3 26.8 12.3  0.0
 
 ``` r
-# Trip 
-trips <- osrmTrip(loc = apotheke.sf[10:20,])
-trip <- trips[[1]]$trip
-# Get map tiles
-osm2 <- get_tiles(x = trip, crop = TRUE, zoom = 11)
-# Map
-mf_export(osm2,filename = "img/trip.png", width = ncol(osm2), theme = theme)
-mf_raster(osm2, add = TRUE)
-mf_map(trip, col = "black", lwd = 4, add = TRUE )
-mf_map(trip, col = c("red", "white"), lwd = 1, add = TRUE)
-mf_map(apotheke.sf[10:20,], pch = 21, col = "red", cex = 1.5, add = TRUE)
-mf_title("osrmTrip()")
-mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .8, 
-           bg = "#ffffff80")
-dev.off()
+diag(travel_time$durations) <- NA
+median(travel_time$durations, na.rm = TRUE)
 ```
 
-![](https://raw.githubusercontent.com/riatelab/osrm/master/img/trip.png)
+    ## [1] 21.4
 
-### `osrmIsochrone()`
+The median time needed to access any pharmacy from any other pharmacy is
+21.4 minutes.
+
+-   `osrmRoute()` is used to compute the shortest route between two
+    points. Here we compute the shortest route between the two first
+    pharmacies.
 
 ``` r
-bks <- seq(from = 0, to = 14, by = 2)
-iso <- osrmIsochrone(loc = apotheke.sf[87,], breaks = bks, res = 70)
-# Get map tiles
-osm3 <- get_tiles(x = iso, crop = TRUE, zoom = 12)
-# Map
-cols <- hcl.colors(n = 7, palette = "Emrld", alpha = 0.75, rev = F)
-mf_export(osm3,filename = "img/iso.png", width = ncol(osm3), theme = theme)
-mf_raster(osm3, add = TRUE)
-mf_map(x = iso, var = "center", type = "choro", 
-       breaks = bks, border = NA, pal = cols,
-       leg_pos = "topleft", leg_frame = T,
-       leg_title = "Isochrones\n(min)",
-       leg_title_cex = 1, leg_val_cex = .8,
-       add = TRUE)
-mf_map(apotheke.sf[87,], pch = 21, col = "red", 
-       cex = 1.5, add=TRUE)
-mf_title("osrmIsochrone()")
-mf_credits(get_credit("OpenStreetMap"), pos = "bottomright", cex = .8, 
-           bg = "#ffffff80")
-dev.off()
+(route <- osrmRoute(src = pharmacy[1, ], pharmacy[2, ]))
 ```
 
-![](https://raw.githubusercontent.com/riatelab/osrm/master/img/iso.png)
+    ## Simple feature collection with 1 feature and 4 fields
+    ## Geometry type: LINESTRING
+    ## Dimension:     XY
+    ## Bounding box:  xmin: -13170.51 ymin: 5837172 xmax: -3875.771 ymax: 5841047
+    ## Projected CRS: WGS 84 / UTM zone 34N
+    ##     src dst duration distance                       geometry
+    ## 1_2   1   2 21.11667   12.348 LINESTRING (-13170.51 58410...
+
+This route is 12.3 kilometers long and it takes 21.1 minutes to drive
+through it.
+
+``` r
+plot(st_geometry(route))
+plot(st_geometry(pharmacy[1:2,]), pch = 20, add = T, cex = 1.5)
+```
+
+![](route.png)
+
+-   `osrmTrip()` can be used to resolve the travelling salesman problem,
+    it gives the shortest trip between a set of unordered points. In
+    this example we want to obtain the shortest trip between the first
+    five pharmacies.
+
+``` r
+(trips <- osrmTrip(loc = pharmacy[1:5, ], overview = "full"))
+```
+
+    ## [[1]]
+    ## [[1]]$trip
+    ## Simple feature collection with 5 features and 4 fields
+    ## Geometry type: LINESTRING
+    ## Dimension:     XY
+    ## Bounding box:  xmin: -13431.24 ymin: 5837172 xmax: -3875.582 ymax: 5856332
+    ## Projected CRS: WGS 84 / UTM zone 34N
+    ##   start end duration distance                       geometry
+    ## 1     1   2 21.11667  12.3480 LINESTRING (-13170.77 58410...
+    ## 2     2   4 16.10833   8.4273 LINESTRING (-3875.582 58379...
+    ## 3     4   3 29.69000  18.1448 LINESTRING (-7444.513 58427...
+    ## 4     3   5 27.39833  16.4265 LINESTRING (-8027.41 585621...
+    ## 5     5   1 10.15333   4.2289 LINESTRING (-11716.36 58435...
+    ## 
+    ## [[1]]$summary
+    ## [[1]]$summary$duration
+    ## [1] 104.4667
+    ## 
+    ## [[1]]$summary$distance
+    ## [1] 59.5755
+
+The shortest trip between these pharmacies takes 104.5 minutes and is
+59.6 kilometers long. The steps of the trip are described in the “trip”
+sf object (point 1 \> point 2 \> point 4 \> point 3 \> point 5 \> point
+1).
+
+``` r
+mytrip <- trips[[1]]$trip
+# Display the trip
+plot(st_geometry(mytrip), col = c("black", "grey"), lwd = 2)
+plot(st_geometry(pharmacy[1:5, ]), cex = 1.5, pch = 21, add = TRUE)
+text(st_coordinates(pharmacy[1:5,]), labels = row.names(pharmacy[1:5,]), 
+     pos = 2)
+```
+
+![](trip.png)
+
+-   `osrmIsochrone()` computes areas that are reachable within a given
+    time span from a point and returns the reachable regions as
+    polygons. Here we compute the isochrones from a specific point
+    defined by its longitude and latitude.
+
+``` r
+(iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,12,2)))
+```
+
+    ## Simple feature collection with 5 features and 3 fields
+    ## Geometry type: MULTIPOLYGON
+    ## Dimension:     XY
+    ## Bounding box:  xmin: 13.34397 ymin: 52.41642 xmax: 13.50187 ymax: 52.51548
+    ## Geodetic CRS:  WGS 84
+    ##   id isomin isomax                       geometry
+    ## 1  1      0      4 MULTIPOLYGON (((13.43743 52...
+    ## 2  2      4      6 MULTIPOLYGON (((13.42356 52...
+    ## 3  3      6      8 MULTIPOLYGON (((13.40345 52...
+    ## 4  4      8     10 MULTIPOLYGON (((13.4077 52....
+    ## 5  5     10     12 MULTIPOLYGON (((13.42257 52...
+
+``` r
+bks <-  sort(unique(c(iso$isomin, iso$isomax)))
+pals <- hcl.colors(n = length(bks) - 1, palette = "Light Grays", rev = TRUE)
+plot(iso["isomax"], breaks = bks, pal = pals, 
+     main = "Isochrones (in minutes)", reset = FALSE)
+points(x = 13.43, y = 52.47, pch = 4, lwd = 2, cex = 1.5)
+```
+
+![](iso.png)
 
 ## Installation
 
