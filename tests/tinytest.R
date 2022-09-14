@@ -1,8 +1,6 @@
 if ( requireNamespace("tinytest", quietly=TRUE) ){
   local_server <- FALSE
-  demo_server <- TRUE
-  home <- FALSE
-  localtest <- FALSE
+  demo_server <- FALSE
   suppressPackageStartupMessages(library(sf))
   x_sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
                   quiet = TRUE)
