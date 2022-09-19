@@ -65,20 +65,20 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
   
   url <- base_url(osrm.server, osrm.profile, "trip")
   
-  
+  # input points
   loc <- input_route(x = loc, id = "loc", single = FALSE, all.ids = TRUE)
   oprj <- loc$oprj
- 
-
+  
   url <- paste0(url, 
                 paste(clean_coord(loc$lon) , clean_coord(loc$lat), 
-                           sep=",",collapse = ";"), 
+                      sep=",",collapse = ";"), 
                 "?steps=false&geometries=geojson&overview=", 
-                tolower(overview))
+                tolower(overview), 
+                "&generate_hints=false")
   
   # adding exclude parameter
   if (!missing(exclude)) {url <- paste0(url, "&exclude=", exclude)}
-
+  
   # Send the query
   e <- try({
     req_handle <- curl::new_handle(verbose = FALSE)
@@ -92,7 +92,6 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
   # test result validity
   test_http_error(r)
   res <- RcppSimdJson::fparse(rawToChar(r$content))
-  
   
   # return(res)
   # Get all the waypoints
@@ -122,10 +121,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
                    all.x = T)
     geodf <- geodf[order(geodf$ind, decreasing = F),]
     indexes <- geodf[!is.na(geodf$waypoint_index),"ind"]
-    # xx <- geodf[!is.na(geodf$waypoint_index),]
-    # indexes <- c(stats::aggregate(xx$ind, by  = list(xx$waypoint_index),
-    #                               min)[,2], 
-    #              nrow(geodf))
+
     # Build the polylines
     wktl <- rep(NA,nrow(waypoints))
     for (i in 1:(length(indexes) - 1)) {

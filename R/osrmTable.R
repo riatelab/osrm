@@ -105,7 +105,6 @@ osrmTable <- function(src,
     loc <- input_table(x = loc, id = 'loc')
     dst_r <- src_r <- loc
     url <- paste0(url, encode_coords(x = loc), "?")
-    
   }else{
     src_r <- input_table(x = src, id = 'src')
     dst_r <- input_table(x = dst, id = 'dst')
@@ -124,7 +123,10 @@ osrmTable <- function(src,
     url <- paste0(url, "exclude=", exclude, "&")
   }
   # adding measure parameter
-  url <- paste0(url, "annotations=", paste0(measure, collapse=',') )
+  url <- paste0(url, 
+                "annotations=", 
+                paste0(measure, collapse=','), 
+                "&generate_hints=false")
   # print(url)
   e <- try({
     req_handle <- curl::new_handle(verbose = FALSE)
@@ -162,5 +164,4 @@ osrmTable <- function(src,
   output$sources <- coords$sources
   output$destinations <- coords$destinations
   return(output)
-  
 }

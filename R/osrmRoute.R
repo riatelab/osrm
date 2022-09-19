@@ -130,7 +130,6 @@ osrmRoute <- function(src,
   }
   url <- base_url(osrm.server, osrm.profile, "route")
   
-  
   if(missing(loc)){
     # From src to dst
     src <- input_route(x = src, id = "src", single = TRUE)
@@ -152,14 +151,14 @@ osrmRoute <- function(src,
     )
   }
   
-  
-  url <- paste0(url, coords, 
+  url <- paste0(url, 
+                coords, 
                 "?alternatives=false&geometries=polyline&steps=false&overview=", 
-                tolower(overview))
+                tolower(overview), 
+                "&generate_hints=false")
   
   # adding exclude parameter
   if (!missing(exclude)) {url <- paste0(url, "&exclude=", exclude)}
-  
   
   e <- try({
     req_handle <- curl::new_handle(verbose = FALSE)
@@ -195,5 +194,4 @@ osrmRoute <- function(src,
   }
   
   return(rosf)
-  
 }
