@@ -1,11 +1,29 @@
 # osrm version 4.0.0
 
 ## Major changes
-* drop sp support (deprecate returnclass,to be removed in the next minor vesrion)
+* drop sp support (deprecate returnclass, to be removed in the next minor vesrion), osrm no longer accepts sp objects, nor sp results
 * refactor to better display server error and warnings messages
-* always use googlepolylines in osrmTable
 * use RcppSimdJson instead of jsonlite
 * use mapiso instead of isoband code for isopolygon creation
+* osrmTable(): 
+    - change in args order (loc, src, dst, ... => src,dst, loc, ...)
+    - loc, src, dst accept data.frame, matrix, sfc and sf objects
+    - identifiers are not needed, osrm uses row.names or indexes
+    - better input type checking
+* osrmRoute():
+    - loc, src, dst accept data.frame, matrix, sfc and sf objects
+    - identifiers are not needed, osrm uses row.names or indexes
+    - better input type checking
+* osrmTrip():
+    - loc accepts vector of coordinates, data.frame, matrix, sfc and sf objects
+    - identifiers are not needed, osrm uses row.names or indexes
+    - better input type checking
+* osrmIsochrone() & osrmIsometric():
+    - loc, src, dst accept data.frame, matrix, sfc and sf objects
+    - identifiers are not needed, osrm uses row.names or indexes
+    - better input type checking
+    - the sf output has now three fields (id, isomin and isomax)
+
 
 # osrm version 3.5.1 (Release date 2022-01)
 
