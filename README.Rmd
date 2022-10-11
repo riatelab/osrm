@@ -19,7 +19,7 @@ output: github_document
 ## Description
 OSRM is a routing service based on OpenStreetMap data. See <http://project-osrm.org/> for more information. This package enables the computation of routes, trips, isochrones and travel distances matrices (travel time and kilometric distance).
 
-This package relies on the usage of a running OSRM service (tested with v5.26.0 of OSRM).    
+This package relies on the usage of a running OSRM service (tested with v5.27.0 of OSRM).    
 
 You can run your own instance of OSRM following guidelines provided [here](https://github.com/Project-OSRM/osrm-backend). The simplest solution is probably the one based on [docker containers](https://github.com/Project-OSRM/osrm-backend#using-docker).    
 
