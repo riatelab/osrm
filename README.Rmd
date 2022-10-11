@@ -84,7 +84,7 @@ The median time needed to access any pharmacy from any other pharmacy is 21.4 mi
 * `osrmRoute()` is used to compute the shortest route between two points. Here we compute the shortest route between the two first pharmacies. 
 
 ``` r
-(route <- osrmRoute(src = pharmacy[1, ], pharmacy[2, ]))
+(route <- osrmRoute(src = pharmacy[1, ], dst = pharmacy[2, ]))
 ```
 
     ## Simple feature collection with 1 feature and 4 fields

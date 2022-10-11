@@ -100,7 +100,7 @@ The median time needed to access any pharmacy from any other pharmacy is
     pharmacies.
 
 ``` r
-(route <- osrmRoute(src = pharmacy[1, ], pharmacy[2, ]))
+(route <- osrmRoute(src = pharmacy[1, ], dst = pharmacy[2, ]))
 ```
 
     ## Simple feature collection with 1 feature and 4 fields
