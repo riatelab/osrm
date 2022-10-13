@@ -113,7 +113,7 @@ input_route <- function(x, id, single = TRUE, all.ids = FALSE){
         lat <- clean_coord(x[2])  
         return(list(id = id, lon = lon, lat = lat, oprj = oprj))
       }else{
-        stop(paste0('"', id, '" should be a vector of coordinates, ', 
+        stop(paste0('"', id, '" should be a numeric vector of length 2, ', 
                     'i.e., c(lon, lat).'), 
              call. = FALSE)
       }
