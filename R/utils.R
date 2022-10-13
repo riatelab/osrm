@@ -109,6 +109,11 @@ input_route <- function(x, id, single = TRUE, all.ids = FALSE){
   if(single){
     if(is.vector(x)){
       if(length(x) == 2 & is.numeric(x)){
+        if(x[1] > 180 | x[1] < -180 | x[2] > 90 | x[2] < -90){
+          stop(paste0("longitude is bounded by the interval [-180, 180], ",
+                      "latitude is bounded by the interval [-90, 90]"),
+               call. = FALSE)
+        }
         lon <- clean_coord(x[1])
         lat <- clean_coord(x[2])  
         return(list(id = id, lon = lon, lat = lat, oprj = oprj))
