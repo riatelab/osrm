@@ -35,7 +35,7 @@
 #' If loc is an sfc or sf object, the output has the same CRS 
 #' as loc.\cr
 #' @importFrom sf st_as_sf st_crs st_transform st_convex_hull st_union 
-#' st_intersects st_bbox st_buffer st_distance st_make_grid
+#' st_intersects st_bbox st_buffer st_distance st_make_grid st_sfc
 #' @importFrom mapiso mapiso
 #' @export
 #' @examples
@@ -70,13 +70,14 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   if(!missing(returnclass)){
     warning('"returnclass" is deprecated.', call. = FALSE)
   }
-
+  
   # input management
   loc <- input_route(x = loc, id = "loc", single = TRUE)
   oprj <- loc$oprj
-  loc <- st_as_sf(data.frame(lon = loc$lon, lat = loc$lat), coords = c("lon","lat"), crs = 4326)
+  loc <- st_as_sf(data.frame(lon = loc$lon, lat = loc$lat), 
+                  coords = c("lon","lat"), crs = 4326)
   loc <- st_transform(loc, "epsg:3857")
-
+  
   # max distance management to see how far to extend the grid to get measures
   breaks <- unique(sort(breaks))
   tmax <- max(breaks)
@@ -91,7 +92,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   }
   dmax <- tmax * speed
   
-
+  
   # gentle sleeptime & param for demo server
   if(osrm.server != "https://routing.openstreetmap.de/"){
     sleeptime <- 0
@@ -100,7 +101,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
     sleeptime <- 1
     deco <- 75
   }
-
+  
   # create a grid to obtain measures
   sgrid <- rgrid(loc = loc, dmax = dmax, res = res)
   # slice the grid to make several API calls
@@ -134,7 +135,6 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   
   measure <- do.call(c, listDur)
   destinations <- do.call(rbind, listDest)
-  
   # for testing purpose
   # return(list(destinations = destinations, measure = measure, 
   #             sgrid = sgrid, res = res, tmax = tmax))
@@ -142,21 +142,33 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0,to = 60, length.out = 7),
   # assign values to the grid
   sgrid <- fill_grid(destinations = destinations, measure = measure, 
                      sgrid = sgrid, res = res, tmax = tmax)
-  
+  if(min(sgrid$measure) >= tmax + 1){
+    warning(paste0("An empty object is returned. ", 
+                   "'loc' is too far from the OSRM network."),
+            call. = FALSE)
+    empty_res <- st_sf(
+      crs = ifelse(is.na(oprj),4326,oprj), 
+      id = integer(),
+      isomin = numeric(),
+      isomax = numeric(),
+      geometry = st_sfc()
+    )
+    return(empty_res)
+  }
   # computes isopolygones
   iso <- mapiso(x = sgrid, breaks = breaks, var = "measure")
   # get rid of out of breaks polys
   iso <- iso[-nrow(iso),]
   # fisrt line always start at 0
   iso[1,"isomin"] <- 0
-
+  
   # proj mgmnt
   if (!is.na(oprj)){
     iso <- st_transform(x = iso, oprj)
   }else{
     iso <- st_transform(x = iso, 4326)
   }
-
+  
   return(iso)
 }
 

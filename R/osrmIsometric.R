@@ -127,7 +127,19 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
   # assign values to the grid
   sgrid <- fill_grid(destinations = destinations, measure = measure, 
                      sgrid = sgrid, res = res, tmax = tmax)
-  
+  if(min(sgrid$measure) >= tmax + 1){
+    warning(paste0("An empty object is returned. ", 
+                   "'loc' is too far from the OSRM network."),
+            call. = FALSE)
+    empty_res <- st_sf(
+      crs = ifelse(is.na(oprj),4326,oprj), 
+      id = integer(),
+      isomin = numeric(),
+      isomax = numeric(),
+      geometry = st_sfc()
+    )
+    return(empty_res)
+  }
   # computes isopolygones
   iso <- mapiso(x = sgrid, breaks = breaks, var = "measure")
   # get rid of out of breaks polys

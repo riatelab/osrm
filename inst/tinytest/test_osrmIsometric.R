@@ -84,6 +84,13 @@ if(local_server){
   expect_identical(colnames(r), 
                    c("id", "isomin", "isomax", "geometry"))
   
+  # point too far
+  expect_warning(osrmIsometric(loc = c(10, 10), breaks = seq(0,14,2), 
+                               res = 10,
+                               osrm.server = "http://0.0.0.0:5000/", 
+                               osrm.profile = "driving"))
+  
+  
   # server error
   expect_error(osrmIsometric(loc = c(13.43,52.47), breaks = seq(0,500,100), 
                              res = 10,
