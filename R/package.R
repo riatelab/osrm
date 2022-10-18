@@ -18,10 +18,11 @@
 #' travelling salesman problem.}
 #' \item{\code{\link{osrmIsochrone}}: This function computes areas that are 
 #' reachable within a given time span from a point and returns the reachable 
-#' regions as polygons.}
-#' \item{\code{\link{osrmIsometric}}: This function computes areas that are 
+#' regions as polygons. These areas of equal travel time are called isochrones.}
+#' \item{\code{\link{osrmIsodistance}}: This function computes areas that are 
 #' reachable within a given road distance from a point and returns the reachable 
-#' regions as polygons.}
+#' regions as polygons. These areas of equal travel distance are called 
+#' isodistances}
 #' }
 #' 
 #' 

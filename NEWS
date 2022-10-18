@@ -23,6 +23,8 @@
     - identifiers are not needed, osrm uses row.names or indexes
     - better input type checking
     - the sf output has now three fields (id, isomin and isomax)
+    - osrmIsometric() has been renamed to osrmIsodistance()
+
 
 
 # osrm version 3.5.1 (Release date 2022-01)

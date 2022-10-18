@@ -2,7 +2,7 @@
 #' @title Get Polygons of Isochrones
 #' @description This function computes areas that are reachable within a 
 #' given time span from a point and returns the reachable regions as 
-#' polygons. 
+#' polygons. These areas of equal travel time are called isochrones.
 #' @param loc origin point. \code{loc} can be: \itemize{
 #'   \item a vector of coordinates (longitude and latitude, WGS 84), 
 #'   \item a data.frame of longitudes and latitudes (WGS 84),
@@ -12,7 +12,8 @@
 #'}
 #' If \code{loc} is a data.frame, a matrix, an sfc object or an sf object then 
 #' only the first row or element is considered.
-#' @param breaks a numeric vector of isochrone values (in minutes).
+#' @param breaks a numeric vector of break values to define isochrone areas, 
+#' in minutes.
 #' @param exclude pass an optional "exclude" request option to the OSRM API.
 #' @param res number of points used to compute isochrones, one side of the square
 #' grid, the total number of points will be res*res. Increase res to obtain more

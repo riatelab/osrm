@@ -34,7 +34,7 @@ You can run your own instance of OSRM following guidelines provided [here](https
 - `osrmTable()` uses the *table* service to query time/distance matrices,
 - `osrmRoute()` uses the *route* service to query routes,
 - `osrmTrip()` uses the *trip* service to query trips,
-- `osrmIsochone()` and `osrmIsometric()` use multiple `osrmTable()` calls to create isochrones or isometric polygons.
+- `osrmIsochone()` and `osrmIsodistance()` use multiple `osrmTable()` calls to create isochrones or isodistances polygons.
 
 ## Demo
 
@@ -146,7 +146,7 @@ text(st_coordinates(pharmacy[1:5,]), labels = row.names(pharmacy[1:5,]),
 ![](trip.png)
 
 
-* `osrmIsochrone()` computes areas that are reachable within a given time span from a point and returns the reachable regions as polygons. Here we compute the isochrones from a specific point defined by its longitude and latitude. 
+* `osrmIsochrone()` computes areas that are reachable within a given time span from a point and returns the reachable regions as polygons. These areas of equal travel time are called isochrones. Here we compute the isochrones from a specific point defined by its longitude and latitude. 
 
 ``` r
 (iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,12,2)))

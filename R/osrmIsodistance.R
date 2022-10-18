@@ -1,8 +1,8 @@
-#' @name osrmIsometric
+#' @name osrmIsodistance
 #' @title Get Polygons of Isodistances
 #' @description This function computes areas that are reachable within a 
 #' given road distance from a point and returns the reachable regions as 
-#' polygons. 
+#' polygons. These areas of equal travel distance are called isodistances. 
 #' @param loc origin point. \code{loc} can be: \itemize{
 #'   \item a vector of coordinates (longitude and latitude, WGS 84), 
 #'   \item a data.frame of longitudes and latitudes (WGS 84),
@@ -12,7 +12,8 @@
 #'}
 #' If \code{loc} is a data.frame, a matrix, an sfc object or an sf object then 
 #' only the first row or element is considered.
-#' @param breaks a numeric vector of isometric values (in meters).
+#' @param breaks a numeric vector of break values to define isodistance areas, 
+#' in meters.
 #' @param exclude pass an optional "exclude" request option to the OSRM API.
 #' @param res number of points used to compute isodistances, one side of the 
 #' square grid, the total number of points will be res*res. Increase res to 
@@ -42,12 +43,12 @@
 #' apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"),
 #'                        quiet = TRUE)
 #' # Get isochones with lon/lat coordinates
-#' iso <- osrmIsometric(loc = c(13.43,52.47), breaks = seq(0,500,100))
+#' iso <- osrmIsodistance(loc = c(13.43,52.47), breaks = seq(0,500,100))
 #' # Map
 #' plot(iso["isomax"], breaks = sort(unique(c(iso$isomin, iso$isomax))))
 #' 
 #' # Get isochones with an sf POINT
-#' iso2 <- osrmIsometric(loc = apotheke.sf[11,], breaks = seq(0,500,100))
+#' iso2 <- osrmIsodistance(loc = apotheke.sf[11,], breaks = seq(0,500,100))
 #' # Map
 #' if(require("mapsf")){
 #'   mapsf::mf_map(x = iso2, var = "isomin", type = "choro",
@@ -57,7 +58,7 @@
 #'                 leg_frame = TRUE, leg_title = "Isochrones\n(min)")
 #' }
 #' }
-osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4),
+osrmIsodistance <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4),
                           exclude, res = 30, returnclass,
                           osrm.server = getOption("osrm.server"),
                           osrm.profile = getOption("osrm.profile")){
@@ -155,4 +156,17 @@ osrmIsometric <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4
   }
   
   return(iso)
+}
+
+#' @name osrmIsometric
+#' @description deprecated, use \link{osrmIsodistance} instead.
+#' @title deprecated
+#' @param ... deprecated
+#' @return deprecated
+#' @keywords internal
+#' @export
+osrmIsometric <- function(...){
+  warning("This function is deprecated, use osrmIsodistance() instead.", 
+          call. = FALSE)
+  osrmIsodistance(...)
 }
