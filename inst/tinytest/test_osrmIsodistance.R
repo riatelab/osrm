@@ -91,7 +91,7 @@ if(local_server){
                                osrm.profile = "driving"))
   
   # old name
-  tinytest::expect_warning(osrmIsometric(loc = c(13.43,52.47), 
+  expect_warning(osrmIsometric(loc = c(13.43,52.47), 
                                          breaks = seq(0,14,2), 
                                          res = 10,
                                          osrm.server = "http://0.0.0.0:5000/", 
