@@ -71,18 +71,6 @@
     },
     {
       "@type": "SoftwareApplication",
-      "identifier": "lwgeom",
-      "name": "lwgeom",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=lwgeom"
-    },
-    {
-      "@type": "SoftwareApplication",
       "identifier": "tinytest",
       "name": "tinytest",
       "provider": {
@@ -104,18 +92,6 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=covr"
-    },
-    {
-      "@type": "SoftwareApplication",
-      "identifier": "maptiles",
-      "name": "maptiles",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=maptiles"
     }
   ],
   "softwareRequirements": {
@@ -192,5 +168,5 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "513.025KB"
+  "fileSize": "512.995KB"
 }

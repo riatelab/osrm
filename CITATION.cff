@@ -128,17 +128,6 @@ references:
   year: '2022'
   url: https://CRAN.R-project.org/package=mapsf
 - type: software
-  title: lwgeom
-  abstract: 'lwgeom: Bindings to Selected ''liblwgeom'' Functions for Simple Features'
-  notes: Suggests
-  authors:
-  - family-names: Pebesma
-    given-names: Edzer
-    email: edzer.pebesma@uni-muenster.de
-    orcid: https://orcid.org/0000-0001-8049-7069
-  year: '2022'
-  url: https://CRAN.R-project.org/package=lwgeom
-- type: software
   title: tinytest
   abstract: 'tinytest: Lightweight and Feature Complete Unit Testing Framework'
   notes: Suggests
@@ -159,14 +148,3 @@ references:
     email: james.f.hester@gmail.com
   year: '2022'
   url: https://CRAN.R-project.org/package=covr
-- type: software
-  title: maptiles
-  abstract: 'maptiles: Download and Display Map Tiles'
-  notes: Suggests
-  authors:
-  - family-names: Giraud
-    given-names: Timothée
-    email: timothee.giraud@cnrs.fr
-    orcid: https://orcid.org/0000-0002-1932-3323
-  year: '2022'
-  url: https://CRAN.R-project.org/package=maptiles
