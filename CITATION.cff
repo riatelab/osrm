@@ -1,5 +1,5 @@
 # -----------------------------------------------------------
-# CITATION file created with {cffr} R package, v0.2.2
+# CITATION file created with {cffr} R package, v0.3.0
 # See also: https://docs.ropensci.org/cffr/
 # -----------------------------------------------------------
  
@@ -11,44 +11,13 @@ title: 'osrm: Interface Between R and the OpenStreetMap-Based Routing Service OS
 version: 4.0.0
 abstract: An interface between R and the 'OSRM' API. 'OSRM' is a routing service based
   on 'OpenStreetMap' data. See <http://project-osrm.org/> for more information. This
-  package allows to compute routes, trips, isochrones and travel distances matrices
-  (travel time and kilometric distance).
+  package enables the computation of routes, trips, isochrones and travel distances
+  matrices (travel time and kilometric distance).
 authors:
 - family-names: Giraud
   given-names: Timothée
   email: timothee.giraud@cnrs.fr
   orcid: https://orcid.org/0000-0002-1932-3323
-preferred-citation:
-  type: manual
-  title: 'osrm: Interface Between R and the OpenStreetMap-Based Routing Service OSRM'
-  authors:
-  - family-names: Giraud
-    given-names: Timothée
-    email: timothee.giraud@cnrs.fr
-    orcid: https://orcid.org/0000-0002-1932-3323
-  version: 4.0.0
-  abstract: An interface between R and the 'OSRM' API. 'OSRM' is a routing service
-    based on 'OpenStreetMap' data. See <http://project-osrm.org/> for more information.
-    This package allows to compute routes, trips, isochrones and travel distances
-    matrices (travel time and kilometric distance).
-  repository: https://CRAN.R-project.org/package=osrm
-  repository-code: https://github.com/riatelab/osrm
-  url: https://github.com/riatelab/osrm
-  contact:
-  - family-names: Giraud
-    given-names: Timothée
-    email: timothee.giraud@cnrs.fr
-    orcid: https://orcid.org/0000-0002-1932-3323
-  keywords:
-  - cran
-  - openstreetmap
-  - osrm
-  - r
-  - r-package
-  - shortest-paths
-  - travel
-  license: GPL-3.0-or-later
-  year: '2022'
 repository: https://CRAN.R-project.org/package=osrm
 repository-code: https://github.com/riatelab/osrm
 url: https://github.com/riatelab/osrm
@@ -114,18 +83,6 @@ references:
     orcid: https://orcid.org/0000-0002-1932-3323
   year: '2022'
   url: https://CRAN.R-project.org/package=mapiso
-- type: software
-  title: methods
-  abstract: 'R: A Language and Environment for Statistical Computing'
-  notes: Imports
-  authors:
-  - name: R Core Team
-  location:
-    name: Vienna, Austria
-  year: '2022'
-  url: https://www.R-project.org/
-  institution:
-    name: R Foundation for Statistical Computing
 - type: software
   title: googlePolylines
   abstract: 'googlePolylines: Encoding Coordinates into ''Google'' Polylines'
