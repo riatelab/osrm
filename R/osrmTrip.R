@@ -120,8 +120,10 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
                    by.x = c("X1", "X2"), by.y = c("X1","X2"), 
                    all.x = T)
     geodf <- geodf[order(geodf$ind, decreasing = F),]
-    indexes <- geodf[!is.na(geodf$waypoint_index),"ind"]
-
+    base_ind <- geodf[!is.na(geodf$waypoint_index),]
+    indexes <- aggregate(base_ind$ind, by= list(base_ind$id), head, 1)$x
+    indexes <- c(sort(indexes), nrow(geodf))
+    
     # Build the polylines
     wktl <- rep(NA,nrow(waypoints))
     for (i in 1:(length(indexes) - 1)) {
