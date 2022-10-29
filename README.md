@@ -9,6 +9,7 @@ status](https://github.com/riatelab/osrm/actions/workflows/check-standard.yaml/b
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.04574/status.svg)](https://doi.org/10.21105/joss.04574)
 
 ***Interface Between R and the OpenStreetMap-Based Routing Service
 [OSRM](http://project-osrm.org/)***
@@ -32,9 +33,10 @@ containers](https://github.com/Project-OSRM/osrm-backend#using-docker).
 
 :warning: **You must be careful using the OSRM demo server and read the
 [*about* page](https://routing.openstreetmap.de/about.html) of the
-service**:  
-\> [One request per second max. No scraping, no heavy
-usage.](https://routing.openstreetmap.de/about.html)
+service**:
+
+> [One request per second max. No scraping, no heavy
+> usage.](https://routing.openstreetmap.de/about.html)
 
 ## Features
 
@@ -42,8 +44,8 @@ usage.](https://routing.openstreetmap.de/about.html)
     matrices,
 -   `osrmRoute()` uses the *route* service to query routes,
 -   `osrmTrip()` uses the *trip* service to query trips,
--   `osrmIsochone()` and `osrmIsometric()` use multiple `osrmTable()`
-    calls to create isochrones or isometric polygons.
+-   `osrmIsochone()` and `osrmIsodistance()` use multiple `osrmTable()`
+    calls to create isochrones or isodistances polygons.
 
 ## Demo
 
@@ -169,8 +171,9 @@ text(st_coordinates(pharmacy[1:5,]), labels = row.names(pharmacy[1:5,]),
 
 -   `osrmIsochrone()` computes areas that are reachable within a given
     time span from a point and returns the reachable regions as
-    polygons. Here we compute the isochrones from a specific point
-    defined by its longitude and latitude.
+    polygons. These areas of equal travel time are called isochrones.
+    Here we compute the isochrones from a specific point defined by its
+    longitude and latitude.
 
 ``` r
 (iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,12,2)))
