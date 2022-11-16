@@ -40,12 +40,12 @@ service**:
 
 ## Features
 
--   `osrmTable()` uses the *table* service to query time/distance
-    matrices,
--   `osrmRoute()` uses the *route* service to query routes,
--   `osrmTrip()` uses the *trip* service to query trips,
--   `osrmIsochone()` and `osrmIsodistance()` use multiple `osrmTable()`
-    calls to create isochrones or isodistances polygons.
+- `osrmTable()` uses the *table* service to query time/distance
+  matrices,
+- `osrmRoute()` uses the *route* service to query routes,
+- `osrmTrip()` uses the *trip* service to query trips,
+- `osrmIsochrone()` and `osrmIsodistance()` use multiple `osrmTable()`
+  calls to create isochrones or isodistances polygons.
 
 ## Demo
 
@@ -55,9 +55,9 @@ pharmacies in Berlin ([© OpenStreetMap
 contributors](https://www.openstreetmap.org/copyright/en)) stored in a
 [geopackage](https://www.geopackage.org/) file.
 
--   `osrmTable()` gives access to the *table* OSRM service. In this
-    example we use this function to get the median time needed to access
-    any pharmacy from any other pharmacy.
+- `osrmTable()` gives access to the *table* OSRM service. In this
+  example we use this function to get the median time needed to access
+  any pharmacy from any other pharmacy.
 
 ``` r
 library(osrm)
@@ -97,9 +97,9 @@ median(travel_time$durations, na.rm = TRUE)
 The median time needed to access any pharmacy from any other pharmacy is
 21.4 minutes.
 
--   `osrmRoute()` is used to compute the shortest route between two
-    points. Here we compute the shortest route between the two first
-    pharmacies.
+- `osrmRoute()` is used to compute the shortest route between two
+  points. Here we compute the shortest route between the two first
+  pharmacies.
 
 ``` r
 (route <- osrmRoute(src = pharmacy[1, ], dst = pharmacy[2, ]))
@@ -123,10 +123,10 @@ plot(st_geometry(pharmacy[1:2,]), pch = 20, add = T, cex = 1.5)
 
 ![](route.png)
 
--   `osrmTrip()` can be used to resolve the travelling salesman problem,
-    it gives the shortest trip between a set of unordered points. In
-    this example we want to obtain the shortest trip between the first
-    five pharmacies.
+- `osrmTrip()` can be used to resolve the travelling salesman problem,
+  it gives the shortest trip between a set of unordered points. In this
+  example we want to obtain the shortest trip between the first five
+  pharmacies.
 
 ``` r
 (trips <- osrmTrip(loc = pharmacy[1:5, ], overview = "full"))
@@ -169,11 +169,11 @@ text(st_coordinates(pharmacy[1:5,]), labels = row.names(pharmacy[1:5,]),
 
 ![](trip.png)
 
--   `osrmIsochrone()` computes areas that are reachable within a given
-    time span from a point and returns the reachable regions as
-    polygons. These areas of equal travel time are called isochrones.
-    Here we compute the isochrones from a specific point defined by its
-    longitude and latitude.
+- `osrmIsochrone()` computes areas that are reachable within a given
+  time span from a point and returns the reachable regions as polygons.
+  These areas of equal travel time are called isochrones. Here we
+  compute the isochrones from a specific point defined by its longitude
+  and latitude.
 
 ``` r
 (iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,12,2)))
@@ -203,13 +203,13 @@ points(x = 13.43, y = 52.47, pch = 4, lwd = 2, cex = 1.5)
 
 ## Installation
 
--   Development version on GitHub
+- Development version on GitHub
 
 ``` r
 remotes::install_github("riatelab/osrm")
 ```
 
--   Stable version on [CRAN](https://CRAN.R-project.org/package=osrm/)
+- Stable version on [CRAN](https://CRAN.R-project.org/package=osrm/)
 
 ``` r
 install.packages("osrm")

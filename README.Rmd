@@ -35,7 +35,7 @@ You can run your own instance of OSRM following guidelines provided [here](https
 - `osrmTable()` uses the *table* service to query time/distance matrices,
 - `osrmRoute()` uses the *route* service to query routes,
 - `osrmTrip()` uses the *trip* service to query trips,
-- `osrmIsochone()` and `osrmIsodistance()` use multiple `osrmTable()` calls to create isochrones or isodistances polygons.
+- `osrmIsochrone()` and `osrmIsodistance()` use multiple `osrmTable()` calls to create isochrones or isodistances polygons.
 
 ## Demo
 
