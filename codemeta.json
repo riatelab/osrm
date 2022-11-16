@@ -7,13 +7,13 @@
   "codeRepository": "https://github.com/riatelab/osrm",
   "issueTracker": "https://github.com/riatelab/osrm/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.2.1 (2022-06-23)",
+  "runtimePlatform": "R version 4.2.2 (2022-10-31)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -168,5 +168,34 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "512.995KB"
+  "fileSize": "513.897KB",
+  "citation": [
+    {
+      "@type": "ScholarlyArticle",
+      "datePublished": "2022",
+      "author": [
+        {
+          "@type": "Person",
+          "givenName": "Timothée",
+          "familyName": "Giraud"
+        }
+      ],
+      "name": "{osrm: Interface Between R and the OpenStreetMap-Based Routing Service OSRM}",
+      "identifier": "10.21105/joss.04574",
+      "url": "https://doi.org/10.21105/joss.04574",
+      "pagination": "4574",
+      "@id": "https://doi.org/10.21105/joss.04574",
+      "sameAs": "https://doi.org/10.21105/joss.04574",
+      "isPartOf": {
+        "@type": "PublicationIssue",
+        "issueNumber": "78",
+        "datePublished": "2022",
+        "isPartOf": {
+          "@type": ["PublicationVolume", "Periodical"],
+          "volumeNumber": "7",
+          "name": "Journal of Open Source Software"
+        }
+      }
+    }
+  ]
 }

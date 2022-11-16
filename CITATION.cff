@@ -8,7 +8,8 @@ message: 'To cite package "osrm" in publications use:'
 type: software
 license: GPL-3.0-or-later
 title: 'osrm: Interface Between R and the OpenStreetMap-Based Routing Service OSRM'
-version: 4.0.0
+version: 4.0.1
+doi: 10.21105/joss.04574
 abstract: An interface between R and the 'OSRM' API. 'OSRM' is a routing service based
   on 'OpenStreetMap' data. See <http://project-osrm.org/> for more information. This
   package enables the computation of routes, trips, isochrones and travel distances
@@ -18,6 +19,24 @@ authors:
   given-names: Timothée
   email: timothee.giraud@cnrs.fr
   orcid: https://orcid.org/0000-0002-1932-3323
+preferred-citation:
+  type: article
+  title: 'osrm: Interface Between R and the OpenStreetMap-Based Routing Service OSRM'
+  authors:
+  - family-names: Giraud
+    given-names: Timothée
+    email: timothee.giraud@cnrs.fr
+    orcid: https://orcid.org/0000-0002-1932-3323
+  doi: 10.21105/joss.04574
+  url: https://doi.org/10.21105/joss.04574
+  year: '2022'
+  month: '8'
+  publisher:
+    name: The Open Journal
+  volume: '7'
+  issue: '78'
+  journal: Journal of Open Source Software
+  start: '4574'
 repository: https://CRAN.R-project.org/package=osrm
 repository-code: https://github.com/riatelab/osrm
 url: https://github.com/riatelab/osrm

@@ -1,0 +1,17 @@
+citHeader("To cite package osrm in publications use:")
+
+citEntry(entry = "Article",
+  doi = "10.21105/joss.04574",
+  url = "https://doi.org/10.21105/joss.04574",
+  year  = "2022",
+  month = "aug",
+  publisher = "The Open Journal",
+  volume = "7",
+  number = "78",
+  pages = "4574",
+  author = "Timothée Giraud",
+  title = "{osrm: Interface Between R and the OpenStreetMap-Based Routing Service OSRM}",
+  journal = "Journal of Open Source Software", 
+  textVersion = "Giraud, T., (2022). osrm: Interface Between R and the OpenStreetMap-Based Routing Service OSRM. Journal of Open Source Software, 7(78), 4574, https://doi.org/10.21105/joss.04574")
+  
+  
