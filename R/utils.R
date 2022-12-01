@@ -255,10 +255,23 @@ clean_coord <- function(x){
 }
 
 
-encode_coords <- function(x){
+encode_coords <- function(x, osrm.server){
   x$lat <- as.numeric(as.character(x$lat))
   x$lon <- as.numeric(as.character(x$lon))
-  paste0("polyline(", googlePolylines::encode(x[,c("lon","lat")]),")")
+  if(osrm.server == "https://routing.openstreetmap.de/"){
+    result <- paste(
+      clean_coord(x$lon), 
+      clean_coord(x$lat), 
+      sep=",",collapse = ";"
+    )
+  }else{
+    result <- paste0(
+      "polyline(", 
+      googlePolylines::encode(x[,c("lon","lat")]),
+      ")"
+    )
+  }
+  return(result)
 }
 
 

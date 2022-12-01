@@ -104,13 +104,13 @@ osrmTable <- function(src,
   if(!missing(loc)){
     loc <- input_table(x = loc, id = 'loc')
     dst_r <- src_r <- loc
-    url <- paste0(url, encode_coords(x = loc), "?")
+    url <- paste0(url, encode_coords(x = loc, osrm.server = osrm.server), "?")
   }else{
     src_r <- input_table(x = src, id = 'src')
     dst_r <- input_table(x = dst, id = 'dst')
     loc <- rbind(src_r, dst_r)
     url <- paste0(url, 
-                  encode_coords(x = loc), 
+                  encode_coords(x = loc, osrm.server), 
                   paste0("?sources=", 
                          paste(0:(nrow(src_r)-1), collapse = ";"), 
                          "&destinations=", 
