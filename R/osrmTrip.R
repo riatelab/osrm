@@ -37,6 +37,8 @@
 #' and total distance (in kilometers) of the trip.}
 #' }
 #' @export
+#' @importFrom stats aggregate
+#' @importFrom utils head
 #' @examples
 #' \dontrun{
 #' library(sf)

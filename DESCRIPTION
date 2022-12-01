@@ -20,7 +20,8 @@ Imports:
     utils, 
     mapiso,
     googlePolylines,
-    sf
+    sf, 
+    stats
 Depends:
     R (>= 3.5.0)
 Suggests: mapsf, tinytest, covr
