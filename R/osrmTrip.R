@@ -57,7 +57,6 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
                      returnclass, osrm.server = getOption("osrm.server"),
                      osrm.profile = getOption("osrm.profile")){
   
-  
   opt <- options(error = NULL)
   on.exit(options(opt), add=TRUE)
   
@@ -71,6 +70,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
   loc <- input_route(x = loc, id = "loc", single = FALSE, all.ids = TRUE)
   oprj <- loc$oprj
   
+  # build url
   url <- paste0(url, 
                 paste(clean_coord(loc$lon) , clean_coord(loc$lat), 
                       sep=",",collapse = ";"), 
@@ -104,38 +104,45 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
   # In case of island, multiple trips
   ntour <- dim(res$trips)[1]
   trips <- vector("list", ntour)
-  
   for (nt in 1:ntour) {
-    # nt=1
     # Coordinates of the line
     geodf <- data.frame(res$trips[nt,]$geometry[[1]]$coordinates)
+    geodf$id <- 1:nrow(geodf)
+    
     # In case of unfinnish trip
     if (geodf[nrow(geodf),1] != geodf[1,1]) {
       geodf <- rbind(geodf,geodf[1,])
     }
-    geodf$ind <- 1:nrow(geodf)
+    
     # Extract trip waypoints
     waypoints <- waypointsg[waypointsg$trips_index == (nt - 1),]
+    geodf$id_wp <- NA
+    waypoints <- waypoints[order(waypoints$waypoint_index, decreasing = F),]
+    j <- 1
+    for(i in 1:(nrow(geodf)-1)){
+      if (any(geodf[i, c("X1", "X2")] == waypoints[j, c("X1", "X2")])){
+        geodf$id_wp[i] <- waypoints[j, "id"]
+        j <- j+1
+        if (j>nrow(waypoints)){j = 1}
+      }
+    }
     
-    # Get points order and indexes
-    geodf <- merge(geodf, waypoints, 
-                   by.x = c("X1", "X2"), by.y = c("X1","X2"), 
-                   all.x = T)
-    geodf <- geodf[order(geodf$ind, decreasing = F),]
-    base_ind <- geodf[!is.na(geodf$waypoint_index),]
-    indexes <- aggregate(base_ind$ind, by= list(base_ind$id), head, 1)$x
-    indexes <- c(sort(indexes), nrow(geodf))
+    if(is.na(geodf[nrow(geodf), "id_wp"])){
+      geodf[nrow(geodf), "id_wp"] <- geodf[1, "id_wp"] 
+    }
     
+    l <- list()
+    j <- 1
+    for (i in 1:nrow(geodf)){
+      if(!is.na(geodf[i, "id_wp"])){
+        l[[j]] <- geodf[i, "id"]
+        j <- j + 1
+      }
+    }
     # Build the polylines
     wktl <- rep(NA,nrow(waypoints))
-    for (i in 1:(length(indexes) - 1)) {
-      ind0 <- indexes[i]
-      ind1 <- indexes[i+1]
-      if(ind1==ind0){
-        aind <- rep(ind0,2)
-      }else{
-        aind <- ind0:ind1
-      }
+    for (i in 1:length(wktl)) {
+      aind <- l[[i]]:l[[i+1]]
       wktl[i] <- paste("LINESTRING(",
                        paste(geodf[aind,1]," ",
                              geodf[aind,2], 
@@ -158,5 +165,4 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
     trips[[nt]] <- list(trip = sldf, summary = tripSummary)
   }
   return(trips)
-  
 }
