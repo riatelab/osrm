@@ -28,4 +28,4 @@ Suggests: mapsf, tinytest, covr
 URL: https://github.com/riatelab/osrm
 BugReports: https://github.com/riatelab/osrm/issues
 Encoding: UTF-8
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3

@@ -222,3 +222,10 @@ requests](https://github.com/riatelab/osrm/pulls) and report issues or
 ask questions [here](https://github.com/riatelab/osrm/issues). See the
 [CONTRIBUTING.md](https://github.com/riatelab/osrm/blob/master/CONTRIBUTING.md)
 file for detailed instructions.
+
+## Acknowledgements
+
+Many thanks to the editor (@elbeejay) and reviewers (@JosiahParry,
+@mikemahoney218 and @wcjochem) of the JOSS article.  
+This publication has led to a significant improvement in the code base
+and documentation of the package.
