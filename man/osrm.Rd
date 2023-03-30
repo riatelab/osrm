@@ -21,13 +21,16 @@ travel geometry between two points. This function interfaces with the
 shortest travel geometry between multiple unordered points. This function 
 interfaces the \emph{trip} OSRM service. Use this function to resolve the 
 travelling salesman problem.}
+\item{\code{\link{osrmNearest}}: Build and send an OSRM API query to get the 
+nearest point on the street network. This function interfaces the 
+\emph{nearest} OSRM service.}
 \item{\code{\link{osrmIsochrone}}: This function computes areas that are 
 reachable within a given time span from a point and returns the reachable 
 regions as polygons. These areas of equal travel time are called isochrones.}
 \item{\code{\link{osrmIsodistance}}: This function computes areas that are 
 reachable within a given road distance from a point and returns the reachable 
 regions as polygons. These areas of equal travel distance are called 
-isodistances}
+isodistances.}
 }
 }
 \note{

@@ -1,5 +1,5 @@
 #' @name osrmNearest
-#' @title Get a the Nearest Point on the Street Network 
+#' @title Get the Nearest Point on the Street Network 
 #' @description This function interfaces with the \emph{nearest} OSRM 
 #' service.\cr
 #' @param loc a point to snap to the street network. \code{loc} can be: \itemize{

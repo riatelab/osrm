@@ -2,7 +2,7 @@
 % Please edit documentation in R/osrmNearest.R
 \name{osrmNearest}
 \alias{osrmNearest}
-\title{Get a the Nearest Point on the Street Network}
+\title{Get the Nearest Point on the Street Network}
 \usage{
 osrmNearest(
   loc,

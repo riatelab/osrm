@@ -44,6 +44,8 @@ service**:
   matrices,
 - `osrmRoute()` uses the *route* service to query routes,
 - `osrmTrip()` uses the *trip* service to query trips,
+- `osrmNearest()` uses the *nearest* service to query the nearest point
+  on the street network,
 - `osrmIsochrone()` and `osrmIsodistance()` use multiple `osrmTable()`
   calls to create isochrones or isodistances polygons.
 
@@ -168,6 +170,26 @@ text(st_coordinates(pharmacy[1:5,]), labels = row.names(pharmacy[1:5,]),
 ```
 
 ![](trip.png)
+
+- `osrmNearest()` gives access to the *nearest* OSRM service. It returns
+  the nearest point on the street network from any point. Here we will
+  get the nearest point on the network from a couple of coordinates.
+
+``` r
+pt_not_on_street_network <- c(13.40, 52.47)
+(pt_on_street_network <- osrmNearest(loc = pt_not_on_street_network))
+```
+
+    ## Simple feature collection with 1 feature and 2 fields
+    ## Geometry type: POINT
+    ## Dimension:     XY
+    ## Bounding box:  xmin: 13.39671 ymin: 52.46661 xmax: 13.39671 ymax: 52.46661
+    ## Geodetic CRS:  WGS 84
+    ##      id distance                  geometry
+    ## loc loc      439 POINT (13.39671 52.46661)
+
+The distance from the input point to the nearest point on the street
+network is of 439 meters
 
 - `osrmIsochrone()` computes areas that are reachable within a given
   time span from a point and returns the reachable regions as polygons.
