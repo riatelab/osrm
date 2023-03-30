@@ -29,7 +29,12 @@ only the first row or element is considered.}
 \item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot".}
 }
 \value{
-The output of this function is an sf LINESTRING of the shortest route.\cr
+The output of this function is an sf POINT of the point on the street 
+network.\cr
+It contains 2 fields: \itemize{
+  \item id, the point identifierv
+  \item distance, the distance in meters to the supplied input point.
+  }
 }
 \description{
 This function interfaces with the \emph{nearest} OSRM 
@@ -38,5 +43,9 @@ service.\cr
 \examples{
 \dontrun{
 library(sf)
+apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"),
+                       quiet = TRUE)
+pt <- osrmNearest(apotheke.sf[56, ])
+pt$distance
 }
 }
