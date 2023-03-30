@@ -15,11 +15,20 @@
 #' @param osrm.server the base URL of the routing server.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot".
 #' @return
-#' The output of this function is an sf LINESTRING of the shortest route.\cr
+#' The output of this function is an sf POINT of the point on the street 
+#' network.\cr
+#' It contains 2 fields: \itemize{
+#'   \item id, the point identifierv
+#'   \item distance, the distance in meters to the supplied input point.
+#'   }
 #' @importFrom sf st_as_sfc st_crs st_geometry st_sf st_as_sf st_transform
 #' @examples
 #' \dontrun{
 #' library(sf)
+#' apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"),
+#'                        quiet = TRUE)
+#' pt <- osrmNearest(apotheke.sf[56, ])
+#' pt$distance
 #' }
 #' @export
 osrmNearest <- function( 
@@ -28,16 +37,8 @@ osrmNearest <- function(
     osrm.server = getOption("osrm.server"),
     osrm.profile = getOption("osrm.profile")){
   
-  # library(sf)
-  # apotheke.df <- read.csv(system.file("csv/apotheke.csv", package = "osrm"))
-  # apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
-  #                        quiet = TRUE)
   opt <- options(error = NULL)
   on.exit(options(opt), add=TRUE)
-  # options(osrm.server = "http://0.0.0.0:5000/", osrm.profile = "test")
-  # osrm.server = getOption("osrm.server")
-  # osrm.profile = getOption("osrm.profile")
-  # loc <- apotheke.sf[3,-1]
   
   url <- base_url(osrm.server, osrm.profile, "nearest")
   
@@ -51,7 +52,6 @@ osrmNearest <- function(
   
   # adding exclude parameter
   if (!missing(exclude)) {url <- paste0(url, "&exclude=", exclude)}
-  
   
   e <- try({
     req_handle <- curl::new_handle(verbose = FALSE)
