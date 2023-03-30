@@ -1,7 +1,19 @@
+# osrm version 4.1.0
+
+## Fix
+* fix and refactor osrmTrip() for better handling of points close to each others
+* use raw coordinates for table queries instead of googlepolylines when using the demo server (see #119)
+
+## Feat 
+* add a citation file
+* add osrmNearest() to get the closest point on the street network, interface to the nearest service
+
+
+
 # osrm version 4.0.0
 
 ## Major changes
-* drop sp support (deprecate returnclass, to be removed in the next minor vesrion), osrm no longer accepts sp objects, nor sp results
+* drop sp support (deprecate returnclass, to be removed in the next minor version), osrm no longer accepts sp objects, nor sp results
 * refactor to better display server error and warnings messages
 * use RcppSimdJson instead of jsonlite
 * use mapiso instead of isoband code for isopolygon creation
