@@ -2,62 +2,64 @@ if(demo_server){
   ######################## DEMO car ###########################
   options(osrm.server = "https://routing.openstreetmap.de/", 
           osrm.profile = "car")
-  wait()
+  
   r <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2), res = 10 )
+  wait()
   expect_true(inherits(r, "sf"))
   expect_identical(st_crs(r), st_crs("EPSG:4326"))
   expect_identical(colnames(r), 
                    c("id", "isomin", "isomax", "geometry"))
-  wait()
+  
   r <- osrmIsochrone(loc = x_sf[10, ], breaks = seq(0,14,2), res = 10 )
+  wait()
   expect_true(inherits(r, "sf"))
   expect_identical(st_crs(r), st_crs(x_sf))
   expect_identical(colnames(r), 
                    c("id", "isomin", "isomax", "geometry"))
-  wait()
   
   ################# DEMO BIKE #####################
   options(osrm.server = "https://routing.openstreetmap.de/", osrm.profile = "bike")
   r <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2), res = 10 )
+  wait()
   expect_true(inherits(r, "sf"))
   expect_identical(st_crs(r), st_crs("EPSG:4326"))
   expect_identical(colnames(r), 
                    c("id", "isomin", "isomax", "geometry"))
-  wait()
+  
   r <- osrmIsochrone(loc = x_sf[10, ], breaks = seq(0,14,2), res = 10 )
+  wait()
   expect_true(inherits(r, "sf"))
   expect_identical(st_crs(r), st_crs(x_sf))
   expect_identical(colnames(r), 
                    c("id", "isomin", "isomax", "geometry"))
-  wait()
-  
+
   ############## DEMO FOOT #################"""""
   options(osrm.server = "https://routing.openstreetmap.de/", osrm.profile = "foot")
   r <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2), res = 10 )
+  wait()
   expect_true(inherits(r, "sf"))
   expect_identical(st_crs(r), st_crs("EPSG:4326"))
   expect_identical(colnames(r), 
                    c("id", "isomin", "isomax", "geometry"))
-  wait()
+
   r <- osrmIsochrone(loc = x_sf[10, ], breaks = seq(0,14,2), res = 10 )
+  wait()
   expect_true(inherits(r, "sf"))
   expect_identical(st_crs(r), st_crs(x_sf))
   expect_identical(colnames(r), 
                    c("id", "isomin", "isomax", "geometry"))
-  wait()
-  
+
   ############# server param ##################""
-  wait()
   r <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2), res = 10, 
                      osrm.server = "https://router.project-osrm.org/", 
                      osrm.profile = "driving")
+  wait()
   expect_true(inherits(r, "sf"))
   expect_identical(st_crs(r), st_crs("EPSG:4326"))
   expect_identical(colnames(r), 
                    c("id", "isomin", "isomax", "geometry"))
-  
-  # server error
-  wait()
+
+    # server error
   expect_error(osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,14,2), 
                              res = 10, 
                              osrm.server = "https://router.project-osrm.orgS/", 
@@ -68,6 +70,7 @@ if(demo_server){
                              exclude = "motorway",
                              osrm.server = "https://router.project-osrm.org/", 
                              osrm.profile = "driving"))
+  wait()
 }
 
 # ############## ONLY LOCAL ############################################

@@ -2,8 +2,8 @@ if(demo_server){
   ######################## DEMO car ###########################
   options(osrm.server = "https://routing.openstreetmap.de/", 
           osrm.profile = "car")
-  wait()
   r <- osrmTrip(loc = x_sf[1:16, ])
+  wait()
   trip <- r[[1]]$trip
   trip_summary <- r[[1]]$summary
   expect_true(inherits(trip, "sf"))
@@ -16,8 +16,8 @@ if(demo_server){
   
   ################# DEMO BIKE #####################
   options(osrm.server = "https://routing.openstreetmap.de/", osrm.profile = "bike")
-  wait()
   r <- osrmTrip(loc = x_sf[1:16, ])
+  wait()
   trip <- r[[1]]$trip
   trip_summary <- r[[1]]$summary
   expect_true(inherits(trip, "sf"))
@@ -31,8 +31,8 @@ if(demo_server){
   
   ############## DEMO FOOT #################"""""
   options(osrm.server = "https://routing.openstreetmap.de/", osrm.profile = "foot")
-  wait()
   r <- osrmTrip(loc = x_sf[1:16, ])
+  wait()
   trip <- r[[1]]$trip
   trip_summary <- r[[1]]$summary
   expect_true(inherits(trip, "sf"))
@@ -44,10 +44,10 @@ if(demo_server){
   expect_identical(names(trip_summary),c('duration', 'distance'))
   
   ############# server param ##################""
-  wait()
   r <- osrmTrip(loc = x_sf[1:5,], 
                 osrm.server = "http://router.project-osrm.org/", 
                 osrm.profile = "driving")
+  wait()
   trip <- r[[1]]$trip
   trip_summary <- r[[1]]$summary
   expect_true(inherits(trip, "sf"))
@@ -58,7 +58,6 @@ if(demo_server){
   expect_true(st_geometry_type(trip, by_geometry = FALSE) == "LINESTRING")
   expect_identical(names(trip_summary),c('duration', 'distance'))  
   # server error
-  wait()
   expect_error(osrmTrip(loc = x_sf[1:5, ], 
                         osrm.server = "https://router.project-osrm.orgS/", 
                         osrm.profile = "driving"))
@@ -67,6 +66,7 @@ if(demo_server){
                         exclude = "motorway",
                         osrm.server = "https://router.project-osrm.org/", 
                         osrm.profile = "driving"))
+  wait()
 }
 
 

@@ -2,8 +2,8 @@ if(demo_server){
   ######################## DEMO car ###########################
   options(osrm.server = "https://routing.openstreetmap.de/", 
           osrm.profile = "car")
-  wait()
   r <- osrmNearest(loc = x_sf[1, ])
+  wait()
   expect_true(inherits(r, "sf"))
   expect_identical(st_crs(r), st_crs(x_sf))
   expect_true(nrow(r) == 1)
@@ -12,8 +12,8 @@ if(demo_server){
   
   ################# DEMO BIKE #####################
   options(osrm.server = "https://routing.openstreetmap.de/", osrm.profile = "bike")
-  wait()
   r <- osrmNearest(loc = x_sf[1, ])
+  wait()
   expect_true(inherits(r, "sf"))
   expect_identical(st_crs(r), st_crs(x_sf))
   expect_true(nrow(r) == 1)
@@ -22,8 +22,8 @@ if(demo_server){
   
   ############## DEMO FOOT #################"""""
   options(osrm.server = "https://routing.openstreetmap.de/", osrm.profile = "foot")
-  wait()
   r <- osrmNearest(loc = x_sf[1, ])
+  wait()
   expect_true(inherits(r, "sf"))
   expect_identical(st_crs(r), st_crs(x_sf))
   expect_true(nrow(r) == 1)
@@ -31,20 +31,21 @@ if(demo_server){
   expect_true(st_geometry_type(r) == "POINT")
   
   ############# server param ##################""
-  wait()
   r <-  osrmNearest(loc = x_sf[1, ], 
                     osrm.server = "https://router.project-osrm.org/", 
                     osrm.profile = "driving")
+  wait()
   expect_true(inherits(r, "sf"))
-  
   # server error
   expect_error(osrmNearest(loc = x_sf[1, ], 
                            osrm.server = "https://router.project-osrm.orgS/", 
                            osrm.profile = "driving"))
+  wait()
   expect_error(osrmNearest(loc = x_sf[1, ], 
                            exclude = "motorway",
                            osrm.server = "https://router.project-osrm.org/", 
                            osrm.profile = "driving"))
+  wait()
 }
 
 
