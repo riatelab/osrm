@@ -1,3 +1,10 @@
+# osrm version 4.1.1
+
+## Fix 
+* use bibentry() instead of citEntry()
+
+
+
 # osrm version 4.1.0
 
 ## Fix

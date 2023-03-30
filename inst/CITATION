@@ -1,6 +1,4 @@
-citHeader("To cite package osrm in publications use:")
-
-citEntry(entry = "Article",
+bibentry(bibtype = "Article",
   doi = "10.21105/joss.04574",
   url = "https://doi.org/10.21105/joss.04574",
   year  = "2022",
