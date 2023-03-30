@@ -1,5 +1,5 @@
 # -----------------------------------------------------------
-# CITATION file created with {cffr} R package, v0.3.0
+# CITATION file created with {cffr} R package, v0.4.1
 # See also: https://docs.ropensci.org/cffr/
 # -----------------------------------------------------------
  
@@ -8,7 +8,7 @@ message: 'To cite package "osrm" in publications use:'
 type: software
 license: GPL-3.0-or-later
 title: 'osrm: Interface Between R and the OpenStreetMap-Based Routing Service OSRM'
-version: 4.0.1
+version: 4.1.0
 doi: 10.21105/joss.04574
 abstract: An interface between R and the 'OSRM' API. 'OSRM' is a routing service based
   on 'OpenStreetMap' data. See <http://project-osrm.org/> for more information. This
@@ -59,6 +59,8 @@ references:
   abstract: 'RcppSimdJson: ''Rcpp'' Bindings for the ''simdjson'' Header-Only Library
     for ''JSON'' Parsing'
   notes: Imports
+  url: https://github.com/eddelbuettel/rcppsimdjson/
+  repository: https://CRAN.R-project.org/package=RcppSimdJson
   authors:
   - family-names: Eddelbuettel
     given-names: Dirk
@@ -66,19 +68,19 @@ references:
     given-names: Brendan
   - family-names: Lemire
     given-names: Daniel
-  year: '2022'
-  url: https://CRAN.R-project.org/package=RcppSimdJson
+  year: '2023'
 - type: software
   title: curl
   abstract: 'curl: A Modern and Flexible Web Client for R'
   notes: Imports
+  url: https://curl.se/libcurl/
+  repository: https://CRAN.R-project.org/package=curl
   authors:
   - family-names: Ooms
     given-names: Jeroen
     email: jeroen@berkeley.edu
     orcid: https://orcid.org/0000-0002-4035-0289
-  year: '2022'
-  url: https://CRAN.R-project.org/package=curl
+  year: '2023'
 - type: software
   title: utils
   abstract: 'R: A Language and Environment for Statistical Computing'
@@ -87,51 +89,52 @@ references:
   - name: R Core Team
   location:
     name: Vienna, Austria
-  year: '2022'
-  url: https://www.R-project.org/
+  year: '2023'
   institution:
     name: R Foundation for Statistical Computing
 - type: software
   title: mapiso
   abstract: 'mapiso: Create Contour Polygons from Regular Grids'
   notes: Imports
+  url: https://github.com/riatelab/mapiso
+  repository: https://CRAN.R-project.org/package=mapiso
   authors:
   - family-names: Giraud
     given-names: Timothée
     email: timothee.giraud@cnrs.fr
     orcid: https://orcid.org/0000-0002-1932-3323
-  year: '2022'
-  url: https://CRAN.R-project.org/package=mapiso
+  year: '2023'
 - type: software
   title: googlePolylines
   abstract: 'googlePolylines: Encoding Coordinates into ''Google'' Polylines'
   notes: Imports
+  repository: https://CRAN.R-project.org/package=googlePolylines
   authors:
   - family-names: Cooley
     given-names: David
     email: dcooley@symbolix.com.au
-  year: '2022'
-  url: https://CRAN.R-project.org/package=googlePolylines
+  year: '2023'
 - type: software
   title: sf
   abstract: 'sf: Simple Features for R'
   notes: Imports
+  url: https://r-spatial.github.io/sf/
+  repository: https://CRAN.R-project.org/package=sf
   authors:
   - family-names: Pebesma
     given-names: Edzer
     email: edzer.pebesma@uni-muenster.de
     orcid: https://orcid.org/0000-0001-8049-7069
-  year: '2022'
-  url: https://CRAN.R-project.org/package=sf
+  year: '2023'
 - type: software
   title: 'R: A Language and Environment for Statistical Computing'
   notes: Depends
+  url: https://www.R-project.org/
   authors:
   - name: R Core Team
   location:
     name: Vienna, Austria
-  year: '2022'
-  url: https://www.R-project.org/
+  year: '2023'
   institution:
     name: R Foundation for Statistical Computing
   version: '>= 3.5.0'
@@ -139,31 +142,34 @@ references:
   title: mapsf
   abstract: 'mapsf: Thematic Cartography'
   notes: Suggests
+  url: https://riatelab.github.io/mapsf/
+  repository: https://CRAN.R-project.org/package=mapsf
   authors:
   - family-names: Giraud
     given-names: Timothée
     email: timothee.giraud@cnrs.fr
     orcid: https://orcid.org/0000-0002-1932-3323
-  year: '2022'
-  url: https://CRAN.R-project.org/package=mapsf
+  year: '2023'
 - type: software
   title: tinytest
   abstract: 'tinytest: Lightweight and Feature Complete Unit Testing Framework'
   notes: Suggests
+  url: https://github.com/markvanderloo/tinytest
+  repository: https://CRAN.R-project.org/package=tinytest
   authors:
   - family-names: van der Loo
     given-names: Mark
     email: mark.vanderloo@gmail.com
     orcid: https://orcid.org/0000-0002-9807-4686
-  year: '2022'
-  url: https://CRAN.R-project.org/package=tinytest
+  year: '2023'
 - type: software
   title: covr
   abstract: 'covr: Test Coverage for Packages'
   notes: Suggests
+  url: https://covr.r-lib.org
+  repository: https://CRAN.R-project.org/package=covr
   authors:
   - family-names: Hester
     given-names: Jim
     email: james.f.hester@gmail.com
-  year: '2022'
-  url: https://CRAN.R-project.org/package=covr
+  year: '2023'

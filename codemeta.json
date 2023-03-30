@@ -7,13 +7,13 @@
   "codeRepository": "https://github.com/riatelab/osrm",
   "issueTracker": "https://github.com/riatelab/osrm/issues",
   "license": "https://spdx.org/licenses/GPL-3.0",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.2.2 (2022-10-31)",
+  "runtimePlatform": "R version 4.2.3 (2023-03-15)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -168,7 +168,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "513.897KB",
+  "fileSize": "522.885KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
