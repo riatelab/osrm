@@ -16,16 +16,16 @@ osrmIsochrone(
 }
 \arguments{
 \item{loc}{origin point. \code{loc} can be: \itemize{
-  \item a vector of coordinates (longitude and latitude, WGS 84), 
+  \item a vector of coordinates (longitude and latitude, WGS 84),
   \item a data.frame of longitudes and latitudes (WGS 84),
   \item a matrix of longitudes and latitudes (WGS 84),
   \item an sfc object of type POINT,
   \item an sf object of type POINT.
 }
-If \code{loc} is a data.frame, a matrix, an sfc object or an sf object then 
+If \code{loc} is a data.frame, a matrix, an sfc object or an sf object then
 only the first row or element is considered.}
 
-\item{breaks}{a numeric vector of break values to define isochrone areas, 
+\item{breaks}{a numeric vector of break values to define isochrone areas,
 in minutes.}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API.}
@@ -50,35 +50,38 @@ It contains 3 fields: \itemize{
   \item isomin, the minimum value of the isochrone polygon in minutes
   \item isomax, the maximum value of the isochrone polygon in minutes
 }
-If loc is a vector, a data.frame or a matrix the coordinate 
-reference system (CRS) of the output is EPSG:4326 (WGS84).\cr 
-If loc is an sfc or sf object, the output has the same CRS 
+If loc is a vector, a data.frame or a matrix the coordinate
+reference system (CRS) of the output is EPSG:4326 (WGS84).\cr
+If loc is an sfc or sf object, the output has the same CRS
 as loc.\cr
 }
 \description{
-This function computes areas that are reachable within a 
-given time span from a point and returns the reachable regions as 
+This function computes areas that are reachable within a
+given time span from a point and returns the reachable regions as
 polygons. These areas of equal travel time are called isochrones.
 }
 \examples{
 \dontrun{
 library(sf)
 apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"),
-                       quiet = TRUE)
+  quiet = TRUE
+)
 # Get isochones with lon/lat coordinates
-iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,12,2))
+iso <- osrmIsochrone(loc = c(13.43, 52.47), breaks = seq(0, 12, 2))
 # Map
 plot(iso["isomax"], breaks = sort(unique(c(iso$isomin, iso$isomax))))
 
 # Get isochones with an sf POINT
-iso2 <- osrmIsochrone(loc = apotheke.sf[11,], breaks = seq(0,12,2))
+iso2 <- osrmIsochrone(loc = apotheke.sf[11, ], breaks = seq(0, 12, 2))
 # Map
-if(require("mapsf")){
-  mapsf::mf_map(x = iso2, var = "isomin", type = "choro",
-                breaks = sort(unique(c(iso2$isomin, iso2$isomax))),
-                pal = "Burg", border = NA, leg_pos = "topleft",
-                leg_val_rnd = 0,
-                leg_frame = TRUE, leg_title = "Isochrones\n(min)")
+if (require("mapsf")) {
+  mapsf::mf_map(
+    x = iso2, var = "isomin", type = "choro",
+    breaks = sort(unique(c(iso2$isomin, iso2$isomax))),
+    pal = "Burg", border = NA, leg_pos = "topleft",
+    leg_val_rnd = 0,
+    leg_frame = TRUE, leg_title = "Isochrones\n(min)"
+  )
 }
 }
 }

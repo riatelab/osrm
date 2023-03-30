@@ -14,7 +14,7 @@ osrmTrip(
 )
 }
 \arguments{
-\item{loc}{starting point and waypoints to reach along the 
+\item{loc}{starting point and waypoints to reach along the
 route. \code{loc} can be: \itemize{
   \item a data.frame of longitudes and latitudes (WGS 84),
   \item a matrix of longitudes and latitudes (WGS 84),
@@ -26,7 +26,7 @@ Row names, if relevant, or element indexes are used as identifiers.}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API.}
 
-\item{overview}{"full", "simplified". Add geometry either full (detailed) or simplified 
+\item{overview}{"full", "simplified". Add geometry either full (detailed) or simplified
 according to highest zoom level it could be display on.}
 
 \item{returnclass}{deprecated.}
@@ -39,12 +39,12 @@ according to highest zoom level it could be display on.}
 A list of connected components is returned. Each component contains:
 \describe{
 \item{trip}{
-An sf LINESTRING. If loc is a data.frame or a matrix the coordinate 
-reference system (CRS) of the route is EPSG:4326 (WGS84). If loc is an sfc or 
+An sf LINESTRING. If loc is a data.frame or a matrix the coordinate
+reference system (CRS) of the route is EPSG:4326 (WGS84). If loc is an sfc or
 sf object, the route has the same CRS as loc.\cr
-Each line of the returned route is a step of the trip. The object has four 
-columns: start (identifier of the starting point), 
-end (identifier of the destination), duration (duration of the step in minutes), 
+Each line of the returned route is a step of the trip. The object has four
+columns: start (identifier of the starting point),
+end (identifier of the destination), duration (duration of the step in minutes),
 distance (length of the step in kilometers).
 }
 \item{summary}{A list with 2 components: total duration (in minutes)
@@ -52,28 +52,31 @@ and total distance (in kilometers) of the trip.}
 }
 }
 \description{
-Build and send an OSRM API query to get the shortest travel 
+Build and send an OSRM API query to get the shortest travel
 geometry between multiple unordered points.
 This function interfaces the \emph{trip} OSRM service.\cr
 Use this function to resolve the travelling salesman problem.
 }
 \details{
-As stated in the OSRM API, if input coordinates can not be joined by a single trip 
-(e.g. the coordinates are on several disconnected islands) multiple trips for 
+As stated in the OSRM API, if input coordinates can not be joined by a single trip
+(e.g. the coordinates are on several disconnected islands) multiple trips for
 each connected component are returned.
 }
 \examples{
 \dontrun{
 library(sf)
-apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
-                       quiet = TRUE)
+apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"),
+  quiet = TRUE
+)
 # Get a trip with a set of points (sf POINT)
 trips <- osrmTrip(loc = apotheke.sf[1:5, ])
 mytrip <- trips[[1]]$trip
 # Display the trip
 plot(st_geometry(mytrip), col = "black", lwd = 4)
 plot(st_geometry(mytrip), col = c("red", "white"), lwd = 1, add = TRUE)
-plot(st_geometry(apotheke.sf[1:5, ]), pch = 21, bg = "red", cex = 1, 
-     add = TRUE)
+plot(st_geometry(apotheke.sf[1:5, ]),
+  pch = 21, bg = "red", cex = 1,
+  add = TRUE
+)
 }
 }

@@ -16,44 +16,44 @@ osrmRoute(
 )
 }
 \arguments{
-\item{src}{starting point of the route. 
+\item{src}{starting point of the route.
 \code{src} can be: \itemize{
-  \item a vector of coordinates (longitude and latitude, WGS 84), 
+  \item a vector of coordinates (longitude and latitude, WGS 84),
   \item a data.frame of longitudes and latitudes (WGS 84),
   \item a matrix of longitudes and latitudes (WGS 84),
   \item an sfc object of type POINT,
   \item an sf object of type POINT.
 }
 If relevant, row names are used as identifiers.\cr
-If \code{src} is a data.frame, a matrix, an sfc object or an sf object then 
+If \code{src} is a data.frame, a matrix, an sfc object or an sf object then
 only the first row or element is considered.}
 
-\item{dst}{destination of the route. 
+\item{dst}{destination of the route.
 \code{dst} can be: \itemize{
-  \item a vector of coordinates (longitude and latitude, WGS 84), 
+  \item a vector of coordinates (longitude and latitude, WGS 84),
   \item a data.frame of longitudes and latitudes (WGS 84),
   \item a matrix of longitudes and latitudes (WGS 84),
   \item an sfc object of type POINT,
   \item an sf object of type POINT.
 }
 If relevant, row names are used as identifiers.\cr
-If \code{dst} is a data.frame, a matrix, an sfc object or an sf object then 
+If \code{dst} is a data.frame, a matrix, an sfc object or an sf object then
 only the first row or element is considered.}
 
-\item{loc}{starting point, waypoints (optional) and destination of the 
+\item{loc}{starting point, waypoints (optional) and destination of the
 route. \code{loc} can be: \itemize{
   \item a data.frame of longitudes and latitudes (WGS 84),
   \item a matrix of longitudes and latitudes (WGS 84),
   \item an sfc object of type POINT,
   \item an sf object of type POINT.
 }
-The first row or element is the starting point then waypoints are used in 
-the order they are stored in \code{loc} and the last row or element is 
+The first row or element is the starting point then waypoints are used in
+the order they are stored in \code{loc} and the last row or element is
 the destination.\cr
 If relevant, row names are used as identifiers.\cr}
 
-\item{overview}{"full", "simplified" or FALSE. Use "full" to return the 
-detailed geometry, use "simplified" to return a simplified geometry, use 
+\item{overview}{"full", "simplified" or FALSE. Use "full" to return the
+detailed geometry, use "simplified" to return a simplified geometry, use
 FALSE to return only time and distance.}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API.}
@@ -72,16 +72,16 @@ It contains 4 fields: \itemize{
   \item travel time in minutes
   \item travel distance in kilometers.
   }
-If src (or loc) is a vector, a data.frame or a matrix, the coordinate 
-reference system (CRS) of the route is EPSG:4326 (WGS84).\cr 
-If src (or loc) is an sfc or sf object, the route has the same CRS 
+If src (or loc) is a vector, a data.frame or a matrix, the coordinate
+reference system (CRS) of the route is EPSG:4326 (WGS84).\cr
+If src (or loc) is an sfc or sf object, the route has the same CRS
 as src (or loc).\cr\cr
-If overview is FALSE, a named numeric vector is returned. It contains travel 
+If overview is FALSE, a named numeric vector is returned. It contains travel
 time (in minutes) and travel distance (in kilometers).
 }
 \description{
-Build and send an OSRM API query to get the travel geometry 
-between two points. This function interfaces with the \emph{route} OSRM 
+Build and send an OSRM API query to get the travel geometry
+between two points. This function interfaces with the \emph{route} OSRM
 service.\cr
 Use \code{src} and \code{dst} to get the shortest direct route between
 two points.\cr
@@ -92,29 +92,34 @@ ordered waypoints.
 \dontrun{
 library(sf)
 apotheke.df <- read.csv(system.file("csv/apotheke.csv", package = "osrm"))
-apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
-                       quiet = TRUE)
+apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"),
+  quiet = TRUE
+)
 # Travel path between points
 route1 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.sf[16, ])
 # Display paths
 plot(st_geometry(route1))
-plot(st_geometry(apotheke.sf[c(1,16),]), col = "red", pch = 20, add = TRUE)
+plot(st_geometry(apotheke.sf[c(1, 16), ]), col = "red", pch = 20, add = TRUE)
 
 # Return only duration and distance
-route3 <- osrmRoute(src = apotheke.df[1, c('lon', 'lat')], 
-                    dst = apotheke.df[16, c('lon', 'lat')], 
-                    overview = FALSE)
+route3 <- osrmRoute(
+  src = apotheke.df[1, c("lon", "lat")],
+  dst = apotheke.df[16, c("lon", "lat")],
+  overview = FALSE
+)
 route3
 
 # Using only coordinates
-route4 <-  osrmRoute(src = c(13.412, 52.502), 
-                     dst = c(13.454, 52.592))
+route4 <- osrmRoute(
+  src = c(13.412, 52.502),
+  dst = c(13.454, 52.592)
+)
 plot(st_geometry(route4))
 
 # Using via points
-route5 <- osrmRoute(loc = apotheke.sf[c(1,2,4,3),])
+route5 <- osrmRoute(loc = apotheke.sf[c(1, 2, 4, 3), ])
 plot(st_geometry(route5), col = "red", lwd = 2)
-plot(st_geometry(apotheke.sf[c(1,2,4,3),]), add = TRUE)
+plot(st_geometry(apotheke.sf[c(1, 2, 4, 3), ]), add = TRUE)
 
 # Using a different routing server
 u <- "https://routing.openstreetmap.de/routed-foot/"
@@ -125,10 +130,12 @@ route5
 # see https://github.com/riatelab/osrm/issues/67
 u <- "https://routing.openstreetmap.de/"
 options(osrm.server = u)
-route6 <- osrmRoute(apotheke.sf[1, ], apotheke.sf[16, ], 
-                    osrm.profile = "bike")
-route7 <- osrmRoute(apotheke.sf[1, ], apotheke.sf[16, ],  
-                    osrm.profile = "car")
+route6 <- osrmRoute(apotheke.sf[1, ], apotheke.sf[16, ],
+  osrm.profile = "bike"
+)
+route7 <- osrmRoute(apotheke.sf[1, ], apotheke.sf[16, ],
+  osrm.profile = "car"
+)
 plot(st_geometry(route7), col = "green") # car
 plot(st_geometry(route6), add = TRUE) # bike
 plot(st_geometry(route5), col = "red", add = TRUE) # foot

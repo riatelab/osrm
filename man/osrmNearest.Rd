@@ -13,13 +13,13 @@ osrmNearest(
 }
 \arguments{
 \item{loc}{a point to snap to the street network. \code{loc} can be: \itemize{
-  \item a vector of coordinates (longitude and latitude, WGS 84), 
+  \item a vector of coordinates (longitude and latitude, WGS 84),
   \item a data.frame of longitudes and latitudes (WGS 84),
   \item a matrix of longitudes and latitudes (WGS 84),
   \item an sfc object of type POINT,
   \item an sf object of type POINT.
 }
-If \code{src} is a data.frame, a matrix, an sfc object or an sf object then 
+If \code{src} is a data.frame, a matrix, an sfc object or an sf object then
 only the first row or element is considered.}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API.}
@@ -29,7 +29,7 @@ only the first row or element is considered.}
 \item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot".}
 }
 \value{
-The output of this function is an sf POINT of the point on the street 
+The output of this function is an sf POINT of the point on the street
 network.\cr
 It contains 2 fields: \itemize{
   \item id, the point identifierv
@@ -37,14 +37,15 @@ It contains 2 fields: \itemize{
   }
 }
 \description{
-This function interfaces with the \emph{nearest} OSRM 
+This function interfaces with the \emph{nearest} OSRM
 service.\cr
 }
 \examples{
 \dontrun{
 library(sf)
 apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"),
-                       quiet = TRUE)
+  quiet = TRUE
+)
 pt <- osrmNearest(apotheke.sf[56, ])
 pt$distance
 }

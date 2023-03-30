@@ -16,22 +16,22 @@ osrmIsodistance(
 }
 \arguments{
 \item{loc}{origin point. \code{loc} can be: \itemize{
-  \item a vector of coordinates (longitude and latitude, WGS 84), 
+  \item a vector of coordinates (longitude and latitude, WGS 84),
   \item a data.frame of longitudes and latitudes (WGS 84),
   \item a matrix of longitudes and latitudes (WGS 84),
   \item an sfc object of type POINT,
   \item an sf object of type POINT.
 }
-If \code{loc} is a data.frame, a matrix, an sfc object or an sf object then 
+If \code{loc} is a data.frame, a matrix, an sfc object or an sf object then
 only the first row or element is considered.}
 
-\item{breaks}{a numeric vector of break values to define isodistance areas, 
+\item{breaks}{a numeric vector of break values to define isodistance areas,
 in meters.}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API.}
 
-\item{res}{number of points used to compute isodistances, one side of the 
-square grid, the total number of points will be res*res. Increase res to 
+\item{res}{number of points used to compute isodistances, one side of the
+square grid, the total number of points will be res*res. Increase res to
 obtain more detailed isodistances.}
 
 \item{returnclass}{deprecated.}
@@ -50,35 +50,38 @@ It contains 3 fields: \itemize{
   \item isomin, the minimum value of the isodistance polygon in meters
   \item isomax, the maximum value of the isodistance polygon in meters
 }
-If loc is a vector, a data.frame or a matrix the coordinate 
-reference system (CRS) of the output is EPSG:4326 (WGS84).\cr 
-If loc is an sfc or sf object, the output has the same CRS 
+If loc is a vector, a data.frame or a matrix the coordinate
+reference system (CRS) of the output is EPSG:4326 (WGS84).\cr
+If loc is an sfc or sf object, the output has the same CRS
 as loc.\cr
 }
 \description{
-This function computes areas that are reachable within a 
-given road distance from a point and returns the reachable regions as 
+This function computes areas that are reachable within a
+given road distance from a point and returns the reachable regions as
 polygons. These areas of equal travel distance are called isodistances.
 }
 \examples{
 \dontrun{
 library(sf)
 apotheke.sf <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"),
-                       quiet = TRUE)
+  quiet = TRUE
+)
 # Get isochones with lon/lat coordinates
-iso <- osrmIsodistance(loc = c(13.43,52.47), breaks = seq(0,500,100))
+iso <- osrmIsodistance(loc = c(13.43, 52.47), breaks = seq(0, 500, 100))
 # Map
 plot(iso["isomax"], breaks = sort(unique(c(iso$isomin, iso$isomax))))
 
 # Get isochones with an sf POINT
-iso2 <- osrmIsodistance(loc = apotheke.sf[11,], breaks = seq(0,500,100))
+iso2 <- osrmIsodistance(loc = apotheke.sf[11, ], breaks = seq(0, 500, 100))
 # Map
-if(require("mapsf")){
-  mapsf::mf_map(x = iso2, var = "isomin", type = "choro",
-                breaks = sort(unique(c(iso2$isomin, iso2$isomax))),
-                pal = "Burg", border = NA, leg_pos = "topleft",
-                leg_val_rnd = 0,
-                leg_frame = TRUE, leg_title = "Isochrones\n(min)")
+if (require("mapsf")) {
+  mapsf::mf_map(
+    x = iso2, var = "isomin", type = "choro",
+    breaks = sort(unique(c(iso2$isomin, iso2$isomax))),
+    pal = "Burg", border = NA, leg_pos = "topleft",
+    leg_val_rnd = 0,
+    leg_frame = TRUE, leg_title = "Isochrones\n(min)"
+  )
 }
 }
 }
