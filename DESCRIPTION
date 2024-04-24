@@ -2,10 +2,12 @@ Package: osrm
 Type: Package
 Title: Interface Between R and the OpenStreetMap-Based Routing Service OSRM
 Version: 4.1.1
-Authors@R: c(person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr", 
+Authors@R: c(person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr",
     role = c("cre","aut"),  comment = c(ORCID = "0000-0002-1932-3323")),
-    person("Robin", "Cura", role = c("ctb")), 
-    person("Matthieu", "Viry", role = c("ctb")), 
+    person("Robin", "Cura", role = c("ctb"),
+    comment = c(ORCID = "0000-0001-5926-1828")),
+    person("Matthieu", "Viry", role = c("ctb"),
+    comment = c(ORCID = "0000-0002-0693-8556")),
     person("Robin", "Lovelace", role = c("ctb"),
     comment = c(ORCID = "0000-0001-5679-6536"))
     )
@@ -27,4 +29,4 @@ Suggests: mapsf, tinytest, covr
 URL: https://github.com/riatelab/osrm
 BugReports: https://github.com/riatelab/osrm/issues
 Encoding: UTF-8
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
