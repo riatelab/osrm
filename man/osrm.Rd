@@ -2,6 +2,7 @@
 % Please edit documentation in R/package.R
 \docType{package}
 \name{osrm}
+\alias{osrm-package}
 \alias{osrm}
 \title{Shortest Paths and Travel Time from OpenStreetMap via an OSRM API}
 \description{
@@ -54,4 +55,23 @@ The package ships a sample dataset of 100 random pharmacies in Berlin
 (© OpenStreetMap contributors - \url{https://www.openstreetmap.org/copyright/en}).\cr
 The sf dataset uses the projection WGS 84 / UTM zone 34N (EPSG:32634).\cr
 The csv dataset uses WGS 84 (EPSG:4326).\cr
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/riatelab/osrm}
+  \item Report bugs at \url{https://github.com/riatelab/osrm/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Timothée Giraud \email{timothee.giraud@cnrs.fr} (\href{https://orcid.org/0000-0002-1932-3323}{ORCID})
+
+Other contributors:
+\itemize{
+  \item Robin Cura (\href{https://orcid.org/0000-0001-5926-1828}{ORCID}) [contributor]
+  \item Matthieu Viry (\href{https://orcid.org/0000-0002-0693-8556}{ORCID}) [contributor]
+  \item Robin Lovelace (\href{https://orcid.org/0000-0001-5679-6536}{ORCID}) [contributor]
+}
+
 }
