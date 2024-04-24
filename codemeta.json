@@ -13,7 +13,7 @@
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.2.3 (2023-03-15)",
+  "runtimePlatform": "R version 4.3.3 (2024-02-29)",
   "provider": {
     "@id": "https://cran.r-project.org",
     "@type": "Organization",
@@ -33,12 +33,14 @@
     {
       "@type": "Person",
       "givenName": "Robin",
-      "familyName": "Cura"
+      "familyName": "Cura",
+      "@id": "https://orcid.org/0000-0001-5926-1828"
     },
     {
       "@type": "Person",
       "givenName": "Matthieu",
-      "familyName": "Viry"
+      "familyName": "Viry",
+      "@id": "https://orcid.org/0000-0002-0693-8556"
     },
     {
       "@type": "Person",
@@ -168,7 +170,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "521.859KB",
+  "fileSize": "522.541KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",
