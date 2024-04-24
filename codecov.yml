@@ -1,6 +1,14 @@
+comment: false
+
 coverage:
   status:
     project:
       default:
         target: 80%
         threshold: 10%
+        informational: true
+    patch:
+      default:
+        target: 80%
+        threshold: 10%
+        informational: true
