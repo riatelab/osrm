@@ -98,7 +98,14 @@ input_table <- function(x, id) {
         call. = FALSE
       )
     }
-    if (ncol(x) == 2 && is.numeric(x[, 1]) && is.numeric(x[, 2])) {
+    if (inherits(x = x, what = "matrix")) {
+      x_lon <- x[, 1]
+      x_lat <- x[, 2]
+    } else {
+      x_lon <- x[[colnames(x)[1]]]
+      x_lat <- x[[colnames(x)[1]]]
+    }
+    if (ncol(x) == 2 && is.numeric(x_lon) && is.numeric(x_lat)) {
       rn <- row.names(x)
       if (is.null(rn)) {
         rn <- 1:lx
@@ -106,8 +113,8 @@ input_table <- function(x, id) {
 
       x <- data.frame(
         id = rn,
-        lon = clean_coord(x[, 1]),
-        lat = clean_coord(x[, 2])
+        lon = clean_coord(x_lon),
+        lat = clean_coord(x_lat)
       )
       return(x)
     } else {
@@ -251,9 +258,16 @@ input_route <- function(x, id, single = TRUE, all.ids = FALSE) {
       if (lx < 2) {
         stop('"loc" should have at least 2 rows.', call. = FALSE)
       }
-      if (ncol(x) == 2 && is.numeric(x[, 1]) && is.numeric(x[, 2])) {
-        lon <- clean_coord(x[, 1])
-        lat <- clean_coord(x[, 2])
+      if (inherits(x = x, what = "matrix")) {
+        x_lon <- x[, 1]
+        x_lat <- x[, 2]
+      } else {
+        x_lon <- x[[colnames(x)[1]]]
+        x_lat <- x[[colnames(x)[1]]]
+      }
+      if (ncol(x) == 2 && is.numeric(x_lon) && is.numeric(x_lat)) {
+        lon <- clean_coord(x_lon)
+        lat <- clean_coord(x_lat)
         rn <- row.names(x)
         if (is.null(rn)) {
           rn <- 1:lx
