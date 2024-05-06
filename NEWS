@@ -1,3 +1,12 @@
+# osrm version 4.2.0
+
+## Fix
+* change the pkg level documentation for alias (#125)
+
+## Feat
+* add suport for tibbles (#128 thanks to @Moohan)
+
+
 # osrm version 4.1.1
 
 ## Fix 

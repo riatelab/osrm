@@ -8,7 +8,7 @@ message: 'To cite package "osrm" in publications use:'
 type: software
 license: GPL-3.0-or-later
 title: 'osrm: Interface Between R and the OpenStreetMap-Based Routing Service OSRM'
-version: 4.1.1
+version: 4.2.0
 doi: 10.21105/joss.04574
 abstract: An interface between R and the 'OSRM' API. 'OSRM' is a routing service based
   on 'OpenStreetMap' data. See <http://project-osrm.org/> for more information. This
