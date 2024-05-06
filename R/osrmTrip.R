@@ -103,11 +103,11 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
   test_http_error(r)
   res <- RcppSimdJson::fparse(rawToChar(r$content))
 
-  # return(res)
+
   # Get all the waypoints
   waypointsg <- data.frame(res$waypoints[, c(1, 2, 5)],
     matrix(unlist(res$waypoints$location),
-      byrow = T, ncol = 2
+      byrow = TRUE, ncol = 2
     ),
     id = loc$id
   )
@@ -118,7 +118,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
   for (nt in 1:ntour) {
     # Coordinates of the line
     geodf <- data.frame(res$trips[nt, ]$geometry[[1]]$coordinates)
-    geodf$id <- 1:nrow(geodf)
+    geodf$id <- seq_len(nrow(geodf))
 
     # In case of unfinnish trip
     if (geodf[nrow(geodf), 1] != geodf[1, 1]) {
@@ -128,7 +128,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
     # Extract trip waypoints
     waypoints <- waypointsg[waypointsg$trips_index == (nt - 1), ]
     geodf$id_wp <- NA
-    waypoints <- waypoints[order(waypoints$waypoint_index, decreasing = F), ]
+    waypoints <- waypoints[order(waypoints$waypoint_index, decreasing = FALSE), ]
     j <- 1
     for (i in 1:(nrow(geodf) - 1)) {
       if (any(geodf[i, c("X1", "X2")] == waypoints[j, c("X1", "X2")])) {
@@ -146,7 +146,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
 
     l <- list()
     j <- 1
-    for (i in 1:nrow(geodf)) {
+    for (i in seq_len(nrow(geodf))) {
       if (!is.na(geodf[i, "id_wp"])) {
         l[[j]] <- geodf[i, "id"]
         j <- j + 1
@@ -154,7 +154,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
     }
     # Build the polylines
     wktl <- rep(NA, nrow(waypoints))
-    for (i in 1:length(wktl)) {
+    for (i in seq_along(wktl)) {
       aind <- l[[i]]:l[[i + 1]]
       wktl[i] <- paste("LINESTRING(",
         paste(geodf[aind, 1], " ",
@@ -165,7 +165,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
         sep = ""
       )
     }
-    start <- (waypoints[order(waypoints$waypoint_index, decreasing = F), "id"])
+    start <- (waypoints[order(waypoints$waypoint_index, decreasing = FALSE), "id"])
     end <- start[c(2:length(start), 1)]
     sldf <- st_sf(
       start = start, end = end,

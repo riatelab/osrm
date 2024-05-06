@@ -47,16 +47,16 @@ tab_format <- function(res, src, dst, type) {
 coord_format <- function(res, src, dst) {
   sources <- data.frame(matrix(
     unlist(res$sources$location,
-      use.names = T
+      use.names = TRUE
     ),
-    ncol = 2, byrow = T,
+    ncol = 2, byrow = TRUE,
     dimnames = list(src$id, c("lon", "lat"))
   ))
   destinations <- data.frame(matrix(
     unlist(res$destinations$location,
-      use.names = T
+      use.names = TRUE
     ),
-    ncol = 2, byrow = T,
+    ncol = 2, byrow = TRUE,
     dimnames = list(dst$id, c("lon", "lat"))
   ))
   return(list(sources = sources, destinations = destinations))
@@ -135,8 +135,8 @@ input_route <- function(x, id, single = TRUE, all.ids = FALSE) {
   oprj <- NA
   if (single) {
     if (is.vector(x)) {
-      if (length(x) == 2 & is.numeric(x)) {
-        if (x[1] > 180 | x[1] < -180 | x[2] > 90 | x[2] < -90) {
+      if (length(x) == 2 && is.numeric(x)) {
+        if (x[1] > 180 || x[1] < -180 || x[2] > 90 || x[2] < -90) {
           stop(
             paste0(
               "longitude is bounded by the interval [-180, 180], ",
@@ -191,7 +191,7 @@ input_route <- function(x, id, single = TRUE, all.ids = FALSE) {
         idx <- id
       }
       x <- unlist(x)
-      if (length(x) == 2 & is.numeric(x)) {
+      if (length(x) == 2 && is.numeric(x)) {
         lon <- clean_coord(x[1])
         lat <- clean_coord(x[2])
         return(list(id = idx, lon = lon, lat = lat, oprj = oprj))
