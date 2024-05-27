@@ -10,7 +10,6 @@ osrmRoute(
   loc,
   overview = "simplified",
   exclude,
-  returnclass,
   osrm.server = getOption("osrm.server"),
   osrm.profile = getOption("osrm.profile")
 )
@@ -57,8 +56,6 @@ detailed geometry, use "simplified" to return a simplified geometry, use
 FALSE to return only time and distance.}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API.}
-
-\item{returnclass}{deprecated.}
 
 \item{osrm.server}{the base URL of the routing server.}
 

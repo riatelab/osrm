@@ -18,7 +18,6 @@
 #' @param res number of points used to compute isodistances, one side of the
 #' square grid, the total number of points will be res*res. Increase res to
 #' obtain more detailed isodistances.
-#' @param returnclass deprecated.
 #' @param smooth if TRUE a moving window with a gaussian blur is applied to 
 #' distances. This option may be usefull to remove small patches of hard to 
 #' reach areas. The computed isodistances are less precise but better looking. 
@@ -68,15 +67,10 @@
 #' }
 osrmIsodistance <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4),
                             exclude, res = 30, smooth = FALSE, k,
-                            returnclass,
                             osrm.server = getOption("osrm.server"),
                             osrm.profile = getOption("osrm.profile")) {
   opt <- options(error = NULL)
   on.exit(options(opt), add = TRUE)
-
-  if (!missing(returnclass)) {
-    warning('"returnclass" is deprecated.', call. = FALSE)
-  }
 
   # input management
   loc <- input_route(x = loc, id = "loc", single = TRUE)
@@ -221,18 +215,4 @@ osrmIsodistance <- function(loc, breaks = seq(from = 0, to = 10000, length.out =
   }
 
   return(iso)
-}
-
-#' @name osrmIsometric
-#' @description deprecated, use \link{osrmIsodistance} instead.
-#' @title deprecated
-#' @param ... deprecated
-#' @return deprecated
-#' @keywords internal
-#' @export
-osrmIsometric <- function(...) {
-  warning("This function is deprecated, use osrmIsodistance() instead.",
-    call. = FALSE
-  )
-  osrmIsodistance(...)
 }

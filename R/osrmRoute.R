@@ -49,8 +49,6 @@
 #' @param exclude pass an optional "exclude" request option to the OSRM API.
 #' @param osrm.server the base URL of the routing server.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot".
-#' @param returnclass deprecated.
-
 #' @return
 #' The output of this function is an sf LINESTRING of the shortest route.\cr
 #' It contains 4 fields: \itemize{
@@ -124,15 +122,11 @@ osrmRoute <- function(src,
                       loc,
                       overview = "simplified",
                       exclude,
-                      returnclass,
                       osrm.server = getOption("osrm.server"),
                       osrm.profile = getOption("osrm.profile")) {
   opt <- options(error = NULL)
   on.exit(options(opt), add = TRUE)
 
-  if (!missing(returnclass)) {
-    warning('"returnclass" is deprecated.', call. = FALSE)
-  }
   url <- base_url(osrm.server, osrm.profile, "route")
 
   if (missing(loc)) {

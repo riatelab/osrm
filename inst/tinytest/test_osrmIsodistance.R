@@ -94,13 +94,6 @@ if(local_server){
                                osrm.server = "http://0.0.0.0:5000/", 
                                osrm.profile = "driving"))
   
-  # old name
-  expect_warning(osrmIsometric(loc = c(13.43,52.47), 
-                                         breaks = seq(0,14,2), 
-                                         res = 10,
-                                         osrm.server = "http://0.0.0.0:5000/", 
-                                         osrm.profile = "driving"))
-  
   # server error
   expect_error(osrmIsodistance(loc = c(13.43,52.47), breaks = seq(0,500,100), 
                              res = 10,

@@ -11,7 +11,6 @@ osrmIsochrone(
   res = 30,
   smooth = FALSE,
   k,
-  returnclass,
   osrm.server = getOption("osrm.server"),
   osrm.profile = getOption("osrm.profile")
 )
@@ -42,8 +41,6 @@ reach areas. The computed isochrones are less precise but better looking.}
 
 \item{k}{size (sigma) of the gaussian moving window. A reasonable value is 
 used by default.}
-
-\item{returnclass}{deprecated.}
 
 \item{osrm.server}{the base URL of the routing server.
 getOption("osrm.server") by default.}

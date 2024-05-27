@@ -16,7 +16,6 @@
 #' @param exclude pass an optional "exclude" request option to the OSRM API.
 #' @param overview "full", "simplified". Add geometry either full (detailed) or simplified
 #' according to highest zoom level it could be display on.
-#' @param returnclass deprecated.
 #' @param osrm.server the base URL of the routing server.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot".
 #' @details As stated in the OSRM API, if input coordinates can not be joined by a single trip
@@ -55,14 +54,10 @@
 #' )
 #' }
 osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
-                     returnclass, osrm.server = getOption("osrm.server"),
+                     osrm.server = getOption("osrm.server"),
                      osrm.profile = getOption("osrm.profile")) {
   opt <- options(error = NULL)
   on.exit(options(opt), add = TRUE)
-
-  if (!missing(returnclass)) {
-    warning('"returnclass" is deprecated.', call. = FALSE)
-  }
 
   url <- base_url(osrm.server, osrm.profile, "trip")
 

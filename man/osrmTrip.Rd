@@ -8,7 +8,6 @@ osrmTrip(
   loc,
   exclude = NULL,
   overview = "simplified",
-  returnclass,
   osrm.server = getOption("osrm.server"),
   osrm.profile = getOption("osrm.profile")
 )
@@ -28,8 +27,6 @@ Row names, if relevant, or element indexes are used as identifiers.}
 
 \item{overview}{"full", "simplified". Add geometry either full (detailed) or simplified
 according to highest zoom level it could be display on.}
-
-\item{returnclass}{deprecated.}
 
 \item{osrm.server}{the base URL of the routing server.}
 
