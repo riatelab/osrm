@@ -9,6 +9,8 @@ osrmIsochrone(
   breaks = seq(from = 0, to = 60, length.out = 7),
   exclude,
   res = 30,
+  smooth = FALSE,
+  k,
   returnclass,
   osrm.server = getOption("osrm.server"),
   osrm.profile = getOption("osrm.profile")
@@ -33,6 +35,13 @@ in minutes.}
 \item{res}{number of points used to compute isochrones, one side of the square
 grid, the total number of points will be res*res. Increase res to obtain more
 detailed isochrones.}
+
+\item{smooth}{if TRUE a moving window with a gaussian blur is applied to 
+durations. This option may be usefull to remove small patches of hard to 
+reach areas. The computed isochrones are less precise but better looking.}
+
+\item{k}{size (sigma) of the gaussian moving window. A reasonable value is 
+used by default.}
 
 \item{returnclass}{deprecated.}
 

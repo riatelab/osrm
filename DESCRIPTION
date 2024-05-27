@@ -25,7 +25,11 @@ Imports:
     sf
 Depends:
     R (>= 3.5.0)
-Suggests: mapsf, tinytest, covr
+Suggests: 
+    mapsf, 
+    tinytest, 
+    covr, 
+    terra
 URL: https://github.com/riatelab/osrm
 BugReports: https://github.com/riatelab/osrm/issues
 Encoding: UTF-8

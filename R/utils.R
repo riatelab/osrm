@@ -372,16 +372,19 @@ fill_grid <- function(destinations, measure, sgrid, res, tmax) {
     n = c(res, res)
   )
   ag_pt <- function(x) {
-    if (length(x > 0)) {
+    if (length(x) > 0) {
       min(rpt[["measure"]][x], na.rm = TRUE)
     } else {
-      tmax + 1
+      NA
     }
   }
   inter <- st_intersects(xx, rpt)
   sgrid$measure <- unlist(lapply(inter, ag_pt))
-  sgrid[is.infinite(sgrid$measure), "measure"] <- tmax + 1
-  sgrid[is.nan(sgrid$measure), "measure"] <- tmax + 1
-  sgrid[sgrid$measure > tmax, "measure"] <- tmax + 1
+  sgrid[is.infinite(sgrid$measure), "measure"] <- NA
+  sgrid[is.nan(sgrid$measure), "measure"] <- NA
   sgrid
 }
+
+
+
+

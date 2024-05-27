@@ -19,6 +19,11 @@
 #' square grid, the total number of points will be res*res. Increase res to
 #' obtain more detailed isodistances.
 #' @param returnclass deprecated.
+#' @param smooth if TRUE a moving window with a gaussian blur is applied to 
+#' distances. This option may be usefull to remove small patches of hard to 
+#' reach areas. The computed isodistances are less precise but better looking. 
+#' @param k size (sigma) of the gaussian moving window. A reasonable value is 
+#' used by default.
 #' @param osrm.server the base URL of the routing server.
 #' getOption("osrm.server") by default.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot"
@@ -62,7 +67,8 @@
 #' }
 #' }
 osrmIsodistance <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4),
-                            exclude, res = 30, returnclass,
+                            exclude, res = 30, smooth = FALSE, k,
+                            returnclass,
                             osrm.server = getOption("osrm.server"),
                             osrm.profile = getOption("osrm.profile")) {
   opt <- options(error = NULL)
@@ -138,7 +144,9 @@ osrmIsodistance <- function(loc, breaks = seq(from = 0, to = 10000, length.out =
     destinations = destinations, measure = measure,
     sgrid = sgrid, res = res, tmax = tmax
   )
-  if (min(sgrid$measure) >= tmax + 1) {
+  
+  
+  if (min(sgrid$measure, na.rm = TRUE) >= tmax) {
     warning(
       paste0(
         "An empty object is returned. ",
@@ -155,6 +163,49 @@ osrmIsodistance <- function(loc, breaks = seq(from = 0, to = 10000, length.out =
     )
     return(empty_res)
   }
+  
+  if (isFALSE(smooth)) {
+    # All values not within breaks are set to tmax+1 
+    sgrid[is.na(sgrid$measure), "measure"] <- tmax + 1
+    sgrid[is.nan(sgrid$measure), "measure"] <- tmax + 1
+    sgrid[is.infinite(sgrid$measure), "measure"] <- tmax + 1
+    sgrid[sgrid$measure > tmax, "measure"] <- tmax + 1
+  } else {
+    if (!requireNamespace("terra", quietly = TRUE)) {
+      stop(paste0(
+        "'terra' package is needed for this function to work.",
+        "Please install it."
+      ), call. = FALSE)
+    }
+    r <- terra::rast(sgrid[, c("COORDX", "COORDY", "measure"), drop = TRUE], 
+                     crs = "epsg:3857")
+    if (missing(k)) {
+      k <- terra::res(r)[1] / 2
+    }
+    mat <- terra::focalMat(x = r, d = k, type = "Gauss")
+    
+    # test for invalid focal matrix
+    if (sum(dim(mat)) < 6){
+      warning(
+        paste0(
+          "An empty object is returned. ",
+          "Select a larger value for 'k'."
+        ),
+        call. = FALSE
+      )
+      empty_res <- st_sf(
+        crs = ifelse(is.na(oprj), 4326, oprj),
+        id = integer(),
+        isomin = numeric(),
+        isomax = numeric(),
+        geometry = st_sfc()
+      )
+      return(empty_res)
+    }
+    sgrid <- terra::focal(x = r, w = mat, fun = mean, na.rm = TRUE)
+    sgrid[is.na(sgrid)] <- tmax + 1
+  }
+  
   # computes isopolygones
   iso <- mapiso(x = sgrid, breaks = breaks, var = "measure")
   # get rid of out of breaks polys

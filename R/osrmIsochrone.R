@@ -19,6 +19,11 @@
 #' grid, the total number of points will be res*res. Increase res to obtain more
 #' detailed isochrones.
 #' @param returnclass deprecated.
+#' @param smooth if TRUE a moving window with a gaussian blur is applied to 
+#' durations. This option may be usefull to remove small patches of hard to 
+#' reach areas. The computed isochrones are less precise but better looking. 
+#' @param k size (sigma) of the gaussian moving window. A reasonable value is 
+#' used by default.
 #' @param osrm.server the base URL of the routing server.
 #' getOption("osrm.server") by default.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot"
@@ -64,27 +69,30 @@
 #' }
 #' }
 osrmIsochrone <- function(loc, breaks = seq(from = 0, to = 60, length.out = 7),
-                          exclude, res = 30, returnclass,
+                          exclude, res = 30, smooth = FALSE, k,
+                          returnclass,
                           osrm.server = getOption("osrm.server"),
                           osrm.profile = getOption("osrm.profile")) {
   opt <- options(error = NULL)
   on.exit(options(opt), add = TRUE)
-
+  
   if (!missing(returnclass)) {
     warning('"returnclass" is deprecated.', call. = FALSE)
   }
-
+  
   # input management
   loc <- input_route(x = loc, id = "loc", single = TRUE)
   oprj <- loc$oprj
   loc <- st_as_sf(data.frame(lon = loc$lon, lat = loc$lat),
-    coords = c("lon", "lat"), crs = 4326
+                  coords = c("lon", "lat"), crs = 4326
   )
   loc <- st_transform(loc, "epsg:3857")
-
+  
   # max distance management to see how far to extend the grid to get measures
   breaks <- unique(sort(breaks))
   tmax <- max(breaks)
+  
+  # gentle sleeptime & param for demo server
   if (osrm.profile %in% c("foot", "walk")) {
     speed <- 10 * 1000 / 60
   }
@@ -95,8 +103,8 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0, to = 60, length.out = 7),
     speed <- 120 * 1000 / 60
   }
   dmax <- tmax * speed
-
-
+  
+  
   # gentle sleeptime & param for demo server
   if (osrm.server != "https://routing.openstreetmap.de/") {
     sleeptime <- 0
@@ -105,7 +113,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0, to = 60, length.out = 7),
     sleeptime <- 1
     deco <- 75
   }
-
+  
   # create a grid to obtain measures
   sgrid <- rgrid(loc = loc, dmax = dmax, res = res)
   # slice the grid to make several API calls
@@ -140,19 +148,20 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0, to = 60, length.out = 7),
     listDur[[ltot]] <- dmat$durations
     listDest[[ltot]] <- dmat$destinations
   }
-
+  
   measure <- do.call(c, listDur)
   destinations <- do.call(rbind, listDest)
   # for testing purpose
   # return(list(destinations = destinations, measure = measure,
   #             sgrid = sgrid, res = res, tmax = tmax))
-
+  
   # assign values to the grid
   sgrid <- fill_grid(
     destinations = destinations, measure = measure,
     sgrid = sgrid, res = res, tmax = tmax
   )
-  if (min(sgrid$measure) >= tmax + 1) {
+  
+  if (min(sgrid$measure, na.rm = TRUE) > tmax) {
     warning(
       paste0(
         "An empty object is returned. ",
@@ -169,19 +178,63 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0, to = 60, length.out = 7),
     )
     return(empty_res)
   }
+  
+  if (isFALSE(smooth)) {
+    # All values not within breaks are set to tmax+1 
+    sgrid[is.na(sgrid$measure), "measure"] <- tmax + 1
+    sgrid[is.nan(sgrid$measure), "measure"] <- tmax + 1
+    sgrid[is.infinite(sgrid$measure), "measure"] <- tmax + 1
+    sgrid[sgrid$measure > tmax, "measure"] <- tmax + 1
+  } else {
+    if (!requireNamespace("terra", quietly = TRUE)) {
+      stop(paste0(
+        "'terra' package is needed for this function to work.",
+        "Please install it."
+      ), call. = FALSE)
+    }
+    r <- terra::rast(sgrid[, c("COORDX", "COORDY", "measure"), drop = TRUE], 
+              crs = "epsg:3857")
+    if (missing(k)) {
+      k <- terra::res(r)[1] / 2
+    }
+    mat <- terra::focalMat(x = r, d = k, type = "Gauss")
+    
+    # test for invalid focal matrix
+    if (sum(dim(mat)) < 6){
+      warning(
+        paste0(
+          "An empty object is returned. ",
+          "Select a larger value for 'k'."
+        ),
+        call. = FALSE
+      )
+      empty_res <- st_sf(
+        crs = ifelse(is.na(oprj), 4326, oprj),
+        id = integer(),
+        isomin = numeric(),
+        isomax = numeric(),
+        geometry = st_sfc()
+      )
+      return(empty_res)
+    }
+    sgrid <- terra::focal(x = r, w = mat, fun = mean, na.rm = TRUE)
+    sgrid[is.na(sgrid)] <- tmax + 1
+  }
+  
+  
   # computes isopolygones
   iso <- mapiso(x = sgrid, breaks = breaks, var = "measure")
   # get rid of out of breaks polys
   iso <- iso[-nrow(iso), ]
   # fisrt line always start at 0
   iso[1, "isomin"] <- 0
-
+  
   # proj mgmnt
   if (!is.na(oprj)) {
     iso <- st_transform(x = iso, oprj)
   } else {
     iso <- st_transform(x = iso, 4326)
   }
-
+  
   return(iso)
 }
