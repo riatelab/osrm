@@ -9,7 +9,7 @@
 #'   \item an sfc object of type POINT,
 #'   \item an sf object of type POINT.
 #' }
-#' If \code{src} is a data.frame, a matrix, an sfc object or an sf object then
+#' If \code{loc} is a data.frame, a matrix, an sfc object or an sf object then
 #' only the first row or element is considered.
 #' @param exclude pass an optional "exclude" request option to the OSRM API.
 #' @param osrm.server the base URL of the routing server.
@@ -18,7 +18,7 @@
 #' The output of this function is an sf POINT of the point on the street
 #' network.\cr
 #' It contains 2 fields: \itemize{
-#'   \item id, the point identifierv
+#'   \item id, the point identifier
 #'   \item distance, the distance in meters to the supplied input point.
 #'   }
 #' @importFrom sf st_as_sfc st_crs st_geometry st_sf st_as_sf st_transform
