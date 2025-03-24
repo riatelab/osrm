@@ -18,7 +18,7 @@
 #' The output of this function is an sf POINT of the point on the street
 #' network.\cr
 #' It contains 2 fields: \itemize{
-#'   \item id, the point identifierv
+#'   \item id, the point identifier
 #'   \item distance, the distance in meters to the supplied input point.
 #'   }
 #' @importFrom sf st_as_sfc st_crs st_geometry st_sf st_as_sf st_transform
