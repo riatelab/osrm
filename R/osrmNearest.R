@@ -9,7 +9,7 @@
 #'   \item an sfc object of type POINT,
 #'   \item an sf object of type POINT.
 #' }
-#' If \code{src} is a data.frame, a matrix, an sfc object or an sf object then
+#' If \code{loc} is a data.frame, a matrix, an sfc object or an sf object then
 #' only the first row or element is considered.
 #' @param exclude pass an optional "exclude" request option to the OSRM API.
 #' @param osrm.server the base URL of the routing server.
