@@ -33,7 +33,7 @@
 #'
 #' @note
 #' This package relies on the usage of a running OSRM service (tested with
-#' version 5.27.0 of the OSRM API).\cr
+#' version 6.0.0 of the OSRM API).\cr
 #'
 #'
 #' To set the OSRM server, change the \code{osrm.server} option:\cr

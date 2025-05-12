@@ -24,7 +24,7 @@ the computation of routes, trips, isochrones and travel distances
 matrices (travel time and kilometric distance).
 
 This package relies on the usage of a running OSRM service (tested with
-v5.27.0 of OSRM).
+v6.0.0 of OSRM).
 
 You can run your own instance of OSRM following guidelines provided
 [here](https://github.com/Project-OSRM/osrm-backend). The simplest
