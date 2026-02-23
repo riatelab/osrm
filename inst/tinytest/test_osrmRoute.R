@@ -8,11 +8,17 @@ if(demo_server){
   expect_identical(st_crs(r), st_crs(x_sf))
   expect_true(nrow(r) == 1)
   expect_identical(colnames(r), 
-                   c("src", "dst", "duration", "distance", "src_snapping_distance", 
-                     "dst_snapping_distance", "geometry"))
-  expect_true(!is.null(attr(r, "snapping")))
-  expect_true("snapping_distance" %in% colnames(attr(r, "snapping")))
+                   c("src", "dst", "duration", "distance", "geometry"))
   expect_true(st_geometry_type(r) == "LINESTRING")
+  
+  # snapping_distance = TRUE
+  r <- osrmRoute(src = x_sf[1, ], dst = x_sf[16, ], snapping_distance = TRUE)
+  wait()
+  expect_true(is.list(r))
+  expect_true(inherits(r$route, "sf"))
+  expect_true(inherits(r$snapping, "sf"))
+  expect_true(nrow(r$snapping) == 2)
+  expect_true("snapping_distance" %in% colnames(r$snapping))
   
   r <- osrmRoute(loc = x_sf[1:3, ])
   wait()
@@ -20,10 +26,7 @@ if(demo_server){
   expect_identical(st_crs(r), st_crs(x_sf))
   expect_true(nrow(r) == 1)
   expect_identical(colnames(r), 
-                   c("src", "dst", "duration", "distance", "src_snapping_distance", 
-                     "dst_snapping_distance", "geometry"))
-  expect_true(!is.null(attr(r, "snapping")))
-  expect_true("snapping_distance" %in% colnames(attr(r, "snapping")))
+                   c("src", "dst", "duration", "distance", "geometry"))
   expect_true(st_geometry_type(r) == "LINESTRING")
   
   # Return only duration and distance
@@ -32,7 +35,13 @@ if(demo_server){
   expect_true(is.numeric(r))
   expect_true(length(r) == 2)
   
-  ################# DEMO BIKE #####################
+  # Return only duration and distance + snapping_distance
+  r <- osrmRoute(loc = x_sf[1:3, ], overview = FALSE, snapping_distance = TRUE)
+  wait()
+  expect_true(is.list(r))
+  expect_true(is.numeric(r$route))
+  expect_true(inherits(r$snapping, "sf"))
+  expect_true(nrow(r$snapping) == 3)
   options(osrm.server = "https://routing.openstreetmap.de/", osrm.profile = "bike")
   r <- osrmRoute(src = x_sf[1, ], dst = x_sf[16, ])
   wait()
@@ -40,10 +49,7 @@ if(demo_server){
   expect_identical(st_crs(r), st_crs(x_sf))
   expect_true(nrow(r) == 1)
   expect_identical(colnames(r), 
-                   c("src", "dst", "duration", "distance", "src_snapping_distance", 
-                     "dst_snapping_distance", "geometry"))
-  expect_true(!is.null(attr(r, "snapping")))
-  expect_true("snapping_distance" %in% colnames(attr(r, "snapping")))
+                   c("src", "dst", "duration", "distance", "geometry"))
   expect_true(st_geometry_type(r) == "LINESTRING")
   
   r <- osrmRoute(loc = x_sf[1:3, ])
@@ -52,10 +58,7 @@ if(demo_server){
   expect_identical(st_crs(r), st_crs(x_sf))
   expect_true(nrow(r) == 1)
   expect_identical(colnames(r), 
-                   c("src", "dst", "duration", "distance", "src_snapping_distance", 
-                     "dst_snapping_distance", "geometry"))
-  expect_true(!is.null(attr(r, "snapping")))
-  expect_true("snapping_distance" %in% colnames(attr(r, "snapping")))
+                   c("src", "dst", "duration", "distance", "geometry"))
   expect_true(st_geometry_type(r) == "LINESTRING")
   
   # Return only duration and distance
@@ -74,10 +77,7 @@ if(demo_server){
   expect_identical(st_crs(r), st_crs(x_sf))
   expect_true(nrow(r) == 1)
   expect_identical(colnames(r), 
-                   c("src", "dst", "duration", "distance", "src_snapping_distance", 
-                     "dst_snapping_distance", "geometry"))
-  expect_true(!is.null(attr(r, "snapping")))
-  expect_true("snapping_distance" %in% colnames(attr(r, "snapping")))
+                   c("src", "dst", "duration", "distance", "geometry"))
   expect_true(st_geometry_type(r) == "LINESTRING")
 
   r <- osrmRoute(loc = x_sf[1:3, ])
@@ -86,10 +86,7 @@ if(demo_server){
   expect_identical(st_crs(r), st_crs(x_sf))
   expect_true(nrow(r) == 1)
   expect_identical(colnames(r), 
-                   c("src", "dst", "duration", "distance", "src_snapping_distance", 
-                     "dst_snapping_distance", "geometry"))
-  expect_true(!is.null(attr(r, "snapping")))
-  expect_true("snapping_distance" %in% colnames(attr(r, "snapping")))
+                   c("src", "dst", "duration", "distance", "geometry"))
   expect_true(st_geometry_type(r) == "LINESTRING")
   
   # Return only duration and distance
@@ -127,10 +124,7 @@ if(local_server){
   expect_identical(st_crs(r), st_crs(x_sf))
   expect_true(nrow(r) == 1)
   expect_identical(colnames(r), 
-                   c("src", "dst", "duration", "distance", "src_snapping_distance", 
-                     "dst_snapping_distance", "geometry"))
-  expect_true(!is.null(attr(r, "snapping")))
-  expect_true("snapping_distance" %in% colnames(attr(r, "snapping")))
+                   c("src", "dst", "duration", "distance", "geometry"))
   expect_true(st_geometry_type(r) == "LINESTRING")
   
   r <- osrmRoute(loc = x_sf[1:3, ])
@@ -138,10 +132,7 @@ if(local_server){
   expect_identical(st_crs(r), st_crs(x_sf))
   expect_true(nrow(r) == 1)
   expect_identical(colnames(r), 
-                   c("src", "dst", "duration", "distance", "src_snapping_distance", 
-                     "dst_snapping_distance", "geometry"))
-  expect_true(!is.null(attr(r, "snapping")))
-  expect_true("snapping_distance" %in% colnames(attr(r, "snapping")))
+                   c("src", "dst", "duration", "distance", "geometry"))
   expect_true(st_geometry_type(r) == "LINESTRING")
   
   # Return only duration and distance

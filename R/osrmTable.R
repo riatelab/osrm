@@ -94,13 +94,15 @@
 #' distA5$distances[1:5, 1:5]
 #' }
 #' @export
-osrmTable <- function(src,
-                      dst = src,
-                      loc,
-                      exclude,
-                      measure = "duration",
-                      osrm.server = getOption("osrm.server"),
-                      osrm.profile = getOption("osrm.profile")) {
+osrmTable <- function(
+  src,
+  dst = src,
+  loc,
+  exclude,
+  measure = "duration",
+  osrm.server = getOption("osrm.server"),
+  osrm.profile = getOption("osrm.profile")
+) {
   opt <- options(error = NULL)
   on.exit(options(opt), add = TRUE)
 
@@ -193,12 +195,15 @@ osrmTable <- function(src,
     dst_snap <- output$destinations$snapping_distance
     snap_sum <- outer(src_snap, dst_snap, "+")
     output$total_distances <- output$distances + snap_sum
-    
+
     # fix self-distance
-    ids_match <- outer(rownames(output$total_distances), 
-                       colnames(output$total_distances), "==")
+    ids_match <- outer(
+      rownames(output$total_distances),
+      colnames(output$total_distances),
+      "=="
+    )
     output$total_distances[ids_match] <- 0
-    
+
     if (!("distance" %in% measure)) {
       output$distances <- NULL
     }

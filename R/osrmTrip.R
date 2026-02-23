@@ -35,7 +35,7 @@
 #' \item{summary}{A list with 2 components: total duration (in minutes)
 #' and total distance (in kilometers) of the trip.}
 #' \item{waypoints}{An sf POINT object of the snapped waypoints used in the trip,
-#' including their \code{snapping_distance} (in kilometers).}
+#' containing their \code{id} and their \code{snapping_distance} (in kilometers).}
 #' }
 #' @export
 #' @examples
@@ -110,7 +110,7 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
   waypointsg$X1 <- waypointsg$lon
   waypointsg$X2 <- waypointsg$lat
   waypointsg$location <- NULL
-  waypointsg$id <- loc$id
+  waypointsg$id <- loc$id[waypointsg$waypoint_index + 1]
 
   # In case of island, multiple trips
   ntour <- dim(res$trips)[1]
@@ -186,6 +186,9 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
     # remove internal aliases
     trip_waypoints$X1 <- NULL
     trip_waypoints$X2 <- NULL
+    trip_waypoints$trips_index <- NULL
+    trip_waypoints$waypoint_index <- NULL
+    trip_waypoints <- trip_waypoints[, c("id", "snapping_distance")]
     if (!is.na(oprj)) {
       trip_waypoints <- sf::st_transform(trip_waypoints, oprj)
     }
