@@ -234,9 +234,8 @@ You can install the released version of `osrm` from
 install.packages("osrm")
 ```
 
-Alternatively, you can install the development version of `osrm` (the
-dev branch) from [r-universe](https://riatelab.r-universe.dev/osrm)
-with:
+Alternatively, you can install the development version of `osrm` from
+[r-universe](https://riatelab.r-universe.dev/osrm) with:
 
 ``` r
 install.packages("osrm", repos = "https://riatelab.r-universe.dev")
