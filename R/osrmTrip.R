@@ -34,6 +34,8 @@
 #' }
 #' \item{summary}{A list with 2 components: total duration (in minutes)
 #' and total distance (in kilometers) of the trip.}
+#' \item{waypoints}{An sf POINT object of the snapped waypoints used in the trip,
+#' containing their \code{id} and their \code{snapping_distance} (in kilometers).}
 #' }
 #' @export
 #' @examples
@@ -99,13 +101,16 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
   res <- RcppSimdJson::fparse(rawToChar(r$content))
 
 
-  # Get all the waypoints
-  waypointsg <- data.frame(res$waypoints[, c(1, 2, 5)],
-    matrix(unlist(res$waypoints$location),
-      byrow = TRUE, ncol = 2
-    ),
-    id = loc$id
-  )
+  waypointsg <- res$waypoints
+  waypointsg$snapping_distance <- waypointsg$distance / 1000
+  waypointsg$distance <- NULL
+  waypointsg$lon <- sapply(res$waypoints$location, "[[", 1)
+  waypointsg$lat <- sapply(res$waypoints$location, "[[", 2)
+  # Alias for matching loop
+  waypointsg$X1 <- waypointsg$lon
+  waypointsg$X2 <- waypointsg$lat
+  waypointsg$location <- NULL
+  waypointsg$id <- loc$id[waypointsg$waypoint_index + 1]
 
   # In case of island, multiple trips
   ntour <- dim(res$trips)[1]
@@ -177,7 +182,17 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
       duration = res$trips[nt, ]$duration / 60,
       distance = res$trips[nt, ]$distance / 1000
     )
-    trips[[nt]] <- list(trip = sldf, summary = tripSummary)
+    trip_waypoints <- st_as_sf(waypoints, coords = c("lon", "lat"), crs = 4326)
+    # remove internal aliases
+    trip_waypoints$X1 <- NULL
+    trip_waypoints$X2 <- NULL
+    trip_waypoints$trips_index <- NULL
+    trip_waypoints$waypoint_index <- NULL
+    trip_waypoints <- trip_waypoints[, c("id", "snapping_distance")]
+    if (!is.na(oprj)) {
+      trip_waypoints <- sf::st_transform(trip_waypoints, oprj)
+    }
+    trips[[nt]] <- list(trip = sldf, summary = tripSummary, waypoints = trip_waypoints)
   }
   return(trips)
 }

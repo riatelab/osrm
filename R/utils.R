@@ -52,6 +52,8 @@ coord_format <- function(res, src, dst) {
     ncol = 2, byrow = TRUE,
     dimnames = list(src$id, c("lon", "lat"))
   ))
+  sources$snapping_distance <- res$sources$distance
+  
   destinations <- data.frame(matrix(
     unlist(res$destinations$location,
       use.names = TRUE
@@ -59,6 +61,8 @@ coord_format <- function(res, src, dst) {
     ncol = 2, byrow = TRUE,
     dimnames = list(dst$id, c("lon", "lat"))
   ))
+  destinations$snapping_distance <- res$destinations$distance
+  
   return(list(sources = sources, destinations = destinations))
 }
 

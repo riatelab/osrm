@@ -49,20 +49,26 @@
 #' @param exclude pass an optional "exclude" request option to the OSRM API.
 #' @param osrm.server the base URL of the routing server.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot".
+#' @param snapping_distance if TRUE, a list is returned: the first element
+#' is the route, the second is a table of snapping distances.
 #' @return
-#' The output of this function is an sf LINESTRING of the shortest route.\cr
-#' It contains 4 fields: \itemize{
-#'   \item starting point identifier
-#'   \item destination identifier
-#'   \item travel time in minutes
-#'   \item travel distance in kilometers.
+#' If \code{snapping_distance = FALSE} (default): \itemize{
+#'   \item If \code{overview} is not FALSE, an sf LINESTRING of the shortest
+#'   route is returned. It contains 4 fields: src, dst, duration (in minutes)
+#'   and distance (in kilometers).
+#'   \item If \code{overview = FALSE}, a named numeric vector is returned
+#'   (duration and distance).
 #'   }
+#' If \code{snapping_distance = TRUE}, a list is returned: \itemize{
+#'   \item \code{route}: the route as described above.
+#'   \item \code{snapping}: an sf POINT of the snapped waypoints. It contains
+#'   the \code{id} and the \code{snapping_distance} (in kilometers).
+#'   }
+#'
 #' If src (or loc) is a vector, a data.frame or a matrix, the coordinate
 #' reference system (CRS) of the route is EPSG:4326 (WGS84).\cr
 #' If src (or loc) is an sfc or sf object, the route has the same CRS
-#' as src (or loc).\cr\cr
-#' If overview is FALSE, a named numeric vector is returned. It contains travel
-#' time (in minutes) and travel distance (in kilometers).
+#' as src (or loc).
 #' @importFrom sf st_as_sfc st_crs st_geometry st_sf st_as_sf st_transform
 #' @examples
 #' \dontrun{
@@ -76,6 +82,14 @@
 #' # Display paths
 #' plot(st_geometry(route1))
 #' plot(st_geometry(apotheke.sf[c(1, 16), ]), col = "red", pch = 20, add = TRUE)
+#'
+#' # Return the route and snapping distances
+#' route2 <- osrmRoute(
+#'   src = apotheke.sf[1, ], dst = apotheke.sf[16, ],
+#'   snapping_distance = TRUE
+#' )
+#' route2$route
+#' route2$snapping
 #'
 #' # Return only duration and distance
 #' route3 <- osrmRoute(
@@ -123,7 +137,8 @@ osrmRoute <- function(src,
                       overview = "simplified",
                       exclude,
                       osrm.server = getOption("osrm.server"),
-                      osrm.profile = getOption("osrm.profile")) {
+                      osrm.profile = getOption("osrm.profile"),
+                      snapping_distance = FALSE) {
   opt <- options(error = NULL)
   on.exit(options(opt), add = TRUE)
 
@@ -135,14 +150,16 @@ osrmRoute <- function(src,
     dst <- input_route(x = dst, id = "dst", single = TRUE)
     id1 <- src$id
     id2 <- dst$id
+    ids <- c(id1, id2)
     oprj <- src$oprj
     coords <- paste0(src$lon, ",", src$lat, ";", dst$lon, ",", dst$lat)
   } else {
     # from src to dst via x, y, z... (data.frame or sf input)
-    loc <- input_route(x = loc, single = FALSE)
+    loc <- input_route(x = loc, single = FALSE, all.ids = TRUE)
     oprj <- loc$oprj
-    id1 <- loc$id1
-    id2 <- loc$id2
+    id1 <- loc$id[1]
+    id2 <- loc$id[length(loc$id)]
+    ids <- loc$id
     coords <- paste0(
       apply(cbind(loc$lon, loc$lat), MARGIN = 1, FUN = paste0, collapse = ","),
       collapse = ";"
@@ -179,28 +196,44 @@ osrmRoute <- function(src,
   res <- RcppSimdJson::fparse(rawToChar(r$content))
 
   if (overview == FALSE) {
-    return(round(c(
+    res_out <- round(c(
       duration = res$routes$duration / 60,
       distance = res$routes$distance / 1000
-    ), 2))
+    ), 2)
+  } else {
+    # Coordinates of the line
+    geodf <- googlePolylines::decode(res$routes$geometry)[[1]][, c(2, 1)]
+    # Convert to LINESTRING
+    rcoords <- paste0(geodf$lon, " ", geodf$lat, collapse = ", ")
+    res_out <- st_sf(
+      src = id1, dst = id2,
+      duration = res$routes$duration / 60,
+      distance = res$routes$distance / 1000,
+      geometry = st_as_sfc(paste0("LINESTRING(", rcoords, ")")),
+      crs = 4326,
+      row.names = paste(id1, id2, sep = "_")
+    )
+
+    # prj
+    if (!is.na(oprj)) {
+      res_out <- st_transform(res_out, oprj)
+    }
   }
 
-  # Coordinates of the line
-  geodf <- googlePolylines::decode(res$routes$geometry)[[1]][, c(2, 1)]
-  # Convert to LINESTRING
-  rcoords <- paste0(geodf$lon, " ", geodf$lat, collapse = ", ")
-  rosf <- st_sf(
-    src = id1, dst = id2,
-    duration = res$routes$duration / 60,
-    distance = res$routes$distance / 1000,
-    geometry = st_as_sfc(paste0("LINESTRING(", rcoords, ")")),
-    crs = 4326,
-    row.names = paste(id1, id2, sep = "_")
-  )
-  # prj
-  if (!is.na(oprj)) {
-    rosf <- st_transform(rosf, oprj)
+  if (snapping_distance) {
+    snapping <- res$waypoints
+    snapping$snapping_distance <- snapping$distance / 1000
+    snapping$id <- ids
+    snapping <- snapping[, c("id", "snapping_distance")]
+    snapping$lon <- sapply(res$waypoints$location, "[[", 1)
+    snapping$lat <- sapply(res$waypoints$location, "[[", 2)
+    snapping_sf <- st_as_sf(snapping, coords = c("lon", "lat"), crs = 4326)
+    if (!is.na(oprj)) {
+      snapping_sf <- st_transform(snapping_sf, oprj)
+    }
+    return(list(route = res_out, snapping = snapping_sf))
   }
 
-  return(rosf)
+  return(res_out)
 }
+

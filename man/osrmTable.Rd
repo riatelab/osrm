@@ -45,23 +45,25 @@ If relevant, row names are used as identifiers.}
 (not allowed with the OSRM demo server).}
 
 \item{measure}{a character indicating what measures are calculated. It can
-be "duration" (in minutes), "distance" (meters), or both c('duration',
-'distance').}
+be "duration" (in minutes), "distance" (meters), "total_distance"
+(network distance + snapping distance, in meters) or any combination
+of them.}
 
 \item{osrm.server}{the base URL of the routing server.}
 
 \item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot".}
 }
 \value{
-The output of this function is a list composed of one or two matrices
+The output of this function is a list composed of one or several matrices
 and 2 data.frames
 \itemize{
   \item{durations}: a matrix of travel times (in minutes)
-  \item{distances}: a matrix of distances (in meters)
+  \item{distances}: a matrix of network distances (in meters)
+  \item{total_distances}: a matrix of network + snapping distances (in meters)
   \item{sources}: a data.frame of the coordinates of the points actually
-  used as starting points (EPSG:4326 - WGS84)
-  \item{sources}: a data.frame of the coordinates of the points actually
-  used as destinations (EPSG:4326 - WGS84)
+  used as starting points, including their snapping distance (EPSG:4326 - WGS84)
+  \item{destinations}: a data.frame of the coordinates of the points actually
+  used as destinations, including their snapping distance (EPSG:4326 - WGS84)
   }
 }
 \description{

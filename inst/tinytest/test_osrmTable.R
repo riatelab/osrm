@@ -144,4 +144,17 @@ if(local_server){
   expect_error(osrmTable(loc = x_sf[1:10, ], 
                          osrm.server = "http://0.0.0.0:5100/", 
                          osrm.profile = "car"))
+  
+  # total_distance
+  A <- osrmTable(loc = x_sf[1:5, ], measure = "total_distance")
+  expect_true(!is.null(A$total_distances))
+  expect_true(is.null(A$distances))
+  expect_equal(dim(A$total_distances), c(5,5))
+  expect_equal(diag(A$total_distances), rep(0, 5))
+  
+  B <- osrmTable(loc = x_sf[1:5, ], measure = c("distance", "total_distance"))
+  expect_true(!is.null(B$distances))
+  expect_true(!is.null(B$total_distances))
+  expect_equal(B$total_distances[1,2], 
+               B$distances[1,2] + B$sources$snapping_distance[1] + B$destinations$snapping_distance[2])
 }

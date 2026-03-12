@@ -29,22 +29,24 @@
 #' }
 #' If relevant, row names are used as identifiers.
 #' @param measure a character indicating what measures are calculated. It can
-#' be "duration" (in minutes), "distance" (meters), or both c('duration',
-#' 'distance').
+#' be "duration" (in minutes), "distance" (meters), "total_distance"
+#' (network distance + snapping distance, in meters) or any combination
+#' of them.
 #' @param exclude pass an optional "exclude" request option to the OSRM API
 #' (not allowed with the OSRM demo server).
 #' @param osrm.server the base URL of the routing server.
 #' @param osrm.profile the routing profile to use, e.g. "car", "bike" or "foot".
 #' @return
-#' The output of this function is a list composed of one or two matrices
+#' The output of this function is a list composed of one or several matrices
 #' and 2 data.frames
 #' \itemize{
 #'   \item{durations}: a matrix of travel times (in minutes)
-#'   \item{distances}: a matrix of distances (in meters)
+#'   \item{distances}: a matrix of network distances (in meters)
+#'   \item{total_distances}: a matrix of network + snapping distances (in meters)
 #'   \item{sources}: a data.frame of the coordinates of the points actually
-#'   used as starting points (EPSG:4326 - WGS84)
-#'   \item{sources}: a data.frame of the coordinates of the points actually
-#'   used as destinations (EPSG:4326 - WGS84)
+#'   used as starting points, including their snapping distance (EPSG:4326 - WGS84)
+#'   \item{destinations}: a data.frame of the coordinates of the points actually
+#'   used as destinations, including their snapping distance (EPSG:4326 - WGS84)
 #'   }
 #' @note
 #' The OSRM demo server does not allow large queries (more than 10000 distances
@@ -92,13 +94,15 @@
 #' distA5$distances[1:5, 1:5]
 #' }
 #' @export
-osrmTable <- function(src,
-                      dst = src,
-                      loc,
-                      exclude,
-                      measure = "duration",
-                      osrm.server = getOption("osrm.server"),
-                      osrm.profile = getOption("osrm.profile")) {
+osrmTable <- function(
+  src,
+  dst = src,
+  loc,
+  exclude,
+  measure = "duration",
+  osrm.server = getOption("osrm.server"),
+  osrm.profile = getOption("osrm.profile")
+) {
   opt <- options(error = NULL)
   on.exit(options(opt), add = TRUE)
 
@@ -130,14 +134,21 @@ osrmTable <- function(src,
   if (!missing(exclude)) {
     url <- paste0(url, "exclude=", exclude, "&")
   }
+
+  # Manage "total_distance" measure
+  total <- "total_distance" %in% measure
+  measure_api <- setdiff(measure, "total_distance")
+  if (total && !("distance" %in% measure_api)) {
+    measure_api <- c(measure_api, "distance")
+  }
+
   # adding measure parameter
   url <- paste0(
     url,
     "annotations=",
-    paste0(measure, collapse = ","),
+    paste0(measure_api, collapse = ","),
     "&generate_hints=false"
   )
-  # print(url)
   e <- try(
     {
       req_handle <- curl::new_handle(verbose = FALSE)
@@ -154,9 +165,6 @@ osrmTable <- function(src,
   test_http_error(r)
 
   res <- RcppSimdJson::fparse(rawToChar(r$content))
-
-  # create dummy dataset for tests
-  # return(list(res = res, src = src_r, dst = dst_r))
 
   # format results
   output <- list()
@@ -180,5 +188,26 @@ osrmTable <- function(src,
   coords <- coord_format(res = res, src = src_r, dst = dst_r)
   output$sources <- coords$sources
   output$destinations <- coords$destinations
+
+  # compute total distances
+  if (total && !is.null(output$distances)) {
+    src_snap <- output$sources$snapping_distance
+    dst_snap <- output$destinations$snapping_distance
+    snap_sum <- outer(src_snap, dst_snap, "+")
+    output$total_distances <- output$distances + snap_sum
+
+    # fix self-distance
+    ids_match <- outer(
+      rownames(output$total_distances),
+      colnames(output$total_distances),
+      "=="
+    )
+    output$total_distances[ids_match] <- 0
+
+    if (!("distance" %in% measure)) {
+      output$distances <- NULL
+    }
+  }
+
   return(output)
 }
