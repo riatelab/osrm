@@ -72,6 +72,7 @@ Other contributors:
   \item Robin Cura (\href{https://orcid.org/0000-0001-5926-1828}{ORCID}) [contributor]
   \item Matthieu Viry (\href{https://orcid.org/0000-0002-0693-8556}{ORCID}) [contributor]
   \item Robin Lovelace (\href{https://orcid.org/0000-0001-5679-6536}{ORCID}) [contributor]
+  \item Egor Kotov (\href{https://orcid.org/0000-0001-6690-5345}{ORCID}) [contributor]
 }
 
 }

@@ -57,7 +57,7 @@
 #'   route is returned. It contains 4 fields: src, dst, duration (in minutes)
 #'   and distance (in kilometers).
 #'   \item If \code{overview = FALSE}, a named numeric vector is returned
-#'   (duration and distance).
+#'   (duration in minutes and distance in kilometers).
 #'   }
 #' If \code{snapping_distance = TRUE}, a list is returned: \itemize{
 #'   \item \code{route}: the route as described above.
@@ -196,10 +196,10 @@ osrmRoute <- function(src,
   res <- RcppSimdJson::fparse(rawToChar(r$content))
 
   if (overview == FALSE) {
-    res_out <- round(c(
-      duration = res$routes$duration / 60,
-      distance = res$routes$distance / 1000
-    ), 2)
+    res_out <- c(
+      duration = round(res$routes$duration / 60, 1),
+      distance = round(res$routes$distance / 1000, 3)
+    )
   } else {
     # Coordinates of the line
     geodf <- googlePolylines::decode(res$routes$geometry)[[1]][, c(2, 1)]
@@ -222,7 +222,7 @@ osrmRoute <- function(src,
 
   if (snapping_distance) {
     snapping <- res$waypoints
-    snapping$snapping_distance <- snapping$distance / 1000
+    snapping$snapping_distance <- round(snapping$distance / 1000, 3)
     snapping$id <- ids
     snapping <- snapping[, c("id", "snapping_distance")]
     snapping$lon <- sapply(res$waypoints$location, "[[", 1)
@@ -236,4 +236,3 @@ osrmRoute <- function(src,
 
   return(res_out)
 }
-

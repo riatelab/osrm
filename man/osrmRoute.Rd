@@ -71,7 +71,7 @@ If \code{snapping_distance = FALSE} (default): \itemize{
   route is returned. It contains 4 fields: src, dst, duration (in minutes)
   and distance (in kilometers).
   \item If \code{overview = FALSE}, a named numeric vector is returned
-  (duration and distance).
+  (duration in minutes and distance in kilometers).
   }
 If \code{snapping_distance = TRUE}, a list is returned: \itemize{
   \item \code{route}: the route as described above.

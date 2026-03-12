@@ -59,11 +59,15 @@ and 2 data.frames
 \itemize{
   \item{durations}: a matrix of travel times (in minutes)
   \item{distances}: a matrix of network distances (in meters)
-  \item{total_distances}: a matrix of network + snapping distances (in meters)
+  \item{total_distances}: a matrix of network + snapping distances
+  (in meters)
   \item{sources}: a data.frame of the coordinates of the points actually
-  used as starting points, including their snapping distance (EPSG:4326 - WGS84)
+  used as starting points (EPSG:4326 - WGS84),
+  including their snapping distance in meters
+
   \item{destinations}: a data.frame of the coordinates of the points actually
-  used as destinations, including their snapping distance (EPSG:4326 - WGS84)
+  used as destinations (EPSG:4326 - WGS84),
+  including their snapping distance in meters
   }
 }
 \description{

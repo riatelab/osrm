@@ -42,11 +42,15 @@
 #' \itemize{
 #'   \item{durations}: a matrix of travel times (in minutes)
 #'   \item{distances}: a matrix of network distances (in meters)
-#'   \item{total_distances}: a matrix of network + snapping distances (in meters)
+#'   \item{total_distances}: a matrix of network + snapping distances
+#'   (in meters)
 #'   \item{sources}: a data.frame of the coordinates of the points actually
-#'   used as starting points, including their snapping distance (EPSG:4326 - WGS84)
+#'   used as starting points (EPSG:4326 - WGS84),
+#'   including their snapping distance in meters
+#'
 #'   \item{destinations}: a data.frame of the coordinates of the points actually
-#'   used as destinations, including their snapping distance (EPSG:4326 - WGS84)
+#'   used as destinations (EPSG:4326 - WGS84),
+#'   including their snapping distance in meters
 #'   }
 #' @note
 #' The OSRM demo server does not allow large queries (more than 10000 distances
@@ -194,7 +198,7 @@ osrmTable <- function(
     src_snap <- output$sources$snapping_distance
     dst_snap <- output$destinations$snapping_distance
     snap_sum <- outer(src_snap, dst_snap, "+")
-    output$total_distances <- output$distances + snap_sum
+    output$total_distances <- output$distances + round(snap_sum, 0)
 
     # fix self-distance
     ids_match <- outer(

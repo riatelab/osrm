@@ -100,17 +100,12 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
   test_http_error(r)
   res <- RcppSimdJson::fparse(rawToChar(r$content))
 
-
-  waypointsg <- res$waypoints
-  waypointsg$snapping_distance <- waypointsg$distance / 1000
-  waypointsg$distance <- NULL
-  waypointsg$lon <- sapply(res$waypoints$location, "[[", 1)
-  waypointsg$lat <- sapply(res$waypoints$location, "[[", 2)
-  # Alias for matching loop
-  waypointsg$X1 <- waypointsg$lon
-  waypointsg$X2 <- waypointsg$lat
-  waypointsg$location <- NULL
-  waypointsg$id <- loc$id[waypointsg$waypoint_index + 1]
+  waypointsg <- data.frame(res$waypoints[, c(1, 2, 5)],
+    matrix(unlist(res$waypoints$location),
+      byrow = TRUE, ncol = 2
+    ),
+    id = loc$id
+  )
 
   # In case of island, multiple trips
   ntour <- dim(res$trips)[1]
@@ -169,8 +164,8 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
     end <- start[c(2:length(start), 1)]
     sldf <- st_sf(
       start = start, end = end,
-      duration = res$trips[nt, ]$legs[[1]][, "duration"] / 60,
-      distance = res$trips[nt, ]$legs[[1]][, "distance"] / 1000,
+      duration = round(res$trips[nt, ]$legs[[1]][, "duration"] / 60, 1),
+      distance = round(res$trips[nt, ]$legs[[1]][, "distance"] / 1000, 3),
       geometry = st_as_sfc(wktl, crs = 4326)
     )
     # Reproj
@@ -179,16 +174,14 @@ osrmTrip <- function(loc, exclude = NULL, overview = "simplified",
     }
     # Build tripSummary
     tripSummary <- list(
-      duration = res$trips[nt, ]$duration / 60,
-      distance = res$trips[nt, ]$distance / 1000
+      duration = round(res$trips[nt, ]$duration / 60, 1),
+      distance = round(res$trips[nt, ]$distance / 1000, 3)
     )
-    trip_waypoints <- st_as_sf(waypoints, coords = c("lon", "lat"), crs = 4326)
-    # remove internal aliases
-    trip_waypoints$X1 <- NULL
-    trip_waypoints$X2 <- NULL
-    trip_waypoints$trips_index <- NULL
-    trip_waypoints$waypoint_index <- NULL
-    trip_waypoints <- trip_waypoints[, c("id", "snapping_distance")]
+
+    trip_waypoints <- st_as_sf(waypoints, coords = c("X1", "X2"), crs = "EPSG:4326")
+    trip_waypoints <- trip_waypoints[, c("id", "distance")]
+    trip_waypoints$distance <- round(trip_waypoints$distance / 1000, 3)
+    names(trip_waypoints)[2] <- "snapping_distance"
     if (!is.na(oprj)) {
       trip_waypoints <- sf::st_transform(trip_waypoints, oprj)
     }

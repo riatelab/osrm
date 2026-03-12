@@ -81,7 +81,7 @@ osrmNearest <- function(
     rcoords <- paste0(unlist(r$location[i]), collapse = " ")
     rosf[[i]] <- st_sf(
       id = id,
-      distance = round(r$distance[i], 1),
+      distance = round(r$distance[i], 0),
       geometry = st_as_sfc(paste0("POINT(", rcoords, ")")),
       crs = 4326
     )

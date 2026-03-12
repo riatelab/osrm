@@ -34,8 +34,8 @@ in minutes.}
 \item{n}{number of points used to compute isochrones, possible values are
 c(100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000).}
 
-\item{smooth}{if TRUE a moving window with a gaussian blur is applied to 
-durations. This option may be usefull to remove small patches of hard to 
+\item{smooth}{if TRUE a moving window with a gaussian blur is applied to
+durations. This option may be usefull to remove small patches of hard to
 reach areas. The computed isochrones are less precise but better looking.}
 
 \item{res}{deprecated}
