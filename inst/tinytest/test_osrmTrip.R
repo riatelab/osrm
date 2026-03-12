@@ -13,8 +13,6 @@ if(demo_server){
                    c("start", "end", "duration", "distance", "geometry"))
   expect_true(st_geometry_type(trip, by_geometry = FALSE) == "LINESTRING")
   expect_identical(names(trip_summary),c('duration', 'distance'))
-  expect_true(!is.null(r[[1]]$waypoints))
-  expect_true("snapping_distance" %in% colnames(r[[1]]$waypoints))
   
   ################# DEMO BIKE #####################
   options(osrm.server = "https://routing.openstreetmap.de/", osrm.profile = "bike")
@@ -29,8 +27,6 @@ if(demo_server){
                    c("start", "end", "duration", "distance", "geometry"))
   expect_true(st_geometry_type(trip, by_geometry = FALSE) == "LINESTRING")
   expect_identical(names(trip_summary),c('duration', 'distance'))
-  expect_true(!is.null(r[[1]]$waypoints))
-  expect_true("snapping_distance" %in% colnames(r[[1]]$waypoints))
   
   
   ############## DEMO FOOT #################"""""
@@ -46,8 +42,6 @@ if(demo_server){
                    c("start", "end", "duration", "distance", "geometry"))
   expect_true(st_geometry_type(trip, by_geometry = FALSE) == "LINESTRING")
   expect_identical(names(trip_summary),c('duration', 'distance'))
-  expect_true(!is.null(r[[1]]$waypoints))
-  expect_true("snapping_distance" %in% colnames(r[[1]]$waypoints))
   
   ############# server param ##################""
   r <- osrmTrip(loc = x_sf[1:5,], 
@@ -62,9 +56,7 @@ if(demo_server){
   expect_identical(colnames(trip), 
                    c("start", "end", "duration", "distance", "geometry"))
   expect_true(st_geometry_type(trip, by_geometry = FALSE) == "LINESTRING")
-  expect_identical(names(trip_summary),c('duration', 'distance'))
-  expect_true(!is.null(r[[1]]$waypoints))
-  expect_true("snapping_distance" %in% colnames(r[[1]]$waypoints))  
+  expect_identical(names(trip_summary),c('duration', 'distance'))  
   # server error
   expect_error(osrmTrip(loc = x_sf[1:5, ], 
                         osrm.server = "https://router.project-osrm.orgS/", 
@@ -91,8 +83,6 @@ if(local_server){
                    c("start", "end", "duration", "distance", "geometry"))
   expect_true(st_geometry_type(trip, by_geometry = FALSE) == "LINESTRING")
   expect_identical(names(trip_summary),c('duration', 'distance'))
-  expect_true(!is.null(r[[1]]$waypoints))
-  expect_true("snapping_distance" %in% colnames(r[[1]]$waypoints))
   
   # server error
   expect_error(osrmTrip(loc = x_sf[1:5, ], 

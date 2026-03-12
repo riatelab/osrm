@@ -46,8 +46,6 @@ distance (length of the step in kilometers).
 }
 \item{summary}{A list with 2 components: total duration (in minutes)
 and total distance (in kilometers) of the trip.}
-\item{waypoints}{An sf POINT object of the snapped waypoints used in the trip,
-containing their \code{id} and their \code{snapping_distance} (in kilometers).}
 }
 }
 \description{

@@ -11,8 +11,7 @@ osrmRoute(
   overview = "simplified",
   exclude,
   osrm.server = getOption("osrm.server"),
-  osrm.profile = getOption("osrm.profile"),
-  snapping_distance = FALSE
+  osrm.profile = getOption("osrm.profile")
 )
 }
 \arguments{
@@ -61,28 +60,21 @@ FALSE to return only time and distance.}
 \item{osrm.server}{the base URL of the routing server.}
 
 \item{osrm.profile}{the routing profile to use, e.g. "car", "bike" or "foot".}
-
-\item{snapping_distance}{if TRUE, a list is returned: the first element
-is the route, the second is a table of snapping distances.}
 }
 \value{
-If \code{snapping_distance = FALSE} (default): \itemize{
-  \item If \code{overview} is not FALSE, an sf LINESTRING of the shortest
-  route is returned. It contains 4 fields: src, dst, duration (in minutes)
-  and distance (in kilometers).
-  \item If \code{overview = FALSE}, a named numeric vector is returned
-  (duration and distance).
+The output of this function is an sf LINESTRING of the shortest route.\cr
+It contains 4 fields: \itemize{
+  \item starting point identifier
+  \item destination identifier
+  \item travel time in minutes
+  \item travel distance in kilometers.
   }
-If \code{snapping_distance = TRUE}, a list is returned: \itemize{
-  \item \code{route}: the route as described above.
-  \item \code{snapping}: an sf POINT of the snapped waypoints. It contains
-  the \code{id} and the \code{snapping_distance} (in kilometers).
-  }
-
 If src (or loc) is a vector, a data.frame or a matrix, the coordinate
 reference system (CRS) of the route is EPSG:4326 (WGS84).\cr
 If src (or loc) is an sfc or sf object, the route has the same CRS
-as src (or loc).
+as src (or loc).\cr\cr
+If overview is FALSE, a named numeric vector is returned. It contains travel
+time (in minutes) and travel distance (in kilometers).
 }
 \description{
 Build and send an OSRM API query to get the travel geometry
@@ -105,14 +97,6 @@ route1 <- osrmRoute(src = apotheke.sf[1, ], dst = apotheke.sf[16, ])
 # Display paths
 plot(st_geometry(route1))
 plot(st_geometry(apotheke.sf[c(1, 16), ]), col = "red", pch = 20, add = TRUE)
-
-# Return the route and snapping distances
-route2 <- osrmRoute(
-  src = apotheke.sf[1, ], dst = apotheke.sf[16, ],
-  snapping_distance = TRUE
-)
-route2$route
-route2$snapping
 
 # Return only duration and distance
 route3 <- osrmRoute(

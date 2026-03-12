@@ -9,9 +9,7 @@ Authors@R: c(person("Timothée", "Giraud", email = "timothee.giraud@cnrs.fr",
     person("Matthieu", "Viry", role = c("ctb"),
     comment = c(ORCID = "0000-0002-0693-8556")),
     person("Robin", "Lovelace", role = c("ctb"),
-    comment = c(ORCID = "0000-0001-5679-6536")),
-    person("Egor", "Kotov", role = c("ctb"),
-    comment = c(ORCID = "0000-0001-6690-5345"))
+    comment = c(ORCID = "0000-0001-5679-6536"))
     )
 Description: An interface between R and the 'OSRM' API. 'OSRM' is a routing
     service based on 'OpenStreetMap' data. See <http://project-osrm.org/> for more
