@@ -59,7 +59,7 @@
 #'     breaks = sort(unique(c(iso2$isomin, iso2$isomax))),
 #'     pal = "Burg", border = NA, leg_pos = "topleft",
 #'     leg_val_rnd = 0,
-#'     leg_frame = TRUE, leg_title = "Isochrones\n(min)"
+#'     leg_frame = TRUE, leg_title = "Isodistance\n(m)"
 #'   )
 #' }
 #' }
