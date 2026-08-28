@@ -55,3 +55,22 @@ expect_identical(osrm:::input_table(x = x_sf, id = "src"),
 
 
 
+
+# points with missing (NA/NaN) coordinates are skipped with a warning
+x_nan <- data.frame(
+  lon = c(13.26, NaN, 13.41, 13.45),
+  lat = c(52.48, NaN, 52.52, NA),
+  row.names = c("a", "b", "c", "d")
+)
+expect_warning(
+  res <- osrm:::input_table(x = x_nan, id = "src"),
+  "2 point\\(s\\) with missing \\(NA/NaN\\) or non-finite coordinates"
+)
+expect_identical(res$id, c("a", "c"))
+expect_identical(res, suppressWarnings(osrm:::input_table(x = x_nan[c(1, 3), ], id = "src")))
+expect_warning(osrm:::input_table(x = as.matrix(x_nan), id = "src"))
+
+# error if no point with valid coordinates remains
+expect_error(
+  suppressWarnings(osrm:::input_table(x = data.frame(lon = NaN, lat = NaN), id = "src"))
+)

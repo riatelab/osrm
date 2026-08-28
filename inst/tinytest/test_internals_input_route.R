@@ -232,3 +232,36 @@ expect_equivalent(osrm:::input_route(x = x_sf[1:4, ],
                                      single = FALSE, 
                                      all.ids = TRUE), 
                   target)
+# single points with missing (NA/NaN) coordinates raise a clear error
+expect_error(
+  osrm:::input_route(x = c(NaN, 52), id = "src", single = TRUE),
+  "missing \\(NA/NaN\\) or non-finite coordinates"
+)
+expect_error(
+  osrm:::input_route(x = data.frame(lon = NaN, lat = 52), id = "dst", single = TRUE),
+  "missing \\(NA/NaN\\) or non-finite coordinates"
+)
+
+# multi-point inputs skip missing (NA/NaN) coordinates with a warning
+x_nan <- data.frame(
+  lon = c(13.26, NaN, 13.41, 13.45),
+  lat = c(52.48, NaN, 52.52, NA),
+  row.names = c("a", "b", "c", "d")
+)
+expect_warning(
+  res <- osrm:::input_route(x = x_nan, id = "loc", single = FALSE, all.ids = TRUE),
+  "2 point\\(s\\) with missing \\(NA/NaN\\) or non-finite coordinates"
+)
+expect_identical(res$id, c("a", "c"))
+expect_warning(
+  res <- osrm:::input_route(x = x_nan, id = "loc", single = FALSE, all.ids = FALSE)
+)
+expect_identical(res$id1, "a")
+expect_identical(res$id2, "c")
+
+# error if fewer than 2 points with valid coordinates remain
+expect_error(
+  suppressWarnings(
+    osrm:::input_route(x = x_nan[1:2, ], id = "loc", single = FALSE)
+  )
+)
