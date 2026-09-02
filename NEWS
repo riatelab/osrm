@@ -1,3 +1,13 @@
+# osrm version 5.0.0.9000
+
+## fix
+* skip points with missing (NA/NaN) or non-finite coordinates in multi-point
+  inputs (osrmTable(), osrmRoute(loc), osrmTrip()), with a warning. Such
+  coordinates previously produced corrupted encoded polylines or invalid
+  queries sent to the OSRM server.
+* raise a clear error when a single point input (src, dst, loc) has missing
+  (NA/NaN) or non-finite coordinates.
+
 # osrm version 5.0.0
 
 ## Major changes
