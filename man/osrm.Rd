@@ -67,6 +67,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Timothée Giraud \email{timothee.giraud@cnrs.fr} (\href{https://orcid.org/0000-0002-1932-3323}{ORCID})
 
+Authors:
+\itemize{
+  \item Timothée Giraud \email{timothee.giraud@cnrs.fr} (\href{https://orcid.org/0000-0002-1932-3323}{ORCID})
+}
+
 Other contributors:
 \itemize{
   \item Robin Cura (\href{https://orcid.org/0000-0001-5926-1828}{ORCID}) [contributor]
