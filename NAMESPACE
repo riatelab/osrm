@@ -7,17 +7,19 @@ export(osrmRoute)
 export(osrmTable)
 export(osrmTrip)
 importFrom(mapiso,mapiso)
-importFrom(sf,st_as_sf)
-importFrom(sf,st_as_sfc)
-importFrom(sf,st_bbox)
-importFrom(sf,st_buffer)
-importFrom(sf,st_convex_hull)
-importFrom(sf,st_crs)
-importFrom(sf,st_distance)
-importFrom(sf,st_geometry)
-importFrom(sf,st_intersects)
-importFrom(sf,st_make_grid)
-importFrom(sf,st_sf)
-importFrom(sf,st_sfc)
-importFrom(sf,st_transform)
-importFrom(sf,st_union)
+importFrom(sf,
+  st_as_sf,
+  st_as_sfc,
+  st_bbox,
+  st_buffer,
+  st_convex_hull,
+  st_crs,
+  st_distance,
+  st_geometry,
+  st_intersects,
+  st_make_grid,
+  st_sf,
+  st_sfc,
+  st_transform,
+  st_union
+)

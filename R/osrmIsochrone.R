@@ -38,7 +38,7 @@
 #' If loc is an sfc or sf object, the output has the same CRS
 #' as loc.\cr
 #' @importFrom sf st_as_sf st_crs st_transform st_convex_hull st_union
-#' st_intersects st_bbox st_buffer st_distance st_make_grid st_sfc
+#'   st_intersects st_bbox st_buffer st_distance st_make_grid st_sfc
 #' @importFrom mapiso mapiso
 #' @export
 #' @examples

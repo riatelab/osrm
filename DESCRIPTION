@@ -35,4 +35,4 @@ Suggests:
 URL: https://github.com/riatelab/osrm
 BugReports: https://github.com/riatelab/osrm/issues
 Encoding: UTF-8
-RoxygenNote: 7.3.3
+Config/roxygen2/version: 8.1.0
