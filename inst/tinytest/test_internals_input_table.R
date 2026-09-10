@@ -14,6 +14,29 @@ expect_error(osrm:::input_table(x = st_drop_geometry(x_sf), id = "src"))
 # x is not the correct type
 expect_error(osrm:::input_table(x = st_crs(x_sf), id = "src"))  
 
+# contains NA / Inf / NaN coordinates from matrix, data.frame, sf
+expect_error(
+  osrm:::input_table(x = matrix(c(NA, 1, 50, 50), ncol = 2), id = "loc"),
+  '"loc" contains missing \\(NA\\), infinite \\(Inf/-Inf\\) or invalid \\(NaN\\) coordinates.'
+)
+expect_error(
+  osrm:::input_table(x = data.frame(x = c(NaN, 1), y = c(50, 50)), id = "loc"),
+  '"loc" contains missing \\(NA\\), infinite \\(Inf/-Inf\\) or invalid \\(NaN\\) coordinates.'
+)
+expect_error(
+  osrm:::input_table(x = st_as_sf(data.frame(x = c(Inf, 1), y = c(50, 50)), coords = c("x", "y"), crs = "EPSG:4326"), id = "loc"),
+  '"loc" contains missing \\(NA\\), infinite \\(Inf/-Inf\\) or invalid \\(NaN\\) coordinates.'
+)
+
+
+
+
+
+
+
+
+
+
 # correct input
 # input_table_out_df <- osrm:::input_table(x = x_df, id = "src")
 # input_table_out_m <- osrm:::input_table(x = x_m, id = "src")

@@ -65,6 +65,20 @@ coord_format <- function(res, src, dst) {
   return(list(sources = sources, destinations = destinations))
 }
 
+valid_coords <- function(lon, lat, id) {
+  ok <- is.finite(lon) & is.finite(lat)
+  if (any(!ok)) {
+    stop(
+      paste0(
+        '"',
+        id,
+        '" contains missing (NA), infinite (Inf/-Inf) or invalid (NaN) coordinates.'
+      ),
+      call. = FALSE
+    )
+  }
+}
+
 input_table <- function(x, id) {
   if (inherits(x = x, what = c("sfc", "sf"))) {
     lx <- length(st_geometry(x))
@@ -87,6 +101,7 @@ input_table <- function(x, id) {
     }
     x <- sf::st_transform(x = x, crs = 4326)
     coords <- sf::st_coordinates(x)
+    valid_coords(lon = coords[, 1], lat = coords[, 2], id = id)
     x <- data.frame(
       id = idx,
       lon = clean_coord(coords[, 1]),
@@ -106,7 +121,7 @@ input_table <- function(x, id) {
       if (is.null(rn)) {
         rn <- 1:lx
       }
-
+      valid_coords(lon = x[, 1, drop = TRUE], lat = x[, 2, drop = TRUE], id = id)
       x <- data.frame(
         id = rn,
         lon = clean_coord(x[, 1, drop = TRUE]),
@@ -139,6 +154,7 @@ input_route <- function(x, id, single = TRUE, all.ids = FALSE) {
   if (single) {
     if (is.vector(x)) {
       if (length(x) == 2 && is.numeric(x)) {
+        valid_coords(x[1], x[2], id)
         if (x[1] > 180 || x[1] < -180 || x[2] > 90 || x[2] < -90) {
           stop(
             paste0(
@@ -180,6 +196,7 @@ input_route <- function(x, id, single = TRUE, all.ids = FALSE) {
       }
       x <- sf::st_transform(x = x, crs = 4326)
       coords <- sf::st_coordinates(x)
+      valid_coords(coords[, 1], coords[, 2], id = id)
       lon <- clean_coord(coords[, 1])
       lat <- clean_coord(coords[, 2])
       return(list(id = idx, lon = lon, lat = lat, oprj = oprj))
@@ -195,6 +212,7 @@ input_route <- function(x, id, single = TRUE, all.ids = FALSE) {
       }
       x <- unlist(x)
       if (length(x) == 2 && is.numeric(x)) {
+        valid_coords(x[1], x[2], id = id)
         lon <- clean_coord(x[1])
         lat <- clean_coord(x[2])
         return(list(id = idx, lon = lon, lat = lat, oprj = oprj))
@@ -241,6 +259,7 @@ input_route <- function(x, id, single = TRUE, all.ids = FALSE) {
       }
       x <- sf::st_transform(x = x, crs = 4326)
       coords <- sf::st_coordinates(x)
+      valid_coords(coords[, 1], coords[, 2], id = id)
       lon <- clean_coord(coords[, 1])
       lat <- clean_coord(coords[, 2])
       if (!all.ids) {
@@ -255,6 +274,7 @@ input_route <- function(x, id, single = TRUE, all.ids = FALSE) {
         stop('"loc" should have at least 2 rows.', call. = FALSE)
       }
       if (ncol(x) == 2 && is.numeric(x[, 1, drop = TRUE]) && is.numeric(x[, 2, drop = TRUE])) {
+        valid_coords(x[, 1, drop = TRUE], x[, 2, drop = TRUE], id)
         lon <- clean_coord(x[, 1, drop = TRUE])
         lat <- clean_coord(x[, 2, drop = TRUE])
         rn <- row.names(x)

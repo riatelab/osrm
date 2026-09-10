@@ -28,6 +28,23 @@ expect_error(osrm:::input_route(x = st_crs(x_sf),
                                 id = "src", 
                                 single = TRUE, 
                                 all.ids = FALSE))
+# NA / Inf / NaN coordinates from vector, matrix, data.frame, sf
+expect_error(
+  osrm:::input_route(x = c(NaN, 52), id = "src", single = TRUE),
+  '"src" contains missing \\(NA\\), infinite \\(Inf/-Inf\\) or invalid \\(NaN\\) coordinates.'
+)
+expect_error(
+  osrm:::input_route(x = matrix(c(NA, 52), ncol = 2), id = "src", single = TRUE),
+  '"src" contains missing \\(NA\\), infinite \\(Inf/-Inf\\) or invalid \\(NaN\\) coordinates.'
+)
+expect_error(
+  osrm:::input_route(x = data.frame(x = Inf, y = 13), id = "src", single = TRUE),
+  '"src" contains missing \\(NA\\), infinite \\(Inf/-Inf\\) or invalid \\(NaN\\) coordinates.'
+)
+expect_error(
+  osrm:::input_route(x = st_as_sf(data.frame(x = Inf, y = 13), coords = c("x", "y"), crs = "EPSG:4326"), id = "src", single = TRUE),
+  '"src" contains missing \\(NA\\), infinite \\(Inf/-Inf\\) or invalid \\(NaN\\) coordinates.'
+)
 
 # Multi input/output
 # too short input
@@ -56,6 +73,20 @@ expect_error(osrm:::input_route(x = st_crs(x_sf),
                                 id = "loc", 
                                 single = FALSE, 
                                 all.ids = FALSE))
+
+# NA / Inf / NaN coordinates from matrix, data.frame, sf
+expect_error(
+  osrm:::input_route(x = matrix(c(NA, 1, 50, 50), ncol = 2), id = "loc", single = FALSE),
+  '"loc" contains missing \\(NA\\), infinite \\(Inf/-Inf\\) or invalid \\(NaN\\) coordinates.'
+)
+expect_error(
+  osrm:::input_route(x = data.frame(x = c(NaN, 1), y = c(50, 50)), id = "loc", single = FALSE),
+  '"loc" contains missing \\(NA\\), infinite \\(Inf/-Inf\\) or invalid \\(NaN\\) coordinates.'
+)
+expect_error(
+  osrm:::input_route(x = st_as_sf(data.frame(x = c(Inf, 1), y = c(50, 50)), coords = c("x", "y"), crs = "EPSG:4326"), id = "loc", single = FALSE),
+  '"loc" contains missing \\(NA\\), infinite \\(Inf/-Inf\\) or invalid \\(NaN\\) coordinates.'
+)
 
 
 
