@@ -5,9 +5,10 @@
 [![downloads](https://cranlogs.r-pkg.org/badges/osrm?color=brightgreen)](https://cran.r-project.org/package=osrm)
 [![R build
 status](https://github.com/riatelab/osrm/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/riatelab/osrm/actions)
-[![codecov](https://codecov.io/gh/riatelab/osrm/branch/dev/graph/badge.svg?token=JOJNuBCH9M)](https://app.codecov.io/gh/riatelab/osrm)
-[![Project Status: Active – The project has reached a stable, usable
-state and is being actively
+![code coverage:
+98%](https://img.shields.io/badge/code_coverage-98%25-green) [![Project
+Status: Active – The project has reached a stable, usable state and is
+being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.04574/status.svg)](https://doi.org/10.21105/joss.04574)
 
@@ -238,7 +239,7 @@ Alternatively, you can install the development version of `osrm` from
 [r-universe](https://riatelab.r-universe.dev/osrm) with:
 
 ``` r
-install.packages("osrm", repos = "https://riatelab.r-universe.dev")
+install.packages('osrm', repos = c('https://riatelab.r-universe.dev', 'https://cloud.r-project.org'))
 ```
 
 ## Community Guidelines
