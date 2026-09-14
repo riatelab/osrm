@@ -207,8 +207,8 @@ osrmRoute <- function(src,
     rcoords <- paste0(geodf$lon, " ", geodf$lat, collapse = ", ")
     res_out <- st_sf(
       src = id1, dst = id2,
-      duration = res$routes$duration / 60,
-      distance = res$routes$distance / 1000,
+      duration = round(res$routes$duration / 60, 1),
+      distance = round(res$routes$distance / 1000, 3),
       geometry = st_as_sfc(paste0("LINESTRING(", rcoords, ")")),
       crs = 4326,
       row.names = paste(id1, id2, sep = "_")

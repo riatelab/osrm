@@ -81,7 +81,7 @@ osrmIsochrone <- function(loc, breaks = seq(from = 0, to = 60, length.out = 7),
   loc <- st_transform(loc, "epsg:3857")
 
   # max distance management to see how far to extend the grid to get measures
-  breaks <- unique(sort(breaks))
+  breaks <- unique(sort(round(breaks, 1)))
   tmax <- max(breaks)
 
   # gentle sleeptime & param for demo server
