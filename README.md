@@ -6,7 +6,7 @@
 [![R build
 status](https://github.com/riatelab/osrm/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/riatelab/osrm/actions)
 ![code coverage:
-98%](https://img.shields.io/badge/code_coverage-98%25-green) [![Project
+96%](https://img.shields.io/badge/code_coverage-96%25-green) [![Project
 Status: Active – The project has reached a stable, usable state and is
 being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
@@ -25,14 +25,14 @@ the computation of routes, trips, isochrones and travel distances
 matrices (travel time and kilometric distance) with R.
 
 This package relies on the usage of a running OSRM service (tested with
-v6.0.0 of OSRM).
+v26.9.0 of OSRM).
 
 You can run your own instance of OSRM following guidelines provided
 [here](https://github.com/Project-OSRM/osrm-backend). A simple solution
 is to use [docker
 containers](https://github.com/Project-OSRM/osrm-backend#using-docker)
 and you can find and exemple of building a European-wide OSRM Server
-[here](https://rcarto.github.io/posts/build_osrm_server/).  
+[here](https://rcarto.github.io/posts/build_osrm_server/).\
 Alternatively, you can use
 [`osrm.backend`](https://www.ekotov.pro/osrm.backend/), an R package
 that installs and controls OSRM executables to prepare routing data and
@@ -72,22 +72,21 @@ pharmacy from any other pharmacy.
 ``` r
 library(osrm)
 library(sf)
-pharmacy <- st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), 
-                    quiet = TRUE)
+library(mapsf)
+pharmacy <- sf::st_read(system.file("gpkg/apotheke.gpkg", package = "osrm"), quiet = TRUE)
 travel_time <- osrmTable(loc = pharmacy)
 travel_time$durations[1:5,1:5]
 ```
 
     ##      1    2    3    4    5
-    ## 1  0.0 21.1 33.4 21.2 12.6
-    ## 2 22.1  0.0 42.3 16.1 20.2
-    ## 3 33.0 43.0  0.0 30.5 27.4
-    ## 4 20.1 15.3 29.7  0.0 12.7
-    ## 5 10.2 20.3 26.8 12.3  0.0
+    ## 1  0.0 21.7 34.2 19.8 10.1
+    ## 2 22.3  0.0 42.9 16.3 20.5
+    ## 3 33.9 43.1  0.0 30.7 27.6
+    ## 4 19.4 17.0 29.8  0.0 12.7
+    ## 5  9.4 20.5 27.4 12.5  0.0
 
 ``` r
-diag(travel_time$durations) <- NA
-median(travel_time$durations, na.rm = TRUE)
+median(travel_time$durations)
 ```
 
     ## [1] 21.4
@@ -107,20 +106,21 @@ Here we compute the shortest route between the two first pharmacies.
     ## Simple feature collection with 1 feature and 4 fields
     ## Geometry type: LINESTRING
     ## Dimension:     XY
-    ## Bounding box:  xmin: -13177 ymin: 5837172 xmax: -3875.06 ymax: 5841047
+    ## Bounding box:  xmin: -13170.51 ymin: 5837172 xmax: -3875.06 ymax: 5841047
     ## Projected CRS: WGS 84 / UTM zone 34N
     ##     src dst duration distance                       geometry
-    ## 1_2   1   2 21.68333  12.5251 LINESTRING (-13170.51 58410...
+    ## 1_2   1   2     21.7   12.838 LINESTRING (-13170.51 58410...
 
-This route is 12.5 kilometers long and it takes 21.7 minutes to drive
+This route is 12.838 kilometers long and it takes 21.7 minutes to drive
 through it.
 
 ``` r
-plot(st_geometry(route), main = "Route")
-plot(st_geometry(pharmacy[1:2,]), pch = 20, add = T, cex = 1.5)
+mf_map(route, lwd = 2)
+mf_map(pharmacy[1:2,], pch = 20, cex = 1.5, add = TRUE)
+mf_title("Route")
 ```
 
-![](man/figures/route.png)
+![](man/figures/route-1.png)<!-- -->
 
 ### Travelling salesman problem
 
@@ -141,35 +141,50 @@ pharmacies.
     ## Bounding box:  xmin: -13431.44 ymin: 5837172 xmax: -3875.322 ymax: 5856333
     ## Projected CRS: WGS 84 / UTM zone 34N
     ##   start end duration distance                       geometry
-    ## 1     1   2 21.68333  12.5251 LINESTRING (-13170.77 58410...
-    ## 2     2   4 16.26667   8.4495 LINESTRING (-3875.322 58379...
-    ## 3     4   3 30.04667  18.1690 LINESTRING (-7444.513 58427...
-    ## 4     3   5 27.85167  16.4466 LINESTRING (-8024.73 585621...
-    ## 5     5   1  9.80000   4.2308 LINESTRING (-11716.82 58435...
+    ## 1     1   2     21.7   12.838 LINESTRING (-13170.77 58410...
+    ## 2     2   4     16.3    8.450 LINESTRING (-3875.322 58379...
+    ## 3     4   3     29.8   18.169 LINESTRING (-7444.513 58427...
+    ## 4     3   5     27.6   16.447 LINESTRING (-8024.73 585621...
+    ## 5     5   1      9.4    4.229 LINESTRING (-11716.82 58435...
     ## 
     ## [[1]]$summary
     ## [[1]]$summary$duration
-    ## [1] 105.6483
+    ## [1] 104.9
     ## 
     ## [[1]]$summary$distance
-    ## [1] 59.821
+    ## [1] 60.133
+    ## 
+    ## 
+    ## [[1]]$waypoints
+    ## Simple feature collection with 5 features and 2 fields
+    ## Geometry type: POINT
+    ## Dimension:     XY
+    ## Bounding box:  xmin: -13170.77 ymin: 5837935 xmax: -3875.322 ymax: 5856219
+    ## Projected CRS: WGS 84 / UTM zone 34N
+    ##   id snapping_distance                  geometry
+    ## 1  1             0.003 POINT (-13170.77 5841047)
+    ## 2  2             0.018 POINT (-3875.322 5837935)
+    ## 4  4             0.027 POINT (-7444.513 5842729)
+    ## 3  3             0.014  POINT (-8024.73 5856219)
+    ## 5  5             0.007 POINT (-11716.82 5843569)
 
-The shortest trip between these pharmacies takes 105.6 minutes and is
-59.8 kilometers long. The steps of the trip are described in the “trip”
-sf object (point 1 \> point 2 \> point 4 \> point 3 \> point 5 \> point
-1).
+The shortest trip between these pharmacies takes 104.9 minutes and is
+60.133 kilometers long. The steps of the trip are described in the
+“trip” sf object (point 1 \> point 2 \> point 4 \> point 3 \> point 5 \>
+point 1).
 
 ``` r
-par(mar = c(0,0,3,0))
-mytrip <- trips[[1]]$trip
+trip <- trips[[1]]$trip
+waypoints <- trips[[1]]$waypoints
+
 # Display the trip
-plot(st_geometry(mytrip), col = c("black", "grey"), lwd = 2, main = "Trip")
-plot(st_geometry(pharmacy[1:5, ]), cex = 1.5, pch = 21, add = TRUE)
-text(st_coordinates(pharmacy[1:5,]), labels = row.names(pharmacy[1:5,]), 
-     pos = 2)
+mf_map(trip, col = c("black", "grey"), lwd = 2)
+mf_map(waypoints, cex = 1.5, pch = 21, add = TRUE)
+mf_label(waypoints, var = "id", pos = 4, add = TRUE)
+mf_title("Trip")
 ```
 
-![](man/figures/trip.png)
+![](man/figures/trip-1.png)<!-- -->
 
 ### Point(s) on the street network
 
@@ -187,11 +202,11 @@ pt_not_on_street_network <- c(13.40, 52.47)
     ## Dimension:     XY
     ## Bounding box:  xmin: 13.39671 ymin: 52.46661 xmax: 13.39671 ymax: 52.46661
     ## Geodetic CRS:  WGS 84
-    ##      id distance                  geometry
-    ## loc loc      439 POINT (13.39671 52.46661)
+    ##    id distance                  geometry
+    ## 1 loc    0.439 POINT (13.39671 52.46661)
 
 The distance from the input point to the nearest point on the street
-network is of 439 meters
+network is of 0.439 kilometers.
 
 ### Isochrones
 
@@ -201,30 +216,34 @@ areas of equal travel time are called isochrones. Here we compute the
 isochrones from a specific point defined by its longitude and latitude.
 
 ``` r
-(iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,12,2), n = 1000, smooth = F))
+(iso <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0, 12, 1), n = 20000, smooth = TRUE))
 ```
 
-    ## Simple feature collection with 5 features and 3 fields
+    ## Simple feature collection with 12 features and 3 fields
     ## Geometry type: MULTIPOLYGON
     ## Dimension:     XY
-    ## Bounding box:  xmin: 13.32727 ymin: 52.41842 xmax: 13.50226 ymax: 52.51358
+    ## Bounding box:  xmin: 13.31171 ymin: 52.41559 xmax: 13.51561 ymax: 52.5141
     ## Geodetic CRS:  WGS 84
-    ##   id isomin isomax                       geometry
-    ## 1  1      0      4 MULTIPOLYGON (((13.4315 52....
-    ## 2  2      4      6 MULTIPOLYGON (((13.44048 52...
-    ## 3  3      6      8 MULTIPOLYGON (((13.44946 52...
-    ## 4  4      8     10 MULTIPOLYGON (((13.4315 52....
-    ## 5  5     10     12 MULTIPOLYGON (((13.44048 52...
+    ## First 10 features:
+    ##    id isomin isomax                       geometry
+    ## 1   1      0      1 MULTIPOLYGON (((13.42966 52...
+    ## 2   2      1      2 MULTIPOLYGON (((13.42924 52...
+    ## 3   3      2      3 MULTIPOLYGON (((13.43647 52...
+    ## 4   4      3      4 MULTIPOLYGON (((13.43775 52...
+    ## 5   5      4      5 MULTIPOLYGON (((13.43842 52...
+    ## 6   6      5      6 MULTIPOLYGON (((13.4364 52....
+    ## 7   7      6      7 MULTIPOLYGON (((13.43413 52...
+    ## 8   8      7      8 MULTIPOLYGON (((13.43775 52...
+    ## 9   9      8      9 MULTIPOLYGON (((13.43613 52...
+    ## 10 10      9     10 MULTIPOLYGON (((13.4364 52....
 
 ``` r
-bks <-  sort(unique(c(iso$isomin, iso$isomax)))
-pals <- hcl.colors(n = length(bks) - 1, palette = "Light Grays", rev = TRUE)
-plot(iso["isomax"], breaks = bks, pal = pals, 
-     main = "Isochrones (in minutes)", reset = FALSE)
-points(x = 13.43, y = 52.47, pch = 4, lwd = 2, cex = 1.5)
+mf_map(iso, "isomax", "choro", breaks = unique(c(iso$isomin, iso$isomax)), 
+       leg_title = "Isochrones (in minutes)", leg_horiz = TRUE, leg_pos = "bottom", leg_val_rnd = 0)
+mf_title("Isochrones")
 ```
 
-![](man/figures/iso.png)
+![](man/figures/iso-1.png)<!-- -->
 
 ## Installation
 
@@ -253,6 +272,6 @@ file for detailed instructions.
 ## Acknowledgements
 
 Many thanks to the editor (@elbeejay) and reviewers (@JosiahParry,
-@mikemahoney218 and @wcjochem) of the JOSS article.  
+@mikemahoney218 and @wcjochem) of the JOSS article.\
 This publication has led to a significant improvement in the code base
 and documentation of the package.
