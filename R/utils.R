@@ -34,8 +34,8 @@ tab_format <- function(res, src, dst, type) {
     # From sec to minutes
     mat <- round(mat / (60), 1)
   } else {
-    mat <- res$distances
-    mat <- round(mat, 0)
+    mat <- res$distances / 1000
+    mat <- round(mat, 3)
   }
   # col and row names management
   dimnames(mat) <- list(src$id, dst$id)
@@ -51,7 +51,7 @@ coord_format <- function(res, src, dst) {
     ncol = 2, byrow = TRUE,
     dimnames = list(src$id, c("lon", "lat"))
   ))
-  sources$snapping_distance <- round(res$sources$distance, 0)
+  sources$snapping_distance <- round(res$sources$distance / 1000, 3)
 
   destinations <- data.frame(matrix(
     unlist(res$destinations$location,
@@ -60,7 +60,7 @@ coord_format <- function(res, src, dst) {
     ncol = 2, byrow = TRUE,
     dimnames = list(dst$id, c("lon", "lat"))
   ))
-  destinations$snapping_distance <- round(res$destinations$distance, 0)
+  destinations$snapping_distance <- round(res$destinations$distance / 1000, 3)
 
   return(list(sources = sources, destinations = destinations))
 }
@@ -419,4 +419,21 @@ get_resolution <- function(res, n) {
     return(27)
   }
   return(ref[ref$n == n, "res"])
+}
+
+
+#' @importFrom utils globalVariables
+.osrm <- new.env(parent = emptyenv())
+globalVariables("msg", package = "osrm", add = FALSE)
+.osrm$msg <- TRUE
+msg_units <- function() {
+  if (isTRUE(.osrm$msg)) {
+    msg <- paste0(
+      "For all functions in the package, ", 
+      "distances are expressed in kilometres and durations in minutes.\n",
+      "This message is displayed once per session."
+    )
+    message(msg)
+    .osrm$msg <- FALSE
+  }
 }

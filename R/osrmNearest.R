@@ -20,7 +20,7 @@
 #' network.\cr
 #' It contains 2 fields: \itemize{
 #'   \item id, the point identifier
-#'   \item distance, the distance in meters to the supplied input point.
+#'   \item distance, the distance in kilometers to the supplied input point.
 #'   }
 #' @importFrom sf st_as_sfc st_crs st_geometry st_sf st_as_sf st_transform
 #' @examples
@@ -41,7 +41,7 @@ osrmNearest <- function(
     osrm.profile = getOption("osrm.profile")) {
   opt <- options(error = NULL)
   on.exit(options(opt), add = TRUE)
-  
+  msg_units()
   url <- base_url(osrm.server, osrm.profile, "nearest")
   
   # from src to dst via x, y, z... (data.frame or sf input)
@@ -81,7 +81,7 @@ osrmNearest <- function(
     rcoords <- paste0(unlist(r$location[i]), collapse = " ")
     rosf[[i]] <- st_sf(
       id = id,
-      distance = round(r$distance[i], 0),
+      distance = round(r$distance[i] / 1000, 3),
       geometry = st_as_sfc(paste0("POINT(", rcoords, ")")),
       crs = 4326
     )

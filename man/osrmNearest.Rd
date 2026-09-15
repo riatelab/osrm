@@ -36,7 +36,7 @@ The output of this function is an sf POINT of the point on the street
 network.\cr
 It contains 2 fields: \itemize{
   \item id, the point identifier
-  \item distance, the distance in meters to the supplied input point.
+  \item distance, the distance in kilometers to the supplied input point.
   }
 }
 \description{

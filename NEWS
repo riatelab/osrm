@@ -1,6 +1,8 @@
 # osrm version 5.0.0.9000
 
 ## Fix 
+* use kilometers for distances in all functions, add a once per session message 
+about this breaking change
 * return an error on input coordinates containing NA, NaN or Inf values 
 (#141 thanks to @neon-ninja)
 * fix: harmonize the accuracy of results to the meter for distances and to one 

@@ -13,7 +13,7 @@
 #' If \code{loc} is a data.frame, a matrix, an sfc object or an sf object then
 #' only the first row or element is considered.
 #' @param breaks a numeric vector of break values to define isodistance areas,
-#' in meters.
+#' in kilometers.
 #' @param exclude pass an optional "exclude" request option to the OSRM API.
 #' @param n number of points used to compute isodistances, possible values are
 #' c(100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000).
@@ -30,8 +30,8 @@
 #' The output of this function is an sf MULTIPOLYGON of isodistances.\cr
 #' It contains 3 fields: \itemize{
 #'   \item id, an identifier
-#'   \item isomin, the minimum value of the isodistance polygon in meters
-#'   \item isomax, the maximum value of the isodistance polygon in meters
+#'   \item isomin, the minimum value of the isodistance polygon in kilometers
+#'   \item isomax, the maximum value of the isodistance polygon in kilometers
 #' }
 #' If loc is a vector, a data.frame or a matrix the coordinate
 #' reference system (CRS) of the output is EPSG:4326 (WGS84).\cr
@@ -63,13 +63,15 @@
 #'   )
 #' }
 #' }
-osrmIsodistance <- function(loc, breaks = seq(from = 0, to = 10000, length.out = 4),
+osrmIsodistance <- function(loc, breaks = seq(from = 0, to = 10, length.out = 4),
                             exclude, n = 500, smooth = FALSE, res,
                             osrm.server = getOption("osrm.server"),
                             osrm.profile = getOption("osrm.profile")) {
   opt <- options(error = NULL)
   on.exit(options(opt), add = TRUE)
-
+  breaks <- breaks * 1000
+  msg_units()
+  
   # input management
   loc <- input_route(x = loc, id = "loc", single = TRUE)
   oprj <- loc$oprj
@@ -114,7 +116,7 @@ osrmIsodistance <- function(loc, breaks = seq(from = 0, to = 10000, length.out =
         measure = "distance",
         osrm.server = osrm.server,
         osrm.profile = osrm.profile
-      )
+      ) 
       listDur[[i]] <- dmat$distances
       listDest[[i]] <- dmat$destinations
       Sys.sleep(sleeptime)
@@ -133,7 +135,7 @@ osrmIsodistance <- function(loc, breaks = seq(from = 0, to = 10000, length.out =
     listDest[[ltot]] <- dmat$destinations
   }
 
-  measure <- do.call(c, listDur)
+  measure <- do.call(c, listDur) * 1000
   destinations <- do.call(rbind, listDest)
   # for testing purpose
   # return(list(destinations = destinations, measure = measure,
@@ -191,7 +193,10 @@ osrmIsodistance <- function(loc, breaks = seq(from = 0, to = 10000, length.out =
   iso <- iso[-nrow(iso), ]
   # fisrt line always start at 0
   iso[1, "isomin"] <- 0
-
+  # use km
+  iso$isomin <- round(iso$isomin / 1000, 3)
+  iso$isomax <- round(iso$isomax / 1000, 3)
+  
   # proj mgmnt
   if (!is.na(oprj)) {
     iso <- st_transform(x = iso, oprj)

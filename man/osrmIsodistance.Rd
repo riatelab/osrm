@@ -6,7 +6,7 @@
 \usage{
 osrmIsodistance(
   loc,
-  breaks = seq(from = 0, to = 10000, length.out = 4),
+  breaks = seq(from = 0, to = 10, length.out = 4),
   exclude,
   n = 500,
   smooth = FALSE,
@@ -27,7 +27,7 @@ If \code{loc} is a data.frame, a matrix, an sfc object or an sf object then
 only the first row or element is considered.}
 
 \item{breaks}{a numeric vector of break values to define isodistance areas,
-in meters.}
+in kilometers.}
 
 \item{exclude}{pass an optional "exclude" request option to the OSRM API.}
 
@@ -51,8 +51,8 @@ getOption("osrm.profile") by default.}
 The output of this function is an sf MULTIPOLYGON of isodistances.\cr
 It contains 3 fields: \itemize{
   \item id, an identifier
-  \item isomin, the minimum value of the isodistance polygon in meters
-  \item isomax, the maximum value of the isodistance polygon in meters
+  \item isomin, the minimum value of the isodistance polygon in kilometers
+  \item isomax, the maximum value of the isodistance polygon in kilometers
 }
 If loc is a vector, a data.frame or a matrix the coordinate
 reference system (CRS) of the output is EPSG:4326 (WGS84).\cr

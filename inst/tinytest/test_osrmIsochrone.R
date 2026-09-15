@@ -57,7 +57,7 @@ if(demo_server){
                    c("id", "isomin", "isomax", "geometry"))
 
   ############# server param ##################""
-  r <- osrmIsochrone(loc = c(13.43,52.47),, breaks = seq(0,5,1), n = 200,
+  r <- osrmIsochrone(loc = c(13.43,52.47), breaks = seq(0,5,1), n = 200,
                      osrm.server = "http://router.project-osrm.org/", 
                      osrm.profile = "driving")
   wait()

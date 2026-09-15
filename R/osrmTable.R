@@ -29,8 +29,8 @@
 #' }
 #' If relevant, row names are used as identifiers.
 #' @param measure a character indicating what measures are calculated. It can
-#' be "duration" (in minutes), "distance" (meters), "total_distance"
-#' (network distance + snapping distance, in meters) or any combination
+#' be "duration" (in minutes), "distance" (in kilometers), "total_distance"
+#' (network distance + snapping distance, in kilometers) or any combination
 #' of them.
 #' @param exclude pass an optional "exclude" request option to the OSRM API
 #' (not allowed with the OSRM demo server).
@@ -41,16 +41,15 @@
 #' and 2 data.frames
 #' \itemize{
 #'   \item{durations}: a matrix of travel times (in minutes)
-#'   \item{distances}: a matrix of network distances (in meters)
+#'   \item{distances}: a matrix of network distances (in kilometers)
 #'   \item{total_distances}: a matrix of network + snapping distances
-#'   (in meters)
+#'   (in kilometers)
 #'   \item{sources}: a data.frame of the coordinates of the points actually
 #'   used as starting points (EPSG:4326 - WGS84),
-#'   including their snapping distance in meters
-#'
+#'   including their snapping distance in kilometers
 #'   \item{destinations}: a data.frame of the coordinates of the points actually
-#'   used as destinations (EPSG:4326 - WGS84),
-#'   including their snapping distance in meters
+#'   used as destinations (EPSG:4326 - WGS84), including their snapping distance 
+#'   in kilometers
 #'   }
 #' @note
 #' The OSRM demo server does not allow large queries (more than 10000 distances
@@ -187,18 +186,33 @@ osrmTable <- function(
       dst = dst_r,
       type = "distance"
     )
+    msg_units()
   }
+  
   # get the coordinates
-  coords <- coord_format(res = res, src = src_r, dst = dst_r)
-  output$sources <- coords$sources
-  output$destinations <- coords$destinations
+  output$sources <- data.frame(matrix(
+    unlist(res$sources$location,
+           use.names = TRUE
+    ),
+    ncol = 2, byrow = TRUE,
+    dimnames = list(src_r$id, c("lon", "lat"))
+  ))
+  output$sources$snapping_distance <- round(res$sources$distance / 1000, 3)
+  output$destinations <- data.frame(matrix(
+    unlist(res$destinations$location,
+           use.names = TRUE
+    ),
+    ncol = 2, byrow = TRUE,
+    dimnames = list(dst_r$id, c("lon", "lat"))
+  ))
+  output$destinations$snapping_distance <- round(res$destinations$distance / 1000, 3)
 
   # compute total distances
   if (total && !is.null(output$distances)) {
     src_snap <- output$sources$snapping_distance
     dst_snap <- output$destinations$snapping_distance
     snap_sum <- outer(src_snap, dst_snap, "+")
-    output$total_distances <- output$distances + round(snap_sum, 0)
+    output$total_distances <- output$distances + snap_sum
 
     # fix self-distance
     ids_match <- outer(
@@ -212,6 +226,7 @@ osrmTable <- function(
       output$distances <- NULL
     }
   }
+  
 
   return(output)
 }
