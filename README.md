@@ -2,12 +2,7 @@
 
 # osrm <img src="man/figures/logo.png" align="right" width="140"/>
 
-***Interface between R and the OpenStreetMap-based routing service
-[OSRM](http://project-osrm.org/)***
-
-## Description
-
-OSRM is a routing service based on OpenStreetMap data.   
+[OSRM](http://project-osrm.org/) is a routing service based on OpenStreetMap data.   
 This package enables the computation of routes, trips, isochrones and travel 
 distances matrices (travel time and kilometric distance) with R.
 
